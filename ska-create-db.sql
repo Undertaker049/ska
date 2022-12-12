@@ -83,4 +83,5 @@ INSERT INTO levels VALUES
 (NULL, 1, "Basic", "Have general knowledge on product, technology or process; can follow prepared instructions"),
 (NULL, 2, "Middle", "Have experience with product, technology or process; can find instructions and follow them"),
 (NULL, 3, "Professional", "Navigate freely in product, technology or process; can provide instructions and advise to customer"),
-(NULL, 4, "Expert", "Know all quircks of product, technology or process; can provide instructions, advise to customer and deliver trainings");
+(NULL, 4, "Expert", "Know all quircks of product, technology or process; can provide instructions, advise to customer and deliver trainings")
+ON CONFLICT DO NOTHING;

@@ -1,7 +1,7 @@
 import sys, os
 from openpyxl import load_workbook
 
-if sys.argc < 2:
+if len(sys.argv) < 2:
     print("Usage: " + sys.argv[0] + " <Skill and Knowledge Assessment.xlsx>")
     sys.exit(1)
 
