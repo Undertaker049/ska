@@ -16,7 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from self_assessment import views as self_assessment_views
+from main import views as main_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', main_views.main),
+    path('self-assessment', self_assessment_views.main),
+
 ]
