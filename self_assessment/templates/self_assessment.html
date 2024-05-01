@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
+{% load self_assessment_filters %}
 <html lang="en-US">
 <head>
     <title>Self-assessment</title>
@@ -13,7 +14,46 @@
     --><div id="employee_evaluation" class="page_link">Оценить сотрудника(-ов)</div><!--
     --><div id="selection" class="page_link">Сводка по сотруднику</div>
 </header>
-    <h2>This is self-assessment page where you can tell us about your skills</h2>
-    <h3>And this is insertion test {{ test.info }}</h3>
+
+<form>
+    {% csrf_token %}
+    <div id="user_name">
+        <label for id="user_name_input">Введите фамилию и имя:
+            <input id="user_name_input" type="text" placeholder="Петренко Петр">
+        </label><br>
+        <button id="start" type="button">Начать</button>
+    </div>
+
+    <div id="HW" class="form-element"><h1>HW</h1>
+        {% for name in HW %}
+            <div class="hw-element element" id={{ name }}><h2>{{ name|replace_dj:"_| " }}</h2>
+                {% for discipline in hw_disciplines %}
+                    <p>{{ discipline|replace_dj:"_| " }}
+                        <label for={{ discipline }}>
+                            <select id={{ discipline }} >
+                                {% for level in levels %}
+                                    <option value={{ level|get_level_val }}>{{ level }}</option>
+                                {% endfor %}
+                            </select>
+                        </label>
+                    </p>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
+
+    <div id="SW" class="form-element">
+
+    </div>
+
+    <div id="skills" class="form-element">
+
+    </div>
+    <button id="form-prev" class="form-button" type="button">prev</button>
+    <button id="form-next" class="form-button"  type="button">next</button>
+</form>
+{#<script src="{% static "JS/jquery-3.7.1.min.js" %}"></script>#}
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="{% static "JS/self_assessment.js" %}"></script>
 </body>
 </html>
