@@ -1,8 +1,5 @@
 from django.shortcuts import render
 
-# Create your views here.
-from django.http import HttpResponse
-
 
 def main(request):
     hw = ['ProLiant_and_Apollo',
@@ -24,6 +21,7 @@ def main(request):
           'StoreOnce',
           'StoreEasy',
           ]
+
     hw_disciplines = ['Part_Replacement',
                       'Rack_Mounting',
                       'Cabling',
@@ -38,51 +36,50 @@ def main(request):
                       'Performance_Collection'
                       ]
 
-    sw = ['Microsoft Windows Server',
-          'Red Hat Enterprise Linux',
-          'SUSE Linux Enterprise Server',
-          'VMware vSphere',
-          'Microsoft Hyper-V',
-          'Red Hat Enterprise Virtualization',
-          'SUSE Xen Virtualization',
-          'SUSE KVM Virtualization',
+    sw = ['Microsoft_Windows_Server',
+          'Red_Hat_Enterprise_Linux',
+          'SUSE_Linux_Enterprise_Server',
+          'VMware_vSphere',
+          'Microsoft_Hyper-V',
+          'Red_Hat_Enterprise_Virtualization',
+          'SUSE_Xen_Virtualization',
+          'SUSE_KVM_Virtualization',
           'Docker',
           'Kubernetes',
-          'Microsoft Failover Cluster',
-          'Red Hat High Availability Add-On',
-          'SUSE Linux Enterprise High Availability Extension',
-          'Microfocus Data Protector',
-          'Veeam Backup & Replication',
-          'DellEMC NetWorker',
-          'Veritas NetBackup',
-          'Veritas Backup Exec',
-          'Microsoft SQL Server',
-          'Oracle Database',
+          'Microsoft_Failover_Cluster',
+          'Red_Hat_High_Availability_Add-On',
+          'SUSE_Linux_Enterprise_High_Availability_Extension',
+          'Microfocus_Data_Protector',
+          'Veeam_Backup_and_Replication',
+          'DellEMC_NetWorker',
+          'Veritas_NetBackup',
+          'Veritas_Backup_Exec',
+          'Microsoft_SQL_Server',
+          'Oracle_Database',
           'PostgreSQL',
-          'MySQL/MariaDB'
-          ]
-    sw_disciplines = ['Installation',
-                      'Basic Configuration',
-                      'Fine Tuning',
-                      'Performance Collection',
-                      'Performance Tuning'
-                      ]
+          'MySQL-MariaDB']
 
-    skills = ['PRINCE2 Project Management',
-              'PMI Project Management',
-              'TOGAF Enterprise Architecture',
-              'Technical Writing',
-              'Negotiations with Customer',
-              'Correspondence with Customer',
-              'Performance Analysis (Statistics)',
-              'Solution High Level Design',
-              'Solution Low Level Design',
-              'Customer Presentations',
-              'Testing and Acceptance Planning',
-              'Technical Training Delivery',
-              'Technical Training Development',
-              'ITIL/ITSM'
-              ]
+    sw_disciplines = ['Installation',
+                      'Basic_Configuration',
+                      'Fine_Tuning',
+                      'Performance_Collection',
+                      'Performance_Tuning']
+
+    skills = ['PRINCE2_Project_Management',
+              'PMI_Project_Management',
+              'TOGAF_Enterprise_Architecture',
+              'Technical_Writing',
+              'Negotiations_with_Customer',
+              'Correspondence_with_Customer',
+              'Performance_Analysis-Statistics',
+              'Solution_High_Level_Design',
+              'Solution_Low_Level_Design',
+              'Customer_Presentations',
+              'Testing_and_Acceptance_Planning',
+              'Technical_Training_Delivery',
+              'Technical_Training_Development',
+              'ITIL-ITSM']
+
     skill_disciplines = ['level']
 
     levels = ['0 — None',
@@ -94,7 +91,7 @@ def main(request):
 
     data = {'HW': hw,
             'hw_disciplines': hw_disciplines,
-            'sw': sw,
+            'SW': sw,
             'sw_disciplines': sw_disciplines,
             'skills': skills,
             'skill_disciplines': skill_disciplines,

@@ -30,6 +30,24 @@
                 {% for discipline in hw_disciplines %}
                     <p>{{ discipline|replace_dj:"_| " }}
                         <label for={{ discipline }}>
+                            <select id={{ discipline }}>
+                                {% for level in levels %}
+                                    <option value={{ level|get_level_val }}>{{ level }}</option>
+                                {% endfor %}
+                            </select>
+                        </label>
+                    </p>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
+
+    <div id="SW" class="form-element"><h1>SW</h1>
+        {% for name in SW %}
+            <div class="sw-element element" id={{ name }}><h2>{{ name|replace_dj:"_| " }}</h2>
+                {% for discipline in sw_disciplines %}
+                    <p>{{ discipline|replace_dj:"_| " }}
+                        <label for={{ discipline }}>
                             <select id={{ discipline }} >
                                 {% for level in levels %}
                                     <option value={{ level|get_level_val }}>{{ level }}</option>
@@ -42,12 +60,22 @@
         {% endfor %}
     </div>
 
-    <div id="SW" class="form-element">
-
-    </div>
-
-    <div id="skills" class="form-element">
-
+    <div id="skills" class="form-element"><h1>Skills</h1>
+        {% for name in skills %}
+            <div class="skills-element element" id={{ name }}><h2>{{ name|replace_dj:"_| " }}</h2>
+                {% for discipline in skill_disciplines %}
+                    <p>{{ discipline|replace_dj:"_| " }}
+                        <label for={{ discipline }}>
+                            <select id={{ discipline }} >
+                                {% for level in levels %}
+                                    <option value={{ level|get_level_val }}>{{ level }}</option>
+                                {% endfor %}
+                            </select>
+                        </label>
+                    </p>
+                {% endfor %}
+            </div>
+        {% endfor %}
     </div>
     <button id="form-prev" class="form-button" type="button">prev</button>
     <button id="form-next" class="form-button"  type="button">next</button>
