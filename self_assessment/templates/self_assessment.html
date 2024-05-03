@@ -1,21 +1,22 @@
 <!DOCTYPE html>
 {% load static %}
 {% load self_assessment_filters %}
-<html lang="en-US">
+<html lang="en">
 <head>
     <title>Self-assessment</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="{% static "CSS/self_assessment.css" %}" />
+    <link rel="stylesheet" href="{% static "GlobalCSS/Header.css" %}" />
 </head>
 <body>
 <header>
-    <div id="self-assessment" class="page_link">Заполнить квалификации</div><!--
-    --><div id="certificate" class="page_link">Загрузить сертификат</div><!--
-    --><div id="employee_evaluation" class="page_link">Оценить сотрудника(-ов)</div><!--
-    --><div id="selection" class="page_link">Сводка по сотруднику</div>
+    <button id="self-assessment-button" class="page-link">Заполнить квалификации</button><!--
+    --><button id="certificate-button" class="page-link">Загрузить сертификат</button><!--
+    --><button id="employee-evaluation-button" class="page-link">Оценить сотрудника(-ов)</button><!--
+    --><button id="selection-button" class="page-link">Сводка по сотруднику</button>
 </header>
 
-<form>
+<form id="self-assessment-form">
     {% csrf_token %}
     <div id="user_name">
         <label for id="user_name_input">Введите фамилию и имя:
@@ -24,13 +25,19 @@
         <button id="start" type="button">Начать</button>
     </div>
 
+    <div id="form-navigation">
+        <button id="HW-page" class="form-navigation-button" type="button">HW</button>
+        <button id="SW-page" class="form-navigation-button" type="button">SW</button>
+        <button id="skills-page" class="form-navigation-button" type="button">Skills</button>
+    </div>
+
     <div id="HW" class="form-element"><h1>HW</h1>
         {% for name in HW %}
-            <div class="hw-element element" id={{ name }}><h2>{{ name|replace_dj:"_| " }}</h2>
+            <div class="element" id={{ name }}><h2>{{ name|replace_dj:"_| " }}</h2>
                 {% for discipline in hw_disciplines %}
                     <p>{{ discipline|replace_dj:"_| " }}
                         <label for={{ discipline }}>
-                            <select id={{ discipline }}>
+                            <select class="hw-element" name={{ discipline }}>
                                 {% for level in levels %}
                                     <option value={{ level|get_level_val }}>{{ level }}</option>
                                 {% endfor %}
@@ -44,11 +51,11 @@
 
     <div id="SW" class="form-element"><h1>SW</h1>
         {% for name in SW %}
-            <div class="sw-element element" id={{ name }}><h2>{{ name|replace_dj:"_| " }}</h2>
+            <div class="element" id={{ name }}><h2>{{ name|replace_dj:"_| " }}</h2>
                 {% for discipline in sw_disciplines %}
                     <p>{{ discipline|replace_dj:"_| " }}
                         <label for={{ discipline }}>
-                            <select id={{ discipline }} >
+                            <select class="sw-element" id={{ discipline }} >
                                 {% for level in levels %}
                                     <option value={{ level|get_level_val }}>{{ level }}</option>
                                 {% endfor %}
@@ -62,11 +69,11 @@
 
     <div id="skills" class="form-element"><h1>Skills</h1>
         {% for name in skills %}
-            <div class="skills-element element" id={{ name }}><h2>{{ name|replace_dj:"_| " }}</h2>
+            <div class="element" id={{ name }}><h2>{{ name|replace_dj:"_| " }}</h2>
                 {% for discipline in skill_disciplines %}
                     <p>{{ discipline|replace_dj:"_| " }}
                         <label for={{ discipline }}>
-                            <select id={{ discipline }} >
+                            <select class="skills-element" id={{ discipline }} >
                                 {% for level in levels %}
                                     <option value={{ level|get_level_val }}>{{ level }}</option>
                                 {% endfor %}

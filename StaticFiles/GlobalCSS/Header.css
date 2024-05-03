@@ -1,0 +1,17 @@
+.page-link{
+    background-color: rgb(0,182,197);
+    height: 75%;
+    width: 25%;
+    display: inline-block;
+    text-align: center;
+    vertical-align: middle;
+    box-sizing: border-box;
+    border-left: black 1px solid;
+    border-right: black 1px solid;
+    border-bottom: none;
+    overflow: hidden;
+    user-select: none;
+}
+.page-link:hover{
+    background-color: rgb(0,126,146);
+}

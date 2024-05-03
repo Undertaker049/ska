@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<!--Тестовая страница для тестовых тестов-->
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <form>
+        <div>
+        <div>
+            <p>
+        <label for="t">Test select</label>
+        <select name="test" id="t" class="testcase">
+            <option value="volvo">Volvo</option>
+            <option value="saab">Saab</option>
+            <option value="opel">Opel</option>
+            <option value="audi">Audi</option>
+        </select>
+            </p>
+        </div>
+
+        <div>
+            <p>
+        <label for="t1">Test select</label>
+        <select name="test" id="t1" class="testcase">
+            <option value="volvo1">Volvo1</option>
+            <option value="saab1">Saab1</option>
+            <option value="opel1">Opel1</option>
+            <option value="audi1">Audi1</option>
+        </select>
+            </p>
+        </div>
+            </div>
+    </form>
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="{% static "JS/test.js" %}"></script>
+</body>
+</html>

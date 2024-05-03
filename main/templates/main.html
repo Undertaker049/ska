@@ -4,14 +4,15 @@
 <head>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="{% static "CSS/main.css" %}" />
-    <title>Django на METANIT.COM</title>
+    <link rel="stylesheet" href="{% static "GlobalCSS/Header.css" %}" />
+    <title>ska-main</title>
 </head>
 <body>
 <header>
-    <div id="self-assessment" class="page_link">Заполнить квалификации</div><!--
-    --><div id="certificate" class="page_link">Загрузить сертификат</div><!--
-    --><div id="employee_evaluation" class="page_link">Оценить сотрудника(-ов)</div><!--
-    --><div id="selection" class="page_link">Сводка по сотруднику</div>
+    <button id="self-assessment-button" class="page-link">Заполнить квалификации</button><!--
+    --><button id="certificate-button" class="page-link">Загрузить сертификат</button><!--
+    --><button id="employee-evaluation-button" class="page-link">Оценить сотрудника(-ов)</button><!--
+    --><button id="selection-button" class="page-link">Сводка по сотруднику</button>
 </header>
 <script src="{% static "JS/jquery-3.7.1.min.js" %}"></script>
 {#<script src="https://code.jquery.com/jquery-3.7.1.js"></script>#}

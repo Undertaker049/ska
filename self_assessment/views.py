@@ -82,7 +82,8 @@ def main(request):
 
     skill_disciplines = ['level']
 
-    levels = ['0 — None',
+    levels = ['— Select your level —',
+              '0 — None',
               '1 — Basic',
               '2 — Middle',
               '3 — Professional',
@@ -97,3 +98,7 @@ def main(request):
             'skill_disciplines': skill_disciplines,
             'levels': levels}
     return render(request, 'self_assessment.html', data)
+
+
+def test(request):
+    return render(request, 'testPage.html')
