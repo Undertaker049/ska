@@ -7,8 +7,3 @@ register = template.Library()
 def replace_dj(value: str, args: str):
     args = args.split('|')
     return value.replace(args[0], args[1])
-
-
-@register.filter
-def get_level_val(value: str):
-    return value.split(" ")[0]

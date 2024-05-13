@@ -23,6 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', main_views.main),
     path('self-assessment', self_assessment_views.main),
-    path('test', self_assessment_views.test)
+    path('test', self_assessment_views.test),
+    path('upload-assessment',self_assessment_views.upload_assessment)
 
 ]

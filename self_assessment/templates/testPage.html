@@ -1,39 +1,60 @@
 <!DOCTYPE html>
 <!--Тестовая страница для тестовых тестов-->
 {% load static %}
+{% load self_assessment_filters %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" href="{% static "CSS/self_assessment.css" %}" />
+    <link rel="stylesheet" href="{% static "GlobalCSS/Header.css" %}" />
 </head>
 <body>
-    <form>
-        <div>
-        <div>
-            <p>
-        <label for="t">Test select</label>
-        <select name="test" id="t" class="testcase">
-            <option value="volvo">Volvo</option>
-            <option value="saab">Saab</option>
-            <option value="opel">Opel</option>
-            <option value="audi">Audi</option>
-        </select>
-            </p>
-        </div>
+<header>
+    <button id="self-assessment-button" class="page-link">Заполнить квалификации</button><!--
+    --><button id="certificate-button" class="page-link">Загрузить сертификат</button><!--
+    --><button id="employee-evaluation-button" class="page-link">Оценить сотрудника(-ов)</button><!--
+    --><button id="selection-button" class="page-link">Сводка по сотруднику</button>
+</header>
 
-        <div>
-            <p>
-        <label for="t1">Test select</label>
-        <select name="test" id="t1" class="testcase">
-            <option value="volvo1">Volvo1</option>
-            <option value="saab1">Saab1</option>
-            <option value="opel1">Opel1</option>
-            <option value="audi1">Audi1</option>
-        </select>
-            </p>
-        </div>
+<div id="error-box"></div>
+{% csrf_token %}
+<form method="post" action="/test">
+    <div id="user_name">
+        <label for="user_name_input">Введите фамилию и имя:</label>
+        <input id="user_name_input" type="text" value="" name="username"><br>
+        <button type="button" id="start">Начать</button>
+    </div>
+    <div id="form-navigation">
+        <button id="HW-page" class="form-navigation-button" type="button">HW</button>
+        <button id="SW-page" class="form-navigation-button" type="button">SW</button>
+        <button id="skills-page" class="form-navigation-button" type="button">Processes</button>
+        <button id="finish" class="form-navigation-button" type="button">Finish</button>
+    </div>
+{#    {% for product in hw_products %}#}
+{#        <div id={{ product|replace_dj:" |_" }}><h2>{{ product }}</h2>#}
+{#            {% for process in hw_processes %}#}
+{#                {{ process }}#}
+{#            {% endfor %}#}
+{#        </div>#}
+{#    {% endfor %}#}
+    {% for page in pages %}
+        <div id={{ page.id }} class="form-element">
+        <h1>{{ page.id }}</h1>
+        {% for product in page.products %}
+            <div class="block">
+            <h2>{{ product }}</h2>
+                {% for task in page.tasks %}
+                    {{ task }}
+                {% endfor %}
             </div>
-    </form>
+        {% endfor %}
+        </div>
+    {% endfor %}
+
+    <button id="form-prev" class="form-button" type="button">prev</button>
+    <button id="form-next" class="form-button"  type="button">next</button>
+</form>
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 <script src="{% static "JS/test.js" %}"></script>
 </body>

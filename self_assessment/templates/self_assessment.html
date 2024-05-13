@@ -16,30 +16,31 @@
     --><button id="selection-button" class="page-link">Сводка по сотруднику</button>
 </header>
 
-<form id="self-assessment-form">
-    {% csrf_token %}
+<div id="error-box"></div>
+<div id="form-navigation">
+    <button id="HW-page" class="form-navigation-button" type="button">HW</button>
+    <button id="SW-page" class="form-navigation-button" type="button">SW</button>
+    <button id="skills-page" class="form-navigation-button" type="button">Skills</button>
+    <button id="finish" class="form-navigation-button" type="button">Finish</button>
+</div>
+<form id="self-assessment-form" method="post" action="/upload-assessment">
+{% csrf_token %}
     <div id="user_name">
-        <label for id="user_name_input">Введите фамилию и имя:
-            <input id="user_name_input" type="text" placeholder="Петренко Петр">
-        </label><br>
-        <button id="start" type="button">Начать</button>
+        <label for="user_name_input">Введите фамилию и имя:</label>
+        <input id="user_name_input" type="text" value="" name="username"><br>
+        <button type="button" id="start" class="form-navigation-button">Начать</button>
     </div>
 
-    <div id="form-navigation">
-        <button id="HW-page" class="form-navigation-button" type="button">HW</button>
-        <button id="SW-page" class="form-navigation-button" type="button">SW</button>
-        <button id="skills-page" class="form-navigation-button" type="button">Skills</button>
-    </div>
-
-    <div id="HW" class="form-element"><h1>HW</h1>
-        {% for name in HW %}
-            <div class="element" id={{ name }}><h2>{{ name|replace_dj:"_| " }}</h2>
-                {% for discipline in hw_disciplines %}
+    {% for page in pages %}
+        <div id={{ page.id }} class="form-element"><h1>{{ page.id }}</h1>
+        {% for name in page.tech %}
+            <div class="element" id={{ name|replace_dj:" |_" }}><h2>{{ name }}</h2>
+                {% for discipline in page.disciplines %}
                     <p>{{ discipline|replace_dj:"_| " }}
-                        <label for={{ discipline }}>
-                            <select class="hw-element" name={{ discipline }}>
+                        <label for={{ discipline|replace_dj:" |_" }}>
+                            <select class={{ page.subpages }} name={{ discipline|replace_dj:" |_" }}>
                                 {% for level in levels %}
-                                    <option value={{ level|get_level_val }}>{{ level }}</option>
+                                    <option value={{ level.0 }}>{{ level.1 }}</option>
                                 {% endfor %}
                             </select>
                         </label>
@@ -47,48 +48,11 @@
                 {% endfor %}
             </div>
         {% endfor %}
-    </div>
-
-    <div id="SW" class="form-element"><h1>SW</h1>
-        {% for name in SW %}
-            <div class="element" id={{ name }}><h2>{{ name|replace_dj:"_| " }}</h2>
-                {% for discipline in sw_disciplines %}
-                    <p>{{ discipline|replace_dj:"_| " }}
-                        <label for={{ discipline }}>
-                            <select class="sw-element" id={{ discipline }} >
-                                {% for level in levels %}
-                                    <option value={{ level|get_level_val }}>{{ level }}</option>
-                                {% endfor %}
-                            </select>
-                        </label>
-                    </p>
-                {% endfor %}
-            </div>
-        {% endfor %}
-    </div>
-
-    <div id="skills" class="form-element"><h1>Skills</h1>
-        {% for name in skills %}
-            <div class="element" id={{ name }}><h2>{{ name|replace_dj:"_| " }}</h2>
-                {% for discipline in skill_disciplines %}
-                    <p>{{ discipline|replace_dj:"_| " }}
-                        <label for={{ discipline }}>
-                            <select class="skills-element" id={{ discipline }} >
-                                {% for level in levels %}
-                                    <option value={{ level|get_level_val }}>{{ level }}</option>
-                                {% endfor %}
-                            </select>
-                        </label>
-                    </p>
-                {% endfor %}
-            </div>
-        {% endfor %}
-    </div>
-    <button id="form-prev" class="form-button" type="button">prev</button>
-    <button id="form-next" class="form-button"  type="button">next</button>
+        </div>
+    {% endfor %}
 </form>
-{#<script src="{% static "JS/jquery-3.7.1.min.js" %}"></script>#}
-<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="{% static "GlobalJS/jquery-3.7.1.min.js" %}"></script>
+{#<script src="https://code.jquery.com/jquery-3.7.1.js"></script>#}
 <script src="{% static "JS/self_assessment.js" %}"></script>
 </body>
 </html>

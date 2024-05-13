@@ -1,52 +1,136 @@
 let active_tab = "#HW";
 
-$hw_element = $(".hw-element");
-$sw_element = $(".sw-element");
-$skills_element = $(".skills-element");
+let $hw_element = $(".hw-element");
+let $sw_element = $(".sw-element");
+let $skills_element = $(".skills-element");
+let $error_box = $("#error-box");
 
-$hw_page = $("#HW-page");
-$sw_page = $("#SW-page");
-$skills_page = $("#skills-page");
+let $start_button = $("#start");
+let $hw_page_button = $("#HW-page");
+let $sw_page_button = $("#SW-page");
+let $skills_page_button = $("#skills-page");
+let $finish_button = $("#finish");
 
-hw_object = {_count: 0, _total: $hw_element.toArray().length, _selected: [], _id: "HW"}
-sw_object = {_count: 0, _total: $sw_element.toArray().length, _selected: [], _id: "SW"}
-skills_object = {_count: 0, _total: $skills_element.toArray().length, _selected: [], _id: "Skills"}
+let user_name = ""
+let hw_object = {_count: 0, _total: $hw_element.toArray().length, _selected: [], _id: "HW"}
+let sw_object = {_count: 0, _total: $sw_element.toArray().length, _selected: [], _id: "SW"}
+let skills_object = {_count: 0, _total: $skills_element.toArray().length, _selected: [], _id: "Skills"}
 
 
 
-$("#start").on('click',function() {
-    $('#user_name').css("display","none");
-    $(".form-navigation-button").css("display","inline-block");
+$start_button.on('click',function() {
+    // Потом раскомментить
+    if (RegExp("^[А-ЯЁ][а-яё]+\\s[А-ЯЁ][а-яё]*").exec($("#user_name_input").val()) === null){
+        void show_warning("Только Фамилия и Имя, только Кириллица, слова с заглавной буквы")
+    }
+    else {
+        user_name = $('input[id="user_name_input"]').val()
+        $('#user_name').css("display", "none");
+        $(".form-navigation-button").css("display", "inline-block");
+    }
+
+    // $('#user_name').css("display", "none");
+    // $("#form-navigation").css("display", "inline-block");
 });
 
-$hw_page.on("click", function () {
+/**
+ * На enter происходит отправка формы через дефолтный метод
+ * чтобы этого не происходило, создана данная функция, переопределяющая поведение
+ */
+  $(window).keydown(function(event){
+    if(event.keyCode === 13) {
+        $start_button.click()
+    }
+  });
+
+$hw_page_button.on("click", function () {
     $(active_tab).css("display", "none");
     active_tab = "#HW";
     $("#HW").css("display", "block");
 });
-$sw_page.on("click", function () {
+$sw_page_button.on("click", function () {
     $(active_tab).css("display", "none");
     active_tab = "#SW";
     $("#SW").css("display", "block");
 });
-$skills_page.on("click", function () {
+$skills_page_button.on("click", function () {
     $(active_tab).css("display", "none");
-    active_tab = "#skills";
-    $("#skills").css("display", "block");
+    active_tab = "#Skills";
+    $("#Skills").css("display", "block");
 });
 
 $hw_element.on("change", function () {
-    update_counter(this, hw_object, $hw_page)
+    update_counter(this, hw_object, $hw_page_button)
 })
 
 $sw_element.on("change", function () {
-    update_counter(this, sw_object, $sw_page)
+    update_counter(this, sw_object, $sw_page_button)
 })
 
 $skills_element.on("change", function () {
-    update_counter(this, skills_object, $skills_page)
+    update_counter(this, skills_object, $skills_page_button)
 })
 
+$finish_button.on("click", function () {
+    if (hw_object._count === hw_object._total && sw_object._count === sw_object._total && skills_object._count === skills_object._total){
+    // if (true){
+        let data = {"HW": form_data($("#"+hw_object._id)),
+            "SW": form_data($("#"+sw_object._id)),
+            "Skills": form_data($("#"+skills_object._id)),
+            "name": user_name,
+            }
+        console.log(JSON.stringify(data))
+
+         $.ajax({
+        url: '/upload-assessment',
+        type: "POST",
+        headers: {
+            'Accept': 'application/text',
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+        },
+        data: {csrfmiddlewaretoken: $('input[name="csrfmiddlewaretoken"]').val(), from: JSON.stringify(data)},
+        dataType: "json",
+        success(msg){
+            console.log(msg);
+        },
+        error(msg){
+            console.log(msg)
+        }
+    });
+    }
+    else{
+        void show_warning("Сначала заполните форму до конца!")
+    }
+})
+
+/**
+ * Формирует массив с данными из конкретного блока формы
+ * @param jq_global_element <div> элемент представляющий блок формы(HW, SW, Skills)
+ * @returns {*[]} Массив элементов вида {_product : "", _selections: []},
+ * где _product - название продукта, _selections - выбранные пользователем ответы(параметр value:int выбранного варианта)
+ */
+function form_data(jq_global_element) {
+    let arr = []
+    jq_global_element.children('div').each(function () {
+            let obj = {_product : "", _selections: []}
+            // console.log(s)
+            obj._product = $(this).attr('id').replaceAll("_", " ")
+            $(this).find('> p > label > select option:selected').each(function () {
+                obj._selections.push($(this).attr('value'))
+            })
+
+        arr.push(obj)
+        })
+
+    return arr
+}
+
+/**
+ * Функция для обновления и вывода счетчиков заполненных полей формы конкретного блока
+ * @param element Элемент блока <select>, на который повешен слушатель onChange
+ * @param object объект в котором хранится информация о блоке формы(HW, SW, Skills), в т.ч. и счетчик
+ * @param button_object Кнопка навигации по форме, в название которой и дописывается значение счетчика. Прим.: HW(10/216)
+ */
 function update_counter(element, object, button_object){
     let s = `${$(element).closest('div').attr('id')}:${$(element).closest('label').attr('for')}`;
     if ($(element).find(":selected").text() !== "— Select your level —"){
@@ -59,4 +143,18 @@ function update_counter(element, object, button_object){
         object._count--;
     }
     button_object.text(`${object._id}(${object._count}/${object._total})`);
+}
+
+/**
+ * Функция для отображения сообщений об ошибках
+ * @param {String}text Текст сообщения
+ * @returns {Promise<void>} Возвращаемое значение игнорируется
+ */
+async function show_warning(text) {
+    $error_box.text(text);
+    $error_box.fadeTo("slow", 1);
+    await new Promise(r => setTimeout(r, 5000));
+    $error_box.fadeTo("slow", 0);
+    await new Promise(r => setTimeout(r, 1000));
+    $error_box.css("display", "none")
 }

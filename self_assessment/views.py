@@ -1,104 +1,55 @@
+from django.http import HttpResponse
 from django.shortcuts import render
+
+from .forms import MainForm
+from .models import *
 
 
 def main(request):
-    hw = ['ProLiant_and_Apollo',
-          'BladeSystem',
-          'Synergy',
-          'SimpliVity',
-          'B-series_SAN',
-          'Aruba_Switches',
-          'Aruba_Routers',
-          'FlexNetwork_Switches',
-          'FlexFabric_Switches',
-          'OfficeConnect_Switches',
-          'Aruba_Mobility_Controllers',
-          'Aruba_Hotspots',
-          'MSA',
-          'Nimble',
-          '3PAR-Primera',
-          'Autoloader_and_MSL',
-          'StoreOnce',
-          'StoreEasy',
-          ]
 
-    hw_disciplines = ['Part_Replacement',
-                      'Rack_Mounting',
-                      'Cabling',
-                      'Startup',
-                      'Basic_Configuration',
-                      'Log_Collection',
-                      'Log_Parsing',
-                      'Diagnostics',
-                      'Configuration_Design',
-                      'Firmware_Update',
-                      'Performance_Metrics_Setup',
-                      'Performance_Collection'
-                      ]
+    hw = Hardware.objects.values_list('product', flat=True).distinct()
+    hw_disciplines = TaskHW.objects.values_list('task', flat=True).distinct()
 
-    sw = ['Microsoft_Windows_Server',
-          'Red_Hat_Enterprise_Linux',
-          'SUSE_Linux_Enterprise_Server',
-          'VMware_vSphere',
-          'Microsoft_Hyper-V',
-          'Red_Hat_Enterprise_Virtualization',
-          'SUSE_Xen_Virtualization',
-          'SUSE_KVM_Virtualization',
-          'Docker',
-          'Kubernetes',
-          'Microsoft_Failover_Cluster',
-          'Red_Hat_High_Availability_Add-On',
-          'SUSE_Linux_Enterprise_High_Availability_Extension',
-          'Microfocus_Data_Protector',
-          'Veeam_Backup_and_Replication',
-          'DellEMC_NetWorker',
-          'Veritas_NetBackup',
-          'Veritas_Backup_Exec',
-          'Microsoft_SQL_Server',
-          'Oracle_Database',
-          'PostgreSQL',
-          'MySQL-MariaDB']
+    sw = Software.objects.values_list('product', flat=True).distinct()
+    sw_disciplines = TaskSW.objects.values_list('task', flat=True).distinct()
 
-    sw_disciplines = ['Installation',
-                      'Basic_Configuration',
-                      'Fine_Tuning',
-                      'Performance_Collection',
-                      'Performance_Tuning']
+    skills = Processes.objects.values_list('process', flat=True).distinct()
+    skills_disciplines = ['level']
 
-    skills = ['PRINCE2_Project_Management',
-              'PMI_Project_Management',
-              'TOGAF_Enterprise_Architecture',
-              'Technical_Writing',
-              'Negotiations_with_Customer',
-              'Correspondence_with_Customer',
-              'Performance_Analysis-Statistics',
-              'Solution_High_Level_Design',
-              'Solution_Low_Level_Design',
-              'Customer_Presentations',
-              'Testing_and_Acceptance_Planning',
-              'Technical_Training_Delivery',
-              'Technical_Training_Development',
-              'ITIL-ITSM']
+    levels = Levels.objects.values_list('weight', 'level').distinct()
 
-    skill_disciplines = ['level']
+    hw_page = {"id": "HW", "subpages": "hw-element", "tech": hw, "disciplines": hw_disciplines}
+    sw_page = {"id": "SW", "subpages": "sw-element", "tech": sw, "disciplines": sw_disciplines}
+    skills_page = {"id": "Skills", "subpages": "skills-element", "tech": skills, "disciplines": skills_disciplines}
 
-    levels = ['— Select your level —',
-              '0 — None',
-              '1 — Basic',
-              '2 — Middle',
-              '3 — Professional',
-              '4 — Expert'
-              ]
-
-    data = {'HW': hw,
-            'hw_disciplines': hw_disciplines,
-            'SW': sw,
-            'sw_disciplines': sw_disciplines,
-            'skills': skills,
-            'skill_disciplines': skill_disciplines,
-            'levels': levels}
+    data = {"pages": [hw_page, sw_page, skills_page],
+            "levels": levels}
     return render(request, 'self_assessment.html', data)
 
 
+def upload_assessment(request):
+    print(request.POST)
+    return HttpResponse(status=200)
+
+
 def test(request):
-    return render(request, 'testPage.html')
+    hw_products = Hardware.objects.values_list('product', flat=True).distinct()
+    hw_tasks = []
+    for task in TaskHW.objects.values_list('task', flat=True).distinct():
+        hw_tasks.append(MainForm(label=task, _class="hw-element"))
+
+    sw_products = Software.objects.values_list('product', flat=True).distinct()
+    sw_tasks = []
+    for task in TaskHW.objects.values_list('task', flat=True).distinct():
+        sw_tasks.append(MainForm(label=task, _class="sw-element"))
+
+    processes = Processes.objects.values_list('process', flat=True).distinct()
+    processes_tasks = [MainForm(label="Level", _class="processes-element")]
+
+    hw_page = {"id": "HW", "products": hw_products, "tasks": hw_tasks}
+    sw_page = {"id": "SW", "products": sw_products, "tasks": sw_tasks}
+    processes_page = {"id": "Processes", "products": processes, "tasks": processes_tasks}
+
+    pages = [hw_page, sw_page, processes_page]
+
+    return render(request, 'testPage.html', {"pages": pages})

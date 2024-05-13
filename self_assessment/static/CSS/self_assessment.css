@@ -34,10 +34,24 @@ header{
     background-color: rgb(0,126,146);
 }
 
-.form-element, .form-button, .form-navigation-button{
+.form-element, .form-button{
+    display: none;
+}
+#form-navigation{
     display: none;
 }
 
-#self-assessment-form{
-    padding-left: 10px;
+#error-box{
+    display: none;
+    width: fit-content;
+    height: 25px;
+    background-color: salmon;
+    padding: 5px;
+    margin-bottom: 5px;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 25px;
+    border-radius: 5px;
+    border: solid black 3px;
+
 }
