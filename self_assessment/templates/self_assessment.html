@@ -36,8 +36,8 @@
         {% for name in page.tech %}
             <div class="element" id={{ name|replace_dj:" |_" }}><h2>{{ name }}</h2>
                 {% for discipline in page.disciplines %}
-                    <p>{{ discipline|replace_dj:"_| " }}
-                        <label for={{ discipline|replace_dj:" |_" }}>
+                    <p>
+                        <label for={{ discipline|replace_dj:" |_" }}>{{ discipline|replace_dj:"_| " }}
                             <select class={{ page.subpages }} name={{ discipline|replace_dj:" |_" }}>
                                 {% for level in levels %}
                                     <option value={{ level.0 }}>{{ level.1 }}</option>

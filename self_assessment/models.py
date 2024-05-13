@@ -36,7 +36,7 @@ class SkillsHW(models.Model):
     employee = models.ForeignKey(Employees, on_delete=models.CASCADE)
     product = models.ForeignKey(Hardware, on_delete=models.DO_NOTHING, to_field="product")
     task = models.ForeignKey(TaskHW, on_delete=models.DO_NOTHING, to_field="task")
-    level = models.IntegerField()
+    level = models.ForeignKey(Levels, on_delete=models.DO_NOTHING, to_field="level")
     time = models.DateTimeField(auto_now_add=True)
 
 
@@ -44,7 +44,7 @@ class SkillsSW(models.Model):
     employee = models.ForeignKey(Employees, on_delete=models.CASCADE)
     product = models.ForeignKey(Software, on_delete=models.DO_NOTHING, to_field="product")
     task = models.ForeignKey(TaskSW, on_delete=models.DO_NOTHING, to_field="task")
-    level = models.IntegerField()
+    level = models.ForeignKey(Levels, on_delete=models.DO_NOTHING, to_field="level")
     time = models.DateTimeField(auto_now_add=True)
 
 
