@@ -34,24 +34,17 @@ document.getElementById("start").addEventListener('click', function() {
             }else{
                 document.getElementById('user-name').style.display = "none";
                 document.getElementById("form-navigation").style.display = "inline-block";
+                if (localStorage.getItem("name") === user_name){
+                    const modal = document.getElementById("modal")
+                    modal.classList.add("show");
+                    document.body.classList.add("modal-open");
+                }
             }
             return response.text();
         })
         .catch(error => {
             void show_warning(error.message);
         });
-    }
-});
-
-
-/**
- * На enter происходит отправка формы через дефолтный метод
- * чтобы этого не происходило, создана данная функция, переопределяющая поведение
- */
-window.addEventListener('keydown', function(event) {
-    if (event.key === "Enter") {
-        // document.getElementById('start').click();
-        //Do nothing
     }
 });
 
@@ -114,10 +107,6 @@ document.getElementById("finish").addEventListener("click", function() {
             }
             return response.json();
         })
-        .then(msg => {
-            console.log(msg)
-            //Тут будет редирект
-        })
         .catch(err => {
             console.log("error block 2")
             void show_warning(err.message);
@@ -128,10 +117,24 @@ document.getElementById("finish").addEventListener("click", function() {
     }
 });
 
+window.addEventListener('beforeunload', function(event) {
+    event.preventDefault(); // Совместимость с некоторыми браузерами
+    save_form()
+});
+
+document.getElementById("modal-accept").addEventListener("click", function () {
+    load_form();
+    closeModal();
+});
+
+document.getElementById("modal-decline").addEventListener("click", function () {
+    clear_form();
+    closeModal();
+});
 
 /**
  * Меняет CSS свойство display у указанного блока
- * @param to_page_id ID поле блока, который будет отображен вместо текущего
+ * @param {String}to_page_id ID поле блока, который будет отображен вместо текущего
  */
 function swap_active_page(to_page_id) {
     document.querySelector(active_tab).style.display = "none";
@@ -141,7 +144,7 @@ function swap_active_page(to_page_id) {
 
 /**
  * Формирует массив с данными из конкретного блока формы
- * @param global_element <div> элемент представляющий блок формы(HW, SW, Skills)
+ * @param {Element}global_element <div> элемент представляющий блок формы(HW, SW, Skills)
  * @returns {*[]} Массив элементов вида {_product : "", _selections: []},
  * где _product - название продукта, _selections - выбранные пользователем ответы(параметр value:int выбранного варианта)
  */
@@ -161,9 +164,9 @@ function form_data(global_element) {
 
 /**
  * Функция для обновления и вывода счетчиков заполненных полей формы конкретного блока
- * @param element Элемент блока <select>, на который повешен слушатель onChange
+ * @param {HTMLSelectElement}element Элемент блока <select>, на который повешен слушатель onChange
  * @param object объект в котором хранится информация о блоке формы(HW, SW, Skills), в т.ч. и счетчик
- * @param button_object Кнопка навигации по форме, в название которой и дописывается значение счетчика. Прим.: HW(10/216)
+ * @param {HTMLButtonElement}button_object Кнопка навигации по форме, в название которой и дописывается значение счетчика. Прим.: HW(10/216)
  */
 function update_counter(element, object, button_object) {
     let divId = element.closest('div').id;
@@ -206,4 +209,49 @@ async function show_warning(text) {
     await new Promise(r => setTimeout(r, 500));
 
     errorBox.style.display = "none";
+}
+
+function save_form(){
+            let data = {
+            "HW": form_data(document.getElementById(hw_object._id)),
+            "SW": form_data(document.getElementById(sw_object._id)),
+            "Processes": form_data(document.getElementById(skills_object._id)),
+
+        }
+        localStorage.setItem("formData", JSON.stringify(data))
+        localStorage.setItem("name", user_name)
+}
+
+//TODO: Доделать метод восстановления данных из хранилища.
+// Сравнить с вариантом через IndexedDB
+function load_form() {
+    return false
+    //не протестировано так что костыльно выключено
+
+    let form = JSON.parse(localStorage.getItem("formData"))
+    console.log(form)
+    for (const page in form) {
+        for (const element in form[page]) {
+            let tasks = document.getElementById(page).querySelectorAll(
+                    `div#${element._product.replaceAll(" ", "_")}
+                    > p
+                    > label
+                    > select`);
+            let vals = element._selections
+
+            for (let i = 0; i < tasks.length; i++) {
+                tasks[i].value(vals[i])
+            }
+        }
+    }
+}
+
+function clear_form() {
+    localStorage.removeItem("formData")
+    localStorage.removeItem("name")
+}
+
+function closeModal() {
+    document.getElementById("modal").classList.remove("show");
+    document.body.classList.remove("modal-open");
 }

@@ -7,6 +7,7 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" href="{% static "CSS/self_assessment.css" %}" />
+    <link rel="stylesheet" href="{% static "CSS/modal.css" %}" />
     <link rel="stylesheet" href="{% static "GlobalCSS/Header.css" %}" />
 </head>
 <body>
@@ -17,20 +18,20 @@
     --><button id="selection-button" class="page-link">Сводка по сотруднику</button>
 </header>
 
-<div id="error-box"></div>
-{% csrf_token %}
-<form method="post" action="/test">
-    <div id="user_name">
-        <label for="user_name_input">Введите фамилию и имя:</label>
-        <input id="user_name_input" type="text" value="" name="username"><br>
-        <button type="button" id="start">Начать</button>
-    </div>
-    <div id="form-navigation">
-        <button id="HW-page" class="form-navigation-button" type="button">HW</button>
-        <button id="SW-page" class="form-navigation-button" type="button">SW</button>
-        <button id="skills-page" class="form-navigation-button" type="button">Processes</button>
-        <button id="finish" class="form-navigation-button" type="button">Finish</button>
-    </div>
+{#<div id="error-box"></div>#}
+{#{% csrf_token %}#}
+{#<form method="post" action="/test">#}
+{#    <div id="user_name">#}
+{#        <label for="user_name_input">Введите фамилию и имя:</label>#}
+{#        <input id="user_name_input" type="text" value="" name="username"><br>#}
+{#        <button type="button" id="start">Начать</button>#}
+{#    </div>#}
+{#    <div id="form-navigation">#}
+{#        <button id="HW-page" class="form-navigation-button" type="button">HW</button>#}
+{#        <button id="SW-page" class="form-navigation-button" type="button">SW</button>#}
+{#        <button id="skills-page" class="form-navigation-button" type="button">Processes</button>#}
+{#        <button id="finish" class="form-navigation-button" type="button">Finish</button>#}
+{#    </div>#}
 {#    {% for product in hw_products %}#}
 {#        <div id={{ product|replace_dj:" |_" }}><h2>{{ product }}</h2>#}
 {#            {% for process in hw_processes %}#}
@@ -38,24 +39,24 @@
 {#            {% endfor %}#}
 {#        </div>#}
 {#    {% endfor %}#}
-    {% for page in pages %}
-        <div id={{ page.id }} class="form-element">
-        <h1>{{ page.id }}</h1>
-        {% for product in page.products %}
-            <div class="block">
-            <h2>{{ product }}</h2>
-                {% for task in page.tasks %}
-                    {{ task }}
-                {% endfor %}
-            </div>
-        {% endfor %}
-        </div>
-    {% endfor %}
-
-    <button id="form-prev" class="form-button" type="button">prev</button>
-    <button id="form-next" class="form-button"  type="button">next</button>
-</form>
+{#    {% for page in pages %}#}
+{#        <div id={{ page.id }} class="form-element">#}
+{#        <h1>{{ page.id }}</h1>#}
+{#        {% for product in page.products %}#}
+{#            <div class="block">#}
+{#            <h2>{{ product }}</h2>#}
+{#                {% for task in page.tasks %}#}
+{#                    {{ task }}#}
+{#                {% endfor %}#}
+{#            </div>#}
+{#        {% endfor %}#}
+{#        </div>#}
+{#    {% endfor %}#}
+{##}
+{#    <button id="form-prev" class="form-button" type="button">prev</button>#}
+{#    <button id="form-next" class="form-button"  type="button">next</button>#}
+{#</form>#}
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-<script src="{% static "JS/js-only-self_assessment.js" %}"></script>
+<script src="{% static "JS/form-saver.js" %}"></script>
 </body>
 </html>
