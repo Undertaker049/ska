@@ -5,7 +5,7 @@ let $sw_element = $(".sw-element");
 let $skills_element = $(".skills-element");
 
 let $error_box = $("#error-box");
-let $name_input = $("#user_name_input")
+let $name_input = $("#user-name-input")
 
 let $start_button = $("#start");
 let $hw_page_button = $("#HW-page");
@@ -22,30 +22,30 @@ let skills_object = {_count: 0, _total: $skills_element.toArray().length, _selec
 
 $start_button.on('click',function() {
     // Для тестов формы раскомментить это
-    //     if (RegExp("^[А-ЯЁ][а-яё]+\\s[А-ЯЁ][а-яё]*").exec($name_input.val()) === null){
-    //         void show_warning("Только Фамилия и Имя, только Кириллица, слова с заглавной буквы");
-    //     }
-    //     else {
-    //         user_name = $name_input.val();
-    //          $.ajax({
-    //             url: '/validate-name',
-    //             type: 'GET',
-    //              //Выяснить почему работает только так
-    //             data: "name="+user_name,
-    //             success(msg){
-    //                 console.log(msg)
-    //                 $('#user_name').css("display", "none");
-    //                 $("#form-navigation").css("display", "inline-block");
-    //             },
-    //             error(response){
-    //                 void show_warning(response.responseText)
-    //             }
-    //         });
-    //     }
+        if (RegExp("^[А-ЯЁ][а-яё]+\\s[А-ЯЁ][а-яё]*").exec($name_input.val()) === null){
+            void show_warning("Только Фамилия и Имя, только Кириллица, слова с заглавной буквы");
+        }
+        else {
+            user_name = $name_input.val();
+             $.ajax({
+                url: '/validate-name',
+                type: 'GET',
+                 //Выяснить почему работает только так
+                data: "name="+user_name,
+                success(msg){
+                    console.log(msg)
+                    $('#user-name').css("display", "none");
+                    $("#form-navigation").css("display", "inline-block");
+                },
+                error(response){
+                    void show_warning(response.responseText)
+                }
+            });
+        }
     //Для тестов с отправкой данных раскомментить это
-    user_name = $name_input.val();
-    $('#user_name').css("display", "none");
-    $("#form-navigation").css("display", "inline-block");
+    // user_name = $name_input.val();
+    // $('#user_name').css("display", "none");
+    // $("#form-navigation").css("display", "inline-block");
 });
 
 /**
@@ -81,8 +81,8 @@ $skills_element.on("change", function () {
 })
 
 $finish_button.on("click", function () {
-    // if (hw_object._count === hw_object._total && sw_object._count === sw_object._total && skills_object._count === skills_object._total){
-    if (true){
+    if (hw_object._count === hw_object._total && sw_object._count === sw_object._total && skills_object._count === skills_object._total){
+    // if (true){
         let data = {"HW": form_data($("#"+hw_object._id)),
             "SW": form_data($("#"+sw_object._id)),
             "Processes": form_data($("#"+skills_object._id)),

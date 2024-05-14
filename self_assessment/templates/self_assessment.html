@@ -23,11 +23,11 @@
     <button id="skills-page" class="form-navigation-button" type="button">Skills</button>
     <button id="finish" class="form-navigation-button" type="button">Finish</button>
 </div>
-<form id="self-assessment-form" method="post" action="/upload-assessment">
+<form id="self-assessment-form" onkeydown="if(event.keyCode === 13) {return false}">
 {% csrf_token %}
-    <div id="user_name">
-        <label for="user_name_input">Введите фамилию и имя:</label>
-        <input id="user_name_input" type="text" value="" name="username"><br>
+    <div id="user-name">
+        <label for="user-name-input">Введите фамилию и имя:</label>
+        <input id="user-name-input" type="text" value="" name="username"><br>
         <button type="button" id="start" class="form-navigation-button">Начать</button>
     </div>
 
@@ -51,8 +51,9 @@
         </div>
     {% endfor %}
 </form>
-<script src="{% static "GlobalJS/jquery-3.7.1.min.js" %}"></script>
+{#<script src="{% static "GlobalJS/jquery-3.7.1.min.js" %}"></script>#}
 {#<script src="https://code.jquery.com/jquery-3.7.1.js"></script>#}
-<script src="{% static "JS/self_assessment.js" %}"></script>
+{#<script src="{% static "JS/self_assessment.js" %}"></script>#}
+<script src="{% static "JS/js-only-self_assessment.js" %}"></script>
 </body>
 </html>

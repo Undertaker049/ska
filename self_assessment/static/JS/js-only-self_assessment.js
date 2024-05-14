@@ -1,0 +1,209 @@
+let active_tab = "#HW";
+
+let user_name = "";
+let hw_object = {_count: 0,
+    _total: document.querySelectorAll(".hw-element").length,
+    _selected: [],
+    _id: "HW"};
+let sw_object = {_count: 0,
+    _total: document.querySelectorAll(".sw-element").length,
+    _selected: [],
+    _id: "SW"};
+let skills_object = {_count: 0,
+    _total: document.querySelectorAll(".skills-element").length,
+    _selected: [],
+    _id: "Skills"};
+
+document.getElementById("start").addEventListener('click', function() {
+    const nameInput = document.getElementById("user-name-input");
+    try {
+        user_name = nameInput.value;
+    }catch (e) {
+        void show_warning("Сначала введите имя и фамилию!")
+    }
+
+    if ((/^[А-ЯЁ][а-яё]+\s[А-ЯЁ][а-яё]*$/.test(user_name)) === false) {
+        void show_warning("Только Фамилия и Имя, только Кириллица, слова с заглавной буквы");
+    } else {
+        fetch(`/validate-name?name=${encodeURIComponent(user_name)}`, {
+            method: 'GET',
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(text => { void show_warning(text) });
+            }else{
+                document.getElementById('user-name').style.display = "none";
+                document.getElementById("form-navigation").style.display = "inline-block";
+            }
+            return response.text();
+        })
+        .catch(error => {
+            void show_warning(error.message);
+        });
+    }
+});
+
+
+/**
+ * На enter происходит отправка формы через дефолтный метод
+ * чтобы этого не происходило, создана данная функция, переопределяющая поведение
+ */
+window.addEventListener('keydown', function(event) {
+    if (event.key === "Enter") {
+        // document.getElementById('start').click();
+        //Do nothing
+    }
+});
+
+document.getElementById("HW-page").addEventListener("click", function () {
+    swap_active_page("#HW");
+});
+
+document.getElementById("SW-page").addEventListener("click", function () {
+    swap_active_page("#SW");
+});
+
+document.getElementById("skills-page").addEventListener("click", function () {
+    swap_active_page("#Skills");
+});
+
+document.querySelectorAll(".hw-element").forEach(function(element) {
+    element.addEventListener("change", function() {
+        update_counter(this, hw_object, document.getElementById("HW-page"));
+    });
+});
+
+document.querySelectorAll(".sw-element").forEach(function(element) {
+    element.addEventListener("change", function() {
+        update_counter(this, sw_object, document.getElementById("SW-page"));
+    });
+});
+
+document.querySelectorAll(".skills-element").forEach(function(element) {
+    element.addEventListener("change", function() {
+        update_counter(this, skills_object, document.getElementById("skills-page"));
+    });
+});
+
+document.getElementById("finish").addEventListener("click", function() {
+    if (hw_object._count === hw_object._total && sw_object._count === sw_object._total && skills_object._count === skills_object._total) {
+    //if (true){
+        let data = {
+            "HW": form_data(document.getElementById(hw_object._id)),
+            "SW": form_data(document.getElementById(sw_object._id)),
+            "Processes": form_data(document.getElementById(skills_object._id)),
+            "name": user_name,
+        };
+        console.log(data);
+
+        fetch('/upload-assessment', {
+            method: "POST",
+            headers: {
+                'Accept': 'application/text',
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+            },
+            body: new URLSearchParams({
+                csrfmiddlewaretoken: document.querySelector('input[name="csrfmiddlewaretoken"]').value,
+                form: JSON.stringify(data)
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                console.log("error block 1")
+                return response.json().then(err => { void show_warning(err.message || "Unknown error") });
+            }
+            return response.json();
+        })
+        .then(msg => {
+            console.log(msg)
+            //Тут будет редирект
+        })
+        .catch(err => {
+            console.log("error block 2")
+            void show_warning(err.message);
+        });
+    } else {
+        console.log("error block 3")
+        void show_warning("Сначала заполните форму до конца!");
+    }
+});
+
+
+/**
+ * Меняет CSS свойство display у указанного блока
+ * @param to_page_id ID поле блока, который будет отображен вместо текущего
+ */
+function swap_active_page(to_page_id) {
+    document.querySelector(active_tab).style.display = "none";
+    active_tab = to_page_id;
+    document.querySelector(to_page_id).style.display = "block";
+}
+
+/**
+ * Формирует массив с данными из конкретного блока формы
+ * @param global_element <div> элемент представляющий блок формы(HW, SW, Skills)
+ * @returns {*[]} Массив элементов вида {_product : "", _selections: []},
+ * где _product - название продукта, _selections - выбранные пользователем ответы(параметр value:int выбранного варианта)
+ */
+function form_data(global_element) {
+    let arr = [];
+    Array.from(global_element.getElementsByTagName('div')).forEach(function(div) {
+        let obj = { _product: "", _selections: [] };
+        obj._product = div.id.replace(/_/g, " ");
+        Array.from(div.querySelectorAll('p > label > select > option:checked')).forEach(function(option) {
+            obj._selections.push(option.value);
+        });
+        arr.push(obj);
+    });
+
+    return arr;
+}
+
+/**
+ * Функция для обновления и вывода счетчиков заполненных полей формы конкретного блока
+ * @param element Элемент блока <select>, на который повешен слушатель onChange
+ * @param object объект в котором хранится информация о блоке формы(HW, SW, Skills), в т.ч. и счетчик
+ * @param button_object Кнопка навигации по форме, в название которой и дописывается значение счетчика. Прим.: HW(10/216)
+ */
+function update_counter(element, object, button_object) {
+    let divId = element.closest('div').id;
+    let labelFor = element.closest('label').getAttribute('for');
+    let s = `${divId}:${labelFor}`;
+
+    if (element.selectedOptions[0].text !== "— Select your level —") {
+        if (object._selected.indexOf(s) === -1) {
+            object._selected.push(s);
+            object._count++;
+        }
+    } else {
+        let index = object._selected.indexOf(s);
+        if (index !== -1) {
+            object._selected.splice(index, 1);
+            object._count--;
+        }
+    }
+
+    button_object.textContent = `${object._id}(${object._count}/${object._total})`;
+}
+
+/**
+ * Функция для отображения сообщений об ошибках
+ * @param {String}text Текст сообщения
+ * @returns {Promise<void>} Возвращаемое значение игнорируется
+ */
+async function show_warning(text) {
+    const errorBox = document.getElementById("error-box"); // Предполагая, что $error_box соответствует элементу с id "error_box"
+    errorBox.textContent = text;
+
+    errorBox.style.display = "block";
+    errorBox.style.transition = "opacity 0.5s";
+    errorBox.style.opacity = '1';
+
+    await new Promise(r => setTimeout(r, 5000));
+
+    errorBox.style.opacity = '0';
+
+    await new Promise(r => setTimeout(r, 500));
+
+    errorBox.style.display = "none";
+}
