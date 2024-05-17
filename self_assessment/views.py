@@ -29,14 +29,14 @@ def main(request):
 
 
 def validate_name(request):
-    if Employees.objects.filter(name=request.GET.get("name")).exists():
-        return HttpResponse(status=200)
+    employee = Employees.objects.filter(name=request.GET.get("name")).first()
+    if employee is not None:
+        if SkillsHW.objects.filter(employee_id=employee.id).exists() | SkillsSW.objects.filter(employee_id=employee.id).exists() | SKillsPr.objects.filter(employee_id=employee.id).exists():
+            return HttpResponse("Ваши данные уже есть в базе", status=403)
     else:
         return HttpResponse("Работник не найден", status=404)
 
 
-# TODO: переписать метод, чтобы данные заносились только после создания всех объектов,
-#  чтобы предотвратить половинчатую вставку данных.
 def upload_assessment(request):
     data = json.loads(request.POST.get("form"))
     user_id = Employees.objects.filter(name=data.get("name")).values_list('id', flat=True).first()

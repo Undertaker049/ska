@@ -2,10 +2,12 @@
 {% load static %}
 <html lang="en-US">
 <head>
-    <meta charset="utf-8" />
+    <meta charset="UTF-8">
+    <title>Hub</title>
     <link rel="stylesheet" href="{% static "CSS/main.css" %}" />
     <link rel="stylesheet" href="{% static "GlobalCSS/Header.css" %}" />
-    <title>ska-main</title>
+    <link rel="shortcut icon" href="https://i.pinimg.com/474x/67/bf/21/67bf2179ae48b0513c7a067200e006c5.jpg" />
+
 </head>
 <body>
 <header>
@@ -14,8 +16,6 @@
     --><button id="employee-evaluation-button" class="page-link">Оценить сотрудника(-ов)</button><!--
     --><button id="selection-button" class="page-link">Сводка по сотруднику</button>
 </header>
-<script src="{% static "GlobalJS/jquery-3.7.1.min.js" %}"></script>
-{#<script src="https://code.jquery.com/jquery-3.7.1.js"></script>#}
-<script src="{% static "JS/main.js" %}"></script>
+<script src="{% static "GlobalJS/header.js" %}"></script>
 </body>
 </html>

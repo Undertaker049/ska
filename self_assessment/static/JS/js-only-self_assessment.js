@@ -1,23 +1,34 @@
 let active_tab = "#HW";
 
+const $start_button = document.getElementById("start");
+const $hw_page_button = document.getElementById("HW-page");
+const $sw_page_button = document.getElementById("SW-page");
+const $skills_page_button = document.getElementById("skills-page");
+const $finish_button = document.getElementById("finish");
+const $modal_accept_button = document.getElementById("modal-accept");
+const $modal_decline_button = document.getElementById("modal-decline");
+
+const $hw_element = document.querySelectorAll(".hw-element");
+const $sw_element = document.querySelectorAll(".sw-element");
+const $skills_element = document.querySelectorAll(".skills-element");
+
 let user_name = "";
 let hw_object = {_count: 0,
-    _total: document.querySelectorAll(".hw-element").length,
+    _total: $hw_element.length,
     _selected: [],
     _id: "HW"};
 let sw_object = {_count: 0,
-    _total: document.querySelectorAll(".sw-element").length,
+    _total: $sw_element.length,
     _selected: [],
     _id: "SW"};
 let skills_object = {_count: 0,
-    _total: document.querySelectorAll(".skills-element").length,
+    _total: $skills_element.length,
     _selected: [],
     _id: "Skills"};
 
-document.getElementById("start").addEventListener('click', function() {
-    const nameInput = document.getElementById("user-name-input");
+$start_button.addEventListener('click', function() {
     try {
-        user_name = nameInput.value;
+        user_name = document.getElementById("user-name-input").value;
     }catch (e) {
         void show_warning("Сначала введите имя и фамилию!")
     }
@@ -48,37 +59,37 @@ document.getElementById("start").addEventListener('click', function() {
     }
 });
 
-document.getElementById("HW-page").addEventListener("click", function () {
+$hw_page_button.addEventListener("click", function () {
     swap_active_page("#HW");
 });
 
-document.getElementById("SW-page").addEventListener("click", function () {
+$sw_page_button.addEventListener("click", function () {
     swap_active_page("#SW");
 });
 
-document.getElementById("skills-page").addEventListener("click", function () {
+$skills_page_button.addEventListener("click", function () {
     swap_active_page("#Skills");
 });
 
-document.querySelectorAll(".hw-element").forEach(function(element) {
+$hw_element.forEach(function(element) {
     element.addEventListener("change", function() {
-        update_counter(this, hw_object, document.getElementById("HW-page"));
+        update_counter(this, hw_object, $hw_page_button);
     });
 });
 
-document.querySelectorAll(".sw-element").forEach(function(element) {
+$sw_element.forEach(function(element) {
     element.addEventListener("change", function() {
-        update_counter(this, sw_object, document.getElementById("SW-page"));
+        update_counter(this, sw_object, $sw_page_button);
     });
 });
 
-document.querySelectorAll(".skills-element").forEach(function(element) {
+$skills_element.forEach(function(element) {
     element.addEventListener("change", function() {
-        update_counter(this, skills_object, document.getElementById("skills-page"));
+        update_counter(this, skills_object, $skills_page_button);
     });
 });
 
-document.getElementById("finish").addEventListener("click", function() {
+$finish_button.addEventListener("click", function() {
     if (hw_object._count === hw_object._total && sw_object._count === sw_object._total && skills_object._count === skills_object._total) {
     //if (true){
         let data = {
@@ -102,34 +113,42 @@ document.getElementById("finish").addEventListener("click", function() {
         })
         .then(response => {
             if (!response.ok) {
-                console.log("error block 1")
                 return response.json().then(err => { void show_warning(err.message || "Unknown error") });
             }
             return response.json();
         })
         .catch(err => {
-            console.log("error block 2")
-            void show_warning(err.message);
+            console.log(err.text);
         });
     } else {
-        console.log("error block 3")
         void show_warning("Сначала заполните форму до конца!");
     }
 });
 
 window.addEventListener('beforeunload', function(event) {
-    event.preventDefault(); // Совместимость с некоторыми браузерами
-    save_form()
+    if (hw_object._count !== 0 || sw_object._count !== 0 || skills_object._count !== 0) {
+        save_form();
+    }
 });
 
-document.getElementById("modal-accept").addEventListener("click", function () {
+//Выключает предупреждение при закрытии\перезагрузке страницы если форма пуста
+window.addEventListener('onbeforeunload', function (event) {
+    if (hw_object._count === 0 || sw_object._count === 0 || skills_object._count === 0) {
+        event.preventDefault();
+    }
+})
+
+$modal_accept_button.addEventListener("click", function () {
+    // let startTime = performance.now()
     load_form();
-    closeModal();
+    // let endTime = performance.now()
+    // console.log(`Exec. time ${endTime-startTime} ms`)
+    close_modal();
 });
 
-document.getElementById("modal-decline").addEventListener("click", function () {
+$modal_decline_button.addEventListener("click", function () {
     clear_form();
-    closeModal();
+    close_modal();
 });
 
 /**
@@ -195,7 +214,7 @@ function update_counter(element, object, button_object) {
  * @returns {Promise<void>} Возвращаемое значение игнорируется
  */
 async function show_warning(text) {
-    const errorBox = document.getElementById("error-box"); // Предполагая, что $error_box соответствует элементу с id "error_box"
+    const errorBox = document.getElementById("error-box");
     errorBox.textContent = text;
 
     errorBox.style.display = "block";
@@ -215,43 +234,35 @@ function save_form(){
             let data = {
             "HW": form_data(document.getElementById(hw_object._id)),
             "SW": form_data(document.getElementById(sw_object._id)),
-            "Processes": form_data(document.getElementById(skills_object._id)),
-
-        }
-        localStorage.setItem("formData", JSON.stringify(data))
-        localStorage.setItem("name", user_name)
+            "Processes": form_data(document.getElementById(skills_object._id))};
+        localStorage.setItem("formData", JSON.stringify(data));
+        localStorage.setItem("name", user_name);
 }
 
 //TODO: Доделать метод восстановления данных из хранилища.
 // Сравнить с вариантом через IndexedDB
 function load_form() {
-    return false
-    //не протестировано так что костыльно выключено
-
-    let form = JSON.parse(localStorage.getItem("formData"))
-    console.log(form)
-    for (const page in form) {
-        for (const element in form[page]) {
-            let tasks = document.getElementById(page).querySelectorAll(
-                    `div#${element._product.replaceAll(" ", "_")}
-                    > p
-                    > label
-                    > select`);
-            let vals = element._selections
-
-            for (let i = 0; i < tasks.length; i++) {
-                tasks[i].value(vals[i])
-            }
+    let form = JSON.parse(localStorage.getItem("formData"));
+    for (let key in form) {
+        if (form.hasOwnProperty(key)) {
+            form[key].forEach(element => {
+                let product = document.getElementById(`${element._product.replaceAll(" ", "_")}`);
+                let tasks = product.querySelectorAll('p > label > select');
+                let vals = element._selections;
+                for (let i = 0; i < tasks.length; i++) {
+                    tasks[i].value = vals[i];
+                }
+            });
         }
     }
 }
 
 function clear_form() {
-    localStorage.removeItem("formData")
-    localStorage.removeItem("name")
+    localStorage.removeItem("formData");
+    localStorage.removeItem("name");
 }
 
-function closeModal() {
+function close_modal() {
     document.getElementById("modal").classList.remove("show");
     document.body.classList.remove("modal-open");
 }

@@ -16,15 +16,22 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from self_assessment import views as self_assessment_views
+
+from certificate import views as certificate_views
+from employee_evaluation import views as employee_evaluation_views
 from main import views as main_views
+from selection import views as selection_views
+from self_assessment import views as self_assessment_views
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', main_views.main),
     path('self-assessment', self_assessment_views.main),
     path('test', self_assessment_views.test),
-    path('upload-assessment',self_assessment_views.upload_assessment),
-    path('validate-name', self_assessment_views.validate_name)
-
+    path('upload-assessment', self_assessment_views.upload_assessment),
+    path('validate-name', self_assessment_views.validate_name),
+    path('certificate', certificate_views.main),
+    path('employee-evaluation', employee_evaluation_views.main),
+    path('selection', selection_views.main)
 ]

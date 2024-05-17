@@ -6,12 +6,13 @@
     <title>Self-assessment</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="{% static "CSS/self_assessment.css" %}" />
-    <link rel="stylesheet" href="{% static "CSS/modal.css" %}" />
+    <link rel="stylesheet" href="{% static "CSS/self_assessment_modal.css" %}" />
     <link rel="stylesheet" href="{% static "GlobalCSS/Header.css" %}" />
+    <link rel="shortcut icon" href="https://i.pinimg.com/474x/67/bf/21/67bf2179ae48b0513c7a067200e006c5.jpg" />
 </head>
 <body>
 <header>
-    <button id="self-assessment-button" class="page-link">Заполнить квалификации</button><!--
+    <button id="self-assessment-button" class="page-link" >Заполнить квалификации</button><!--
     --><button id="certificate-button" class="page-link">Загрузить сертификат</button><!--
     --><button id="employee-evaluation-button" class="page-link">Оценить сотрудника(-ов)</button><!--
     --><button id="selection-button" class="page-link">Сводка по сотруднику</button>
@@ -55,14 +56,12 @@
 <div id="modal" class="modal">
     <div class="modal-content">
         <p>Найдена ваша незавершенная форма. Хотите продолжить?
-        (В случае отказа данные будут стерты)</p>
+        (В случае отказа данные будут стёрты)</p>
         <button id="modal-accept">Продолжить</button>
         <button id="modal-decline">Очистить</button>
     </div>
 </div>
-{#<script src="{% static "GlobalJS/jquery-3.7.1.min.js" %}"></script>#}
-{#<script src="https://code.jquery.com/jquery-3.7.1.js"></script>#}
-{#<script src="{% static "JS/self_assessment.js" %}"></script>#}
+<script src="{% static "GlobalJS/header.js" %}"></script>
 <script src="{% static "JS/js-only-self_assessment.js" %}"></script>
 </body>
 </html>

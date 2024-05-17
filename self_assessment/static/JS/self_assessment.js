@@ -52,7 +52,7 @@ $start_button.on('click',function() {
  * На enter происходит отправка формы через дефолтный метод
  * чтобы этого не происходило, создана данная функция, переопределяющая поведение
  */
-  $(window).keydown(function(event){
+$(window).keydown(function(event){
     if(event.keyCode === 13) {
         $start_button.click()
     }

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Certificate</title>
+    <link rel="stylesheet" href="{% static "GlobalCSS/Header.css" %}" />
+    <link rel="stylesheet" href="{% static "CSS/certificate.css" %}" />
+    <link rel="shortcut icon" href="https://i.pinimg.com/474x/67/bf/21/67bf2179ae48b0513c7a067200e006c5.jpg" />
+</head>
+<body>
+<header>
+    <button id="self-assessment-button" class="page-link" >Заполнить квалификации</button><!--
+    --><button id="certificate-button" class="page-link">Загрузить сертификат</button><!--
+    --><button id="employee-evaluation-button" class="page-link">Оценить сотрудника(-ов)</button><!--
+    --><button id="selection-button" class="page-link">Сводка по сотруднику</button>
+</header>
+<div id="wrapper">
+<form id="certificate-form" onkeydown="if(event.keyCode === 13) {return false}" method="post" action="/certificate" enctype="multipart/form-data">
+    {% csrf_token %}
+    <p>
+        <label for="name">Фамилия и Имя</label>
+        <input type="text" id="name" name="name" pattern="[А-ЯЁ][а-яё]*\s[А-ЯЁ][а-яё]*" title="Фамилия и имя с заглавной буквы " required />
+    </p>
+
+    <p>
+        <label for="training_name">Название тренинга</label>
+        <input type="text" id="training_name" name="training_name" required />
+    </p>
+
+    <p>
+        <label for="type">Сертификат</label>
+        <select name="type" id="type" required >
+            <option name="DEF" value="Placeholder" disabled selected>— Выберите —</option>
+            <option name="CER" value="certification"> о вендорской сертификации</option>
+            <option name="TR" value="training">о прохождении тренинга</option>
+            <option name="EX" value="exam">о сдаче экзамена</option>
+        </select>
+    </p>
+
+    <p>
+        <label for="date">Дата получения</label>
+        <input type="date" id="date" name="date" required />
+        <label for="set-to-month">Не помню день</label>
+        <input type="checkbox" name="set-to-month" id="set-to-month">
+    </p>
+
+    <p>
+        <label for="category">Категория</label>
+        <select id="category" name="category-select" required >
+            <option value="DEF" disabled selected>— Выберите —</option>
+            <option value="BURA">BURA</option>
+            <option value="Compute">Compute</option>
+            <option value="Generic">Generic</option>
+            <option value="Hybrid IT">Hybrid IT</option>
+            <option value="ITIL">ITIL</option>
+            <option value="Networking">Networking</option>
+            <option value="Operating System">Operating System</option>
+            <option value="Software">Software</option>
+            <option value="Storage">Storage</option>
+            <option value="Support">Support</option>
+        </select>
+    </p>
+
+    <p id="for-sub-cat"></p>
+
+    <p>
+        <label for="file">Сертификат в формате .jpg, .png, .pdf</label><br>
+        <input type="file" id="file" name="certificate" accept=".jpg,.png,.pdf" required />
+    </p>
+
+    <p>
+        <input id="sb" type="submit"/>
+    </p>
+</form>
+{#    <button id="send">Отправить</button>#}
+</div>
+
+<footer>
+</footer>
+<script src="{% static "GlobalJS/header.js" %}"></script>
+<script src="{% static "JS/certificate.js" %}"></script>
+</body>
+</html>
