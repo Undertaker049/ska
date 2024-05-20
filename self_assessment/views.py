@@ -36,6 +36,8 @@ def validate_name(request):
     else:
         return HttpResponse("Работник не найден", status=404)
 
+    return HttpResponse(status=200)
+
 
 def upload_assessment(request):
     data = json.loads(request.POST.get("form"))

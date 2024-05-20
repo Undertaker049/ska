@@ -1,5 +1,3 @@
-const $checkbox = document.getElementById("set-to-month");
-const $date = document.getElementById("date");
 const $category = document.getElementById("category");
 
 const category_data = {
@@ -12,15 +10,6 @@ const category_data = {
     "Software": ["Asset", "BSM", "IDOL", "Insight", "NMM", "OpenView", "Operations", "SDM", "Service Manager", "SiteScope", "uCMDB", "Vertica", "(Empty)"],
     "Storage": ["3PAR", "MSA", "Nimble", "SAN", "StorageWorks", "Tape", "(Empty)"]
 };
-
-
-$checkbox.addEventListener("change", function (){
-    if ($checkbox.checked){
-        $date.setAttribute("type","month");
-    }else {
-        $date.setAttribute("type","date");
-    }
-});
 
 $category.addEventListener("change", function () {
     let cat = this.value;

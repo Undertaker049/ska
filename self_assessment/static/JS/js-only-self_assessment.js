@@ -43,7 +43,7 @@ $start_button.addEventListener('click', function() {
             if (!response.ok) {
                 return response.text().then(text => { void show_warning(text) });
             }else{
-                document.getElementById('user-name').style.display = "none";
+                document.getElementById("user-name").style.display = "none";
                 document.getElementById("form-navigation").style.display = "inline-block";
                 if (localStorage.getItem("name") === user_name){
                     const modal = document.getElementById("modal")
@@ -239,8 +239,7 @@ function save_form(){
         localStorage.setItem("name", user_name);
 }
 
-//TODO: Доделать метод восстановления данных из хранилища.
-// Сравнить с вариантом через IndexedDB
+//TODO: Сравнить с вариантом через IndexedDB
 function load_form() {
     let form = JSON.parse(localStorage.getItem("formData"));
     for (let key in form) {

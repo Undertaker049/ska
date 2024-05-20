@@ -16,7 +16,7 @@ class Certificate(models.Model):
     employee_name = models.CharField(max_length=128)
     training_name = models.CharField(max_length=256)
     training_type = models.CharField(max_length=13, choices=TYPES)
-    date = models.CharField(max_length=10)
+    date = models.DateField()
     category = models.ForeignKey(CertificateCategory, on_delete=models.DO_NOTHING, to_field="category")
     sub_category = models.ForeignKey(CertificateSubCategory, null=True,  on_delete=models.DO_NOTHING, to_field="subcategory")
     certificate_file = models.FileField(upload_to="certificates")

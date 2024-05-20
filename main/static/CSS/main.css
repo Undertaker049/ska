@@ -6,4 +6,21 @@ body{
     margin: 0;
     padding: 0;
 }
-
+#success-msg-box{
+    background-color: lightgreen;
+}
+#warning-msg-box{
+    background-color: lightcoral;
+}
+.msg-box{
+    margin: auto;
+    padding: 10px;
+    width: fit-content;
+    height: 25px;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 25px;
+    border-radius: 5px;
+    border: solid black 3px;
+    display: none;
+}
