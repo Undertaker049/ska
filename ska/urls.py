@@ -29,7 +29,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', main_views.main),
     path('self-assessment', self_assessment_views.main),
-    path('test', self_assessment_views.test),
     path('upload-assessment', self_assessment_views.upload_assessment),
     path('validate-name', self_assessment_views.validate_name),
     path('certificate', certificate_views.main),

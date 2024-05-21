@@ -1,13 +1,15 @@
 import json
 
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render
 
-from .forms import MainForm
 from .models import *
 
 
+@login_required
 def main(request):
+    print(request.user)
     hw = Hardware.objects.values_list('product', flat=True).distinct()
     hw_disciplines = TaskHW.objects.values_list('task', flat=True).distinct()
 
@@ -28,10 +30,12 @@ def main(request):
     return render(request, 'self_assessment.html', data)
 
 
+@login_required
 def validate_name(request):
     employee = Employees.objects.filter(name=request.GET.get("name")).first()
     if employee is not None:
-        if SkillsHW.objects.filter(employee_id=employee.id).exists() | SkillsSW.objects.filter(employee_id=employee.id).exists() | SKillsPr.objects.filter(employee_id=employee.id).exists():
+        if SkillsHW.objects.filter(employee_id=employee.id).exists() | SkillsSW.objects.filter(
+                employee_id=employee.id).exists() | SKillsPr.objects.filter(employee_id=employee.id).exists():
             return HttpResponse("Ваши данные уже есть в базе", status=403)
     else:
         return HttpResponse("Работник не найден", status=404)
@@ -39,6 +43,7 @@ def validate_name(request):
     return HttpResponse(status=200)
 
 
+@login_required
 def upload_assessment(request):
     data = json.loads(request.POST.get("form"))
     user_id = Employees.objects.filter(name=data.get("name")).values_list('id', flat=True).first()
@@ -75,27 +80,3 @@ def upload_assessment(request):
         obj.save()
 
     return HttpResponse(status=200)
-
-
-def test(request):
-    # Тесты с Django Forms
-    hw_products = Hardware.objects.values_list('product', flat=True).distinct()
-    hw_tasks = []
-    for task in TaskHW.objects.values_list('task', flat=True).distinct():
-        hw_tasks.append(MainForm(label=task, _class="hw-element"))
-
-    sw_products = Software.objects.values_list('product', flat=True).distinct()
-    sw_tasks = []
-    for task in TaskHW.objects.values_list('task', flat=True).distinct():
-        sw_tasks.append(MainForm(label=task, _class="sw-element"))
-
-    processes = Processes.objects.values_list('process', flat=True).distinct()
-    processes_tasks = [MainForm(label="Level", _class="processes-element")]
-
-    hw_page = {"id": "HW", "products": hw_products, "tasks": hw_tasks}
-    sw_page = {"id": "SW", "products": sw_products, "tasks": sw_tasks}
-    processes_page = {"id": "Processes", "products": processes, "tasks": processes_tasks}
-
-    pages = [hw_page, sw_page, processes_page]
-
-    return render(request, 'testPage.html', {"pages": pages})

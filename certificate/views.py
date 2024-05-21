@@ -1,11 +1,11 @@
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 
 from .models import *
 
 
-# Create your views here.
-
+@login_required
 def main(request):
     if request.method == 'GET':
         return render(request, "certificate.html")
