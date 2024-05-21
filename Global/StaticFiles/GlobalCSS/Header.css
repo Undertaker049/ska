@@ -1,0 +1,24 @@
+header{
+    width: 100%;
+    height: 80px;
+}
+.page-link{
+    height: 75%;
+    width: 25%;
+    display: inline-block;
+    text-align: center;
+    vertical-align: middle;
+    box-sizing: border-box;
+    text-overflow: ellipsis;
+    font-size: clamp(15px, 5vw, 20px);
+    border-left: black 1px solid;
+    border-right: black 1px solid;
+    border-bottom: none;
+    border-top: none;
+    overflow: hidden;
+    user-select: none;
+    background-color: rgb(0,182,197);
+}
+.page-link:hover{
+    background-color: rgb(0,126,146);
+}

@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'employee_evaluation',
     'selection',
     'self_assessment',
+    'authentication'
 ]
 
 MIDDLEWARE = [
@@ -63,7 +64,7 @@ ROOT_URLCONF = 'ska.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['Templates'],
+        'DIRS': ['Global/Templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -127,7 +128,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [
-    BASE_DIR / "StaticFiles"
+    BASE_DIR / "Global/StaticFiles"
 ]
 
 # Default primary key field type

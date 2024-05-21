@@ -22,6 +22,7 @@ from employee_evaluation import views as employee_evaluation_views
 from main import views as main_views
 from selection import views as selection_views
 from self_assessment import views as self_assessment_views
+from authentication import views as auth_views
 
 
 urlpatterns = [
@@ -33,5 +34,7 @@ urlpatterns = [
     path('validate-name', self_assessment_views.validate_name),
     path('certificate', certificate_views.main),
     path('employee-evaluation', employee_evaluation_views.main),
-    path('selection', selection_views.main)
+    path('selection', selection_views.main),
+    path('auth', auth_views.main),
+    path('registration', auth_views.registration)
 ]

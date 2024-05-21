@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <title>Auth test</title>
+    <link rel="stylesheet" href="{% static "CSS/auth.css" %}" />
+    <link rel="shortcut icon" href="https://i.pinimg.com/474x/67/bf/21/67bf2179ae48b0513c7a067200e006c5.jpg" />
+
+</head>
+<body>
+<div id="wrapper">
+<form id="auth" method="post" action="/auth">
+    {% csrf_token %}
+    <p>
+        <label for="login">Имя пользователя:</label>
+        <input id="login" name="login" type="text" placeholder="username" required>
+    </p>
+    <p>
+        <label for="password">Пароль:</label>
+        <input id="password" name="password" type="password" placeholder="Password" required>
+    </p>
+    <input type="submit">
+</form>
+    <a href="/registration">Регистрация</a>
+</div>
+
+<script src="{% static "GlobalJS/header.js" %}"></script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <title>Reg test</title>
+    <link rel="shortcut icon" href="https://i.pinimg.com/474x/67/bf/21/67bf2179ae48b0513c7a067200e006c5.jpg" />
+
+</head>
+<body>
+<div id="wrapper">
+<form id="reg" method="post" action="/registration">
+    {% csrf_token %}
+    <p>
+        <label for="username">Имя пользователя:</label>
+        <input id="username" name="username" type="text" required>
+    </p>
+    <p>
+        <label for="email">Почта</label>
+        <input id="email" name="email" type="email" required>
+    </p>
+    <p>
+        <label for="first-name">Имя</label>
+        <input  id="first-name" name="first-name" type="text" required>
+    </p>
+        <p>
+        <label for="last-name">Фамилия</label>
+        <input  id="last-name" name="last-name" type="text" required>
+    </p>
+    <p>
+
+    </p>
+    <p>
+        <label for="password">Пароль:</label>
+        <input id="password" name="password" type="password" placeholder="Password" required><br>
+        <label for="re-password">Пароль:</label>
+        <input id="re-password" name="password" type="password" placeholder="Password" required>
+    </p>
+    <input type="submit">
+</form>
+</div>
+
+</body>
+</html>

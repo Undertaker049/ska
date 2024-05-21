@@ -1,10 +1,19 @@
+/*TODO дописать свойства форм.*/
+html, body
+{
+    height: 100%;
+}
+body{
+    margin: 0;
+    padding: 0;
+}
 header{
     width: 100%;
     height: 80px;
 }
 .page-link{
     height: 75%;
-    width: 25%;
+    width: 20%;
     display: inline-block;
     text-align: center;
     vertical-align: middle;
@@ -21,4 +30,11 @@ header{
 }
 .page-link:hover{
     background-color: rgb(0,126,146);
+}
+#wrapper{
+  margin: auto;
+  width: fit-content;
+  padding: 10px;
+  user-select: none;
+  font-size: 18px;
 }
