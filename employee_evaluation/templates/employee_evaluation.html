@@ -9,12 +9,11 @@
     <link rel="shortcut icon" href="https://i.pinimg.com/474x/67/bf/21/67bf2179ae48b0513c7a067200e006c5.jpg" />
 </head>
 <body>
-    <header>
-        <button id="self-assessment-button" class="page-link" >Заполнить квалификации</button><!--
-        --><button id="certificate-button" class="page-link">Загрузить сертификат</button><!--
-        --><button id="employee-evaluation-button" class="page-link">Оценить сотрудника(-ов)</button><!--
-        --><button id="selection-button" class="page-link">Сводка по сотруднику</button>
-    </header>
+    {% if request.user.is_authenticated %}
+        {% include "logged-header.html" %}
+    {% else %}
+        {% include "header.html" %}
+    {% endif %}
 
     <div id="wrapper">
     <p>Когда-нибудь тут что-то будет</p>

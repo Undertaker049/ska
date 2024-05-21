@@ -9,7 +9,6 @@ from .models import *
 
 @login_required
 def main(request):
-    print(request.user)
     hw = Hardware.objects.values_list('product', flat=True).distinct()
     hw_disciplines = TaskHW.objects.values_list('task', flat=True).distinct()
 

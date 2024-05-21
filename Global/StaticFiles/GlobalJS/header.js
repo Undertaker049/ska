@@ -10,3 +10,6 @@ document.getElementById("employee-evaluation-button").addEventListener('click',f
 document.getElementById("selection-button").addEventListener('click',function () {
     location.href = "/selection";
 });
+document.getElementById("login-button").addEventListener('click',function () {
+    location.href = "/auth";
+});
