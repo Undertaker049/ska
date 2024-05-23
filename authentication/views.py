@@ -1,7 +1,8 @@
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 
 
 def main(request):
@@ -28,3 +29,9 @@ def registration(request):
         return redirect("/auth")
     elif request.method == "GET":
         return render(request, "register.html")
+
+
+@login_required
+def user_logout(request):
+    logout(request)
+    return redirect('/')

@@ -10,12 +10,11 @@
 
 </head>
 <body>
-<header>
-    <button id="self-assessment-button" class="page-link">Заполнить квалификации</button><!--
-    --><button id="certificate-button" class="page-link">Загрузить сертификат</button><!--
-    --><button id="employee-evaluation-button" class="page-link">Оценить сотрудника(-ов)</button><!--
-    --><button id="selection-button" class="page-link">Сводка по сотруднику</button>
-</header>
+    {% if request.user.is_authenticated %}
+        {% include "logged-header.html" %}
+    {% else %}
+        {% include "header.html" %}
+    {% endif %}
 <div id="success-msg-box" class="msg-box">{{ success }}</div>
 <div id="warning-msg-box" class="msg-box">{{ warning }}</div>
 <script src="{% static "GlobalJS/header.js" %}"></script>

@@ -18,14 +18,10 @@
     {% endif %}
 
 <div id="error-box"></div>
-<div id="form-navigation">
-    <button id="HW-page" class="form-navigation-button" type="button">HW</button>
-    <button id="SW-page" class="form-navigation-button" type="button">SW</button>
-    <button id="skills-page" class="form-navigation-button" type="button">Skills</button>
-    <button id="finish" class="form-navigation-button" type="button">Finish</button>
-</div>
+
 <form id="self-assessment-form" onkeydown="if(event.keyCode === 13) {return false}">
 {% csrf_token %}
+{#Потом имя и фамилия будут браться из БД#}
     <div id="user-name">
         <label for="user-name-input">Введите фамилию и имя:</label>
         <input id="user-name-input" type="text" value="" name="username"><br>

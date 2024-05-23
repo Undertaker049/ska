@@ -133,7 +133,7 @@ window.addEventListener('beforeunload', function(event) {
 
 //Выключает предупреждение при закрытии\перезагрузке страницы если форма пуста
 window.addEventListener('onbeforeunload', function (event) {
-    if (hw_object._count === 0 || sw_object._count === 0 || skills_object._count === 0) {
+    if (hw_object._count === 0 && sw_object._count === 0 && skills_object._count === 0) {
         event.preventDefault();
     }
 })

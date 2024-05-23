@@ -35,5 +35,6 @@ urlpatterns = [
     path('employee-evaluation', employee_evaluation_views.main),
     path('selection', selection_views.main),
     path('auth', auth_views.main),
-    path('registration', auth_views.registration)
+    path('registration', auth_views.registration),
+    path('logout', auth_views.user_logout)
 ]

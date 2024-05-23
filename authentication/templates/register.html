@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Reg test</title>
+    <link rel="stylesheet" href="{% static "CSS/auth.css" %}" />
     <link rel="shortcut icon" href="https://i.pinimg.com/474x/67/bf/21/67bf2179ae48b0513c7a067200e006c5.jpg" />
 </head>
 <body>
@@ -11,28 +12,28 @@
 <form id="reg" method="post" action="/registration">
     {% csrf_token %}
     <p>
-        <label for="username">Имя пользователя:</label>
+        <label for="username">Имя пользователя:</label><br>
         <input id="username" name="username" type="text" required>
     </p>
     <p>
-        <label for="email">Почта</label>
+        <label for="email">Почта:</label><br>
         <input id="email" name="email" type="email" required>
     </p>
     <p>
-        <label for="first-name">Имя</label>
+        <label for="first-name">Имя:</label><br>
         <input  id="first-name" name="first-name" type="text" required>
     </p>
         <p>
-        <label for="last-name">Фамилия</label>
+        <label for="last-name">Фамилия:</label><br>
         <input  id="last-name" name="last-name" type="text" required>
     </p>
     <p>
 
     </p>
     <p>
-        <label for="password">Пароль:</label>
+        <label for="password">Пароль:</label><br>
         <input id="password" name="password" type="password" placeholder="Password" required><br>
-        <label for="re-password">Пароль:</label>
+        <label for="re-password">Повторите Пароль:</label><br>
         <input id="re-password" name="password" type="password" placeholder="Password" required>
     </p>
     <input type="submit">

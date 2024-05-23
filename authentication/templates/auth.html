@@ -13,11 +13,11 @@
 <form id="auth" method="post" action="/auth">
     {% csrf_token %}
     <p>
-        <label for="login">Имя пользователя:</label>
+        <label for="login">Имя пользователя:</label><br>
         <input id="login" name="login" type="text" placeholder="username" required>
     </p>
     <p>
-        <label for="password">Пароль:</label>
+        <label for="password">Пароль:</label><br>
         <input id="password" name="password" type="password" placeholder="Password" required>
     </p>
     <input type="submit">

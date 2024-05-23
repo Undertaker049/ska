@@ -18,32 +18,32 @@
 <form id="certificate-form" onkeydown="if(event.keyCode === 13) {return false}" method="post" action="/certificate" enctype="multipart/form-data">
     {% csrf_token %}
     <p>
-        <label for="name">Фамилия и Имя</label>
+        <label for="name">Фамилия и Имя</label><br>
         <input type="text" id="name" name="name" pattern="[А-ЯЁ][а-яё]*\s[А-ЯЁ][а-яё]*" title="Фамилия и имя с заглавной буквы " required />
     </p>
 
     <p>
-        <label for="training_name">Название тренинга</label>
+        <label for="training_name">Название тренинга</label><br>
         <input type="text" id="training_name" name="training_name" required />
     </p>
 
     <p>
-        <label for="type">Сертификат</label>
+        <label for="type">Сертификат</label><br>
         <select name="training_type" id="type" required >
             <option name="DEF" value="Placeholder" disabled selected>— Выберите —</option>
-            <option name="CER" value="certification"> о вендорской сертификации</option>
+            <option name="CER" value="certification"> о вендорской сертификации</option><br>
             <option name="TR" value="training">о прохождении тренинга</option>
             <option name="EX" value="exam">о сдаче экзамена</option>
         </select>
     </p>
 
     <p>
-        <label for="date">Дата получения</label>
+        <label for="date">Дата получения</label><br>
         <input type="date" id="date" name="date" required />
     </p>
 
     <p>
-        <label for="category">Категория</label>
+        <label for="category">Категория</label><br>
         <select id="category" name="category" required >
             <option value="DEF" disabled selected>— Выберите —</option>
             <option value="BURA">BURA</option>

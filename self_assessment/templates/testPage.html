@@ -11,51 +11,68 @@
     <link rel="stylesheet" href="{% static "GlobalCSS/Header.css" %}" />
 </head>
 <body>
-<header>
-    <button id="self-assessment-button" class="page-link">Заполнить квалификации</button><!--
-    --><button id="certificate-button" class="page-link">Загрузить сертификат</button><!--
-    --><button id="employee-evaluation-button" class="page-link">Оценить сотрудника(-ов)</button><!--
-    --><button id="selection-button" class="page-link">Сводка по сотруднику</button>
-</header>
+    {% if request.user.is_authenticated %}
+        {% include "logged-header.html" %}
+    {% else %}
+        {% include "header.html" %}
+    {% endif %}
 
-{#<div id="error-box"></div>#}
-{#{% csrf_token %}#}
-{#<form method="post" action="/test">#}
-{#    <div id="user_name">#}
-{#        <label for="user_name_input">Введите фамилию и имя:</label>#}
-{#        <input id="user_name_input" type="text" value="" name="username"><br>#}
-{#        <button type="button" id="start">Начать</button>#}
-{#    </div>#}
-{#    <div id="form-navigation">#}
-{#        <button id="HW-page" class="form-navigation-button" type="button">HW</button>#}
-{#        <button id="SW-page" class="form-navigation-button" type="button">SW</button>#}
-{#        <button id="skills-page" class="form-navigation-button" type="button">Processes</button>#}
-{#        <button id="finish" class="form-navigation-button" type="button">Finish</button>#}
-{#    </div>#}
-{#    {% for product in hw_products %}#}
-{#        <div id={{ product|replace_dj:" |_" }}><h2>{{ product }}</h2>#}
-{#            {% for process in hw_processes %}#}
-{#                {{ process }}#}
-{#            {% endfor %}#}
-{#        </div>#}
-{#    {% endfor %}#}
-{#    {% for page in pages %}#}
-{#        <div id={{ page.id }} class="form-element">#}
-{#        <h1>{{ page.id }}</h1>#}
-{#        {% for product in page.products %}#}
-{#            <div class="block">#}
-{#            <h2>{{ product }}</h2>#}
-{#                {% for task in page.tasks %}#}
-{#                    {{ task }}#}
-{#                {% endfor %}#}
-{#            </div>#}
-{#        {% endfor %}#}
-{#        </div>#}
-{#    {% endfor %}#}
-{##}
-{#    <button id="form-prev" class="form-button" type="button">prev</button>#}
-{#    <button id="form-next" class="form-button"  type="button">next</button>#}
-{#</form>#}
-<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<div id="error-box"></div>
+<div id="form-navigation">
+    <button id="HW-page" class="form-navigation-button" type="button">HW</button>
+    <button id="SW-page" class="form-navigation-button" type="button">SW</button>
+    <button id="skills-page" class="form-navigation-button" type="button">Skills</button>
+    <button id="finish" class="form-navigation-button" type="button">Finish</button>
+</div>
+
+<form id="self-assessment-form" onkeydown="if(event.keyCode === 13) {return false}">
+<div id="form-questions-navigation">
+
+
+</div>
+    {% csrf_token %}
+    {% for page in pages %}
+    	<div id="{{ page.id }}" class="form-element"><h1>{{ page.id }}</h1>
+            {% for product in page.tech %}
+                <div class="sub-block"><h2>{{ product }}</h2>
+                    {% for discipline in page.disciplines %}
+                        <div class="{{ page.subpages}}"><h3>{{ discipline }}</h3>
+                            <button  class="form-navigation-button previous question-button" type="button">Previous</button>
+                                <table style="display: inline">
+                                    <tr>
+                                    {% for level in levels %}
+                                        <td>
+                                            {{ level.1 }}
+                                        </td>
+                                    {% endfor %}
+                                    </tr>
+                                    <tr>
+                                        {% for level in levels %}
+                                        <td>
+                                            <label>
+                                                <input class="{{ page.subpages_radio }}" type="radio" value="{{ level.0 }}" name="{{ product|replace_dj:" |_" }}_{{ discipline|replace_dj:" |_" }}" required disabled>
+                                            </label>
+                                        </td>
+                                        {% endfor %}
+                                    </tr>
+                                </table>
+                            <button  class="form-navigation-button next question-button" type="button" disabled>Next</button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+</form>
+    <div id="modal" class="modal">
+    <div class="modal-content">
+        <p>Найдена ваша незавершенная форма. Хотите продолжить?
+        (В случае отказа данные будут стёрты)</p>
+        <button id="modal-accept">Продолжить</button>
+        <button id="modal-decline">Очистить</button>
+    </div>
+</div>
+    <script src={% static "GlobalJS/header.js" %}></script>
+    <script src={% static "JS/self_assessment.js" %}></script>
 </body>
 </html>

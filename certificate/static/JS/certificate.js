@@ -17,7 +17,7 @@ $category.addEventListener("change", function () {
         document.getElementById("for-sub-cat").innerHTML = "";
     }else {
         if (document.getElementById("subcategory") === null) {
-            document.getElementById("for-sub-cat").innerHTML = "<p><label for='subcategory'>Суб-категория</label><select id='subcategory' name='subcategory'></select></p>";
+            document.getElementById("for-sub-cat").innerHTML = "<p><label for='subcategory'>Суб-категория</label><br><select id='subcategory' name='subcategory'></select></p>";
         }
         document.getElementById("subcategory").innerHTML = ""
 

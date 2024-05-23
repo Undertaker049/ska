@@ -1,165 +1,250 @@
 let active_tab = "#HW";
 
-let $hw_element = $(".hw-element");
-let $sw_element = $(".sw-element");
-let $skills_element = $(".skills-element");
+const $hw_page_button = document.getElementById("HW-page");
+const $sw_page_button = document.getElementById("SW-page");
+const $skills_page_button = document.getElementById("skills-page");
+const $next_question_button = document.querySelectorAll(".next")
+const $previous_question_button = document.querySelectorAll(".previous")
+const $finish_button = document.getElementById("finish");
+const $modal_accept_button = document.getElementById("modal-accept");
+const $modal_decline_button = document.getElementById("modal-decline");
 
-let $error_box = $("#error-box");
-let $name_input = $("#user-name-input")
+const $hw_element = document.querySelectorAll(".hw-element");
+const $sw_element = document.querySelectorAll(".sw-element");
+const $skills_element = document.querySelectorAll(".skills-element");
+const $hw_radio = document.querySelectorAll(".hw-radio");
+const $sw_radio = document.querySelectorAll(".sw-radio");
+const $skills_radio = document.querySelectorAll(".skills-radio");
 
-let $start_button = $("#start");
-let $hw_page_button = $("#HW-page");
-let $sw_page_button = $("#SW-page");
-let $skills_page_button = $("#skills-page");
-let $finish_button = $("#finish");
+let hw_object = {_count: 0,
+    _pointer:0,
+    _total: $hw_element.length,
+    _selected: [],
+    _id: "HW"};
+let sw_object = {_count: 0,
+    _pointer:0,
+    _total: $sw_element.length,
+    _selected: [],
+    _id: "SW"};
+let skills_object = {_count: 0,
+    _pointer:0,
+    _total: $skills_element.length,
+    _selected: [],
+    _id: "Skills"};
 
-let user_name = "";
-let hw_object = {_count: 0, _total: $hw_element.toArray().length, _selected: [], _id: "HW"};
-let sw_object = {_count: 0, _total: $sw_element.toArray().length, _selected: [], _id: "SW"};
-let skills_object = {_count: 0, _total: $skills_element.toArray().length, _selected: [], _id: "Skills"};
-
-
-
-$start_button.on('click',function() {
-    // Для тестов формы раскомментить это
-        if (RegExp("^[А-ЯЁ][а-яё]+\\s[А-ЯЁ][а-яё]*").exec($name_input.val()) === null){
-            void show_warning("Только Фамилия и Имя, только Кириллица, слова с заглавной буквы");
-        }
-        else {
-            user_name = $name_input.val();
-             $.ajax({
-                url: '/validate-name',
-                type: 'GET',
-                 //Выяснить почему работает только так
-                data: "name="+user_name,
-                success(msg){
-                    console.log(msg)
-                    $('#user-name').css("display", "none");
-                    $("#form-navigation").css("display", "inline-block");
-                },
-                error(response){
-                    void show_warning(response.responseText)
-                }
-            });
-        }
-    //Для тестов с отправкой данных раскомментить это
-    // user_name = $name_input.val();
-    // $('#user_name').css("display", "none");
-    // $("#form-navigation").css("display", "inline-block");
+window.addEventListener('load', function () {
+    document.getElementById("form-navigation").style.display='inline-block';
+    update_question($hw_element[0], false, 'inline-block');
+    update_question($sw_element[0], false, 'inline-block');
+    update_question($skills_element[0], false, 'inline-block');
+    if (sessionStorage.getItem("user") === getCookie("user")){
+        const modal = document.getElementById("modal")
+        modal.classList.add("show");
+        document.body.classList.add("modal-open");
+    }
 });
 
-/**
- * На enter происходит отправка формы через дефолтный метод
- * чтобы этого не происходило, создана данная функция, переопределяющая поведение
- */
-$(window).keydown(function(event){
-    if(event.keyCode === 13) {
-        $start_button.click()
-    }
-  });
+$modal_accept_button.addEventListener("click", function () {
+    // let startTime = performance.now()
+    load_form();
+    // let endTime = performance.now()
+    // console.log(`Exec. time ${endTime-startTime} ms`)
+    close_modal();
+});
 
-$hw_page_button.on("click", function () {
+$modal_decline_button.addEventListener("click", function () {
+    clear_form();
+    close_modal();
+});
+
+$hw_page_button.addEventListener("click", function () {
+    console.log("HW")
     swap_active_page("#HW");
 });
-$sw_page_button.on("click", function () {
+
+$sw_page_button.addEventListener("click", function () {
     swap_active_page("#SW");
 });
-$skills_page_button.on("click", function () {
+
+$skills_page_button.addEventListener("click", function () {
     swap_active_page("#Skills");
 });
 
-$hw_element.on("change", function () {
-    update_counter(this, hw_object, $hw_page_button);
-})
-
-$sw_element.on("change", function () {
-    update_counter(this, sw_object, $sw_page_button);
-})
-
-$skills_element.on("change", function () {
-    update_counter(this, skills_object, $skills_page_button);
-})
-
-$finish_button.on("click", function () {
-    if (hw_object._count === hw_object._total && sw_object._count === sw_object._total && skills_object._count === skills_object._total){
-    // if (true){
-        let data = {"HW": form_data($("#"+hw_object._id)),
-            "SW": form_data($("#"+sw_object._id)),
-            "Processes": form_data($("#"+skills_object._id)),
-            "name": user_name,
-            }
-            console.log(data)
-
-         $.ajax({
-        url: '/upload-assessment',
-        type: "POST",
-        headers: {
-            'Accept': 'application/text',
-            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-        },
-        data: {csrfmiddlewaretoken: $('input[name="csrfmiddlewaretoken"]').val(), form: JSON.stringify(data)},
-        dataType: "json",
-        success(msg){
-
-        },
-        error(msg){
-            void show_warning(msg);
-        }
-    });
+window.addEventListener('beforeunload', function(event) {
+    if (hw_object._count !== 0 || sw_object._count !== 0 || skills_object._count !== 0) {
+        save_form();
     }
-    else{
+});
+
+//Выключает предупреждение при закрытии\перезагрузке страницы если форма пуста
+window.addEventListener('onbeforeunload', function (event) {
+    if (hw_object._count === 0 && sw_object._count === 0 && skills_object._count === 0) {
+        event.preventDefault();
+    }
+})
+
+$hw_radio.forEach(function(element) {
+    element.addEventListener("click", function() {
+        console.log("hw clicked")
+        update_counter(this, hw_object, $hw_page_button);
+        this.closest('div').querySelector('.next').disabled = false
+    });
+});
+
+$sw_radio.forEach(function(element) {
+    element.addEventListener("click", function() {
+        update_counter(this, sw_object, $sw_page_button);
+        this.closest('div').querySelector('.next').disabled = false
+    });
+});
+
+$skills_radio.forEach(function(element) {
+    element.addEventListener("click", function() {
+        update_counter(this, skills_object, $skills_page_button);
+        this.closest('div').querySelector('.next').disabled = false
+    });
+});
+
+function step_forward(element, object){
+    update_question(element[object._pointer], true, 'none');
+    update_question(element[object._pointer+1], false, 'inline-block');
+    element[object._pointer].scrollIntoView();
+    object._pointer++;
+}
+$next_question_button.forEach(function (element) {
+    element.addEventListener('click', function (elem) {
+        switch (active_tab) {
+            case "#HW":
+                if (hw_object._pointer !== hw_object._total) {
+                    step_forward($hw_element ,hw_object)
+                }
+                break;
+
+            case "#SW":
+                if (sw_object._pointer !== sw_object._total) {
+                    step_forward($sw_element ,sw_object)
+                }
+                break;
+
+            case "#Skills":
+                if (skills_object._pointer !== skills_object._total) {
+                    step_forward($skills_element, skills_object)
+                }
+                break;
+            default:
+                void show_warning(`Ошибка блока управления кнопками перехода. Текущая страница: ${active_tab}`);
+                break;
+        }
+    })
+});
+
+function step_back(element, object){
+    update_question(element[object._pointer-1], false, 'inline-block');
+    update_question(element[object._pointer], true, 'none');
+    element[object._pointer-1].scrollIntoView();
+    object._pointer--;
+}
+$previous_question_button.forEach(function (element) {
+    element.addEventListener('click', function (elem) {
+        switch (active_tab) {
+            case "#HW":
+                if (hw_object._pointer !== 0) {
+                    step_back($hw_element, hw_object);
+                }
+                break;
+
+            case "#SW":
+                if (sw_object._pointer !== 0) {
+                    step_back($sw_element, sw_object);
+                }
+                break;
+
+            case "#Skills":
+                if (skills_object._pointer !== 0) {
+                    step_back($skills_element, skills_object);
+                }
+                break;
+
+            default:
+                void show_warning(`Ошибка блока управления кнопками перехода. Текущая страница: ${active_tab}`);
+                break;
+        }
+    })
+})
+
+$finish_button.addEventListener("click", function() {
+    if (hw_object._count === hw_object._total && sw_object._count === sw_object._total && skills_object._count === skills_object._total) {
+    //if (true){
+        let data = {
+            "HW": form_data(document.getElementById(hw_object._id)),
+            "SW": form_data(document.getElementById(sw_object._id)),
+            "Processes": form_data(document.getElementById(skills_object._id)),
+        };
+
+        fetch('/upload-assessment', {
+            method: "POST",
+            headers: {
+                'Accept': 'application/text',
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+            },
+            body: new URLSearchParams({
+                csrfmiddlewaretoken: document.querySelector('input[name="csrfmiddlewaretoken"]').value,
+                form: JSON.stringify(data)
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(err => { void show_warning(err.message || "Unknown error") });
+            }
+            return response.json();
+        })
+        .catch(err => {
+            console.log(err.text);
+        });
+    } else {
         void show_warning("Сначала заполните форму до конца!");
     }
-})
+});
+
 
 /**
- * Меняет CSS свойство display у указанного блока
- * @param to_page_id ID поле блока, который будет отображен вместо текущего
+ *
+ * @param {Element} element
+ * @param {string} display
+ * @param {boolean} disabled
  */
-function swap_active_page(to_page_id) {
-    $(active_tab).css("display", "none");
-    active_tab = to_page_id;
-    $(to_page_id).css("display", "block");
+function update_question(element,disabled, display){
+    element.querySelectorAll('input').forEach(function (elem) {
+        elem.disabled = disabled;
+    })
+    element.querySelectorAll('.question-button').forEach(function (elem) {
+        elem.style.display = display
+    })
 }
 
 /**
- * Формирует массив с данными из конкретного блока формы
- * @param jq_global_element <div> элемент представляющий блок формы(HW, SW, Skills)
- * @returns {*[]} Массив элементов вида {_product : "", _selections: []},
- * где _product - название продукта, _selections - выбранные пользователем ответы(параметр value:int выбранного варианта)
+ * Меняет CSS свойство display у указанного блока
+ * @param {String}to_page_id ID поле блока, который будет отображен вместо текущего
  */
-function form_data(jq_global_element) {
-    let arr = [];
-    jq_global_element.children('div').each(function () {
-            let obj = {_product : "", _selections: []}
-            obj._product = $(this).attr('id').replaceAll("_", " ");
-            $(this).find('> p > label > select option:selected').each(function () {
-                obj._selections.push($(this).attr('value'));
-            })
-        arr.push(obj);
-        })
-
-    return arr;
+function swap_active_page(to_page_id) {
+    document.querySelector(active_tab).style.display = "none";
+    active_tab = to_page_id;
+    document.querySelector(to_page_id).style.display = "block";
 }
 
 /**
  * Функция для обновления и вывода счетчиков заполненных полей формы конкретного блока
- * @param element Элемент блока <select>, на который повешен слушатель onChange
+ * @param {HTMLSelectElement}element Элемент блока <select>, на который повешен слушатель onChange
  * @param object объект в котором хранится информация о блоке формы(HW, SW, Skills), в т.ч. и счетчик
- * @param button_object Кнопка навигации по форме, в название которой и дописывается значение счетчика. Прим.: HW(10/216)
+ * @param {HTMLButtonElement}button_object Кнопка навигации по форме, в название которой и дописывается значение счетчика. Прим.: HW(10/216)
  */
-function update_counter(element, object, button_object){
-    let s = `${$(element).closest('div').attr('id')}:${$(element).closest('label').attr('for')}`;
-    if ($(element).find(":selected").text() !== "— Select your level —"){
-        if (object._selected.indexOf(s) === -1) {
-            object._selected.push(s);
-            object._count++;
-        }
-    } else {
-        object._selected.splice(object._selected.indexOf(s),1)
-        object._count--;
+function update_counter(element, object, button_object) {
+    let s = element.name;
+    if (object._selected.indexOf(s) === -1) {
+        object._selected.push(s);
+        object._count++;
+        button_object.textContent = `${object._id}(${object._count}/${object._total})`;
     }
-    button_object.text(`${object._id}(${object._count}/${object._total})`);
 }
 
 /**
@@ -168,10 +253,107 @@ function update_counter(element, object, button_object){
  * @returns {Promise<void>} Возвращаемое значение игнорируется
  */
 async function show_warning(text) {
-    $error_box.text(text);
-    $error_box.fadeTo("slow", 1);
+    const errorBox = document.getElementById("error-box");
+    errorBox.textContent = text;
+
+    errorBox.style.display = "block";
+    errorBox.style.transition = "opacity 0.5s";
+    errorBox.style.opacity = '1';
+
     await new Promise(r => setTimeout(r, 5000));
-    $error_box.fadeTo("slow", 0);
+
+    errorBox.style.opacity = '0';
+
     await new Promise(r => setTimeout(r, 500));
-    $error_box.css("display", "none");
+
+    errorBox.style.display = "none";
+}
+
+/**
+ * Формирует массив с данными из конкретного блока формы
+ * @param {Element}global_element <div> элемент представляющий блок формы(HW, SW, Skills)
+ * @returns {[{ _product: "", _selections: [] }]} Массив элементов вида {_product : "", _selections: []},
+ * где _product - название продукта, _selections - выбранные пользователем ответы(параметр value:int выбранного варианта)
+ */
+function form_data(global_element) {
+    let arr = [];
+    Array.from(global_element.querySelectorAll('.sub-block')).forEach(function(div) {
+        let obj = { _product: "", _selections: [] };
+        obj._product = div.querySelector('h2').textContent;
+        Array.from(div.querySelectorAll('input:checked')).forEach(function(option) {
+            obj._selections.push(option.value);
+        });
+        arr.push(obj);
+    });
+
+    return arr;
+}
+
+/**
+ *
+ */
+function save_form(){
+    let data = {
+            "HW": form_data(document.getElementById(hw_object._id)),
+            "SW": form_data(document.getElementById(sw_object._id)),
+            "Skills": form_data(document.getElementById(skills_object._id)),
+    };
+    sessionStorage.setItem("formData", JSON.stringify(data));
+    sessionStorage.setItem("user", getCookie("user"));
+}
+
+//TODO: Сравнить с вариантом через IndexedDB
+function load_form() {
+    let form = JSON.parse(sessionStorage.getItem("formData"));
+    let to_exec_array = []
+    console.log(form)
+    for (let key in form) {
+        if (form.hasOwnProperty(key)) {
+            let blocks = document.getElementById(key).querySelectorAll(".sub-block");
+            for (let i = 0; i < blocks.length; i++) {
+                let elems = blocks[i].querySelectorAll("div")
+                let selections = form[key][i]._selections
+                for (let j = 0; j < selections.length; j++) {
+                    elems[j].querySelectorAll('button').forEach(function (element) {
+                        element.disabled = false;
+                    })
+                    elems[j].querySelectorAll('input').forEach(function (element) {
+                        if (element.value == selections[j]){
+                            element.checked = true;
+                        }
+                    })
+                    console.log("############")
+                }
+            }
+        }
+    }
+
+}
+
+
+/**
+ *
+ */
+function clear_form() {
+    sessionStorage.removeItem("formData");
+    sessionStorage.removeItem("user");
+}
+
+/**
+ *
+ */
+function close_modal() {
+    document.getElementById("modal").classList.remove("show");
+    document.body.classList.remove("modal-open");
+}
+
+/**
+ *
+ * @param name
+ * @returns {string}
+ */
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
 }

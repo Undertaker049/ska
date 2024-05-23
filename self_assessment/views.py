@@ -20,13 +20,31 @@ def main(request):
 
     levels = Levels.objects.values_list('weight', 'level').distinct()
 
-    hw_page = {"id": "HW", "subpages": "hw-element", "tech": hw, "disciplines": hw_disciplines}
-    sw_page = {"id": "SW", "subpages": "sw-element", "tech": sw, "disciplines": sw_disciplines}
-    skills_page = {"id": "Skills", "subpages": "skills-element", "tech": skills, "disciplines": skills_disciplines}
+    hw_page = {"id": "HW",
+               "subpages": "hw-element",
+               "tech": hw,
+               "disciplines": hw_disciplines,
+               "subpages_radio": "hw-radio",
+               "button": "hw-button"}
+    sw_page = {"id": "SW",
+               "subpages": "sw-element",
+               "tech": sw,
+               "disciplines": sw_disciplines,
+               "subpages_radio": "sw-radio",
+               "button": "sw-button"}
+    skills_page = {"id": "Skills",
+                   "subpages": "skills-element",
+                   "tech": skills,
+                   "disciplines": skills_disciplines,
+                   "subpages_radio": "skills-radio",
+                   "button": "skills-button"}
 
     data = {"pages": [hw_page, sw_page, skills_page],
             "levels": levels}
-    return render(request, 'self_assessment.html', data)
+    # return render(request, 'self_assessment.html', data)
+    response = render(request, 'testPage.html', data)
+    response.set_cookie("user", request.user.email, expires=request.session.get_expiry_date())
+    return response
 
 
 @login_required

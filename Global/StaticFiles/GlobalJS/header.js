@@ -13,3 +13,6 @@ document.getElementById("selection-button").addEventListener('click',function ()
 document.getElementById("login-button").addEventListener('click',function () {
     location.href = "/auth";
 });
+document.getElementById("logout-button").addEventListener('click',function () {
+    location.href = "/logout";
+});
