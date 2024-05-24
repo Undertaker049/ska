@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="{% static "CSS/self_assessment.css" %}" />
     <link rel="stylesheet" href="{% static "CSS/self_assessment_modal.css" %}" />
     <link rel="stylesheet" href="{% static "GlobalCSS/Header.css" %}" />
+    <link rel="shortcut icon" href="https://cdn-icons-png.freepik.com/512/709/709612.png" />
 </head>
 <body>
     {% if request.user.is_authenticated %}
@@ -17,62 +18,70 @@
         {% include "header.html" %}
     {% endif %}
 
-<div id="error-box"></div>
-<div id="form-navigation">
-    <button id="HW-page" class="form-navigation-button" type="button">HW</button>
-    <button id="SW-page" class="form-navigation-button" type="button">SW</button>
-    <button id="skills-page" class="form-navigation-button" type="button">Skills</button>
-    <button id="finish" class="form-navigation-button" type="button">Finish</button>
-</div>
-
-<form id="self-assessment-form" onkeydown="if(event.keyCode === 13) {return false}">
-<div id="form-questions-navigation">
+    <div id="error-box" class="wrapper"></div>
+    <div id="form-navigation" class="wrapper">
+        <button id="hw-page" class="form-navigation-button" type="button">HW</button>
+        <button id="sw-page" class="form-navigation-button" type="button">SW</button>
+        <button id="processes-page" class="form-navigation-button" type="button">Processes</button>
+        <button id="finish" class="form-navigation-button" type="button">Finish</button>
+    </div>
 
 
-</div>
-    {% csrf_token %}
-    {% for page in pages %}
-    	<div id="{{ page.id }}" class="form-element"><h1>{{ page.id }}</h1>
-            {% for product in page.tech %}
-                <div class="sub-block"><h2>{{ product }}</h2>
-                    {% for discipline in page.disciplines %}
-                        <div class="{{ page.subpages}}"><h3>{{ discipline }}</h3>
-                            <button  class="form-navigation-button previous question-button" type="button">Previous</button>
-                                <table style="display: inline">
-                                    <tr>
-                                    {% for level in levels %}
-                                        <td>
-                                            {{ level.1 }}
-                                        </td>
-                                    {% endfor %}
-                                    </tr>
-                                    <tr>
-                                        {% for level in levels %}
-                                        <td>
-                                            <label>
-                                                <input class="{{ page.subpages_radio }}" type="radio" value="{{ level.0 }}" name="{{ product|replace_dj:" |_" }}_{{ discipline|replace_dj:" |_" }}" required disabled>
-                                            </label>
-                                        </td>
-                                        {% endfor %}
-                                    </tr>
-                                </table>
-                            <button  class="form-navigation-button next question-button" type="button" disabled>Next</button>
+        <form id="self-assessment-form" class="wrapper" onkeydown="if(event.keyCode === 13) {return false}">
+            {% csrf_token %}
+            {% for page in pages %}
+                <div id="{{ page.id }}" class="form-element"><h1 class="wrapper">{{ page.id }}</h1>
+                    {% for product in page.tech %}
+                        <div class="sub-block" id="{{ product|replace_dj:" |_" }}">
+                            <div class="form-navigation-block wrapper">
+                                <button id="{{ product|replace_dj:" |_" }}_previous"  class="form-navigation-button block-button-prev"  type="button">Previous</button>
+                                <h2 style="display: inline-block">{{ product }}</h2>
+                                <button id="{{ product|replace_dj:" |_" }}_next"  class="form-navigation-button block-button-next" type="button">Next</button>
+                            </div>
+                            {% for discipline in page.disciplines %}
+                                <div class="{{ page.subpages}} element wrapper"><h3>{{ discipline }}</h3>
+                                        <table style="display: inline">
+                                            <tr>
+                                            {% for level in levels %}
+                                                <td>
+                                                    {{ level.1 }}
+                                                </td>
+                                            {% endfor %}
+                                            </tr>
+                                            <tr>
+                                                {% for level in levels %}
+                                                <td>
+                                                    <label>
+                                                        <input class="{{ page.subpages_radio }}" type="radio" value="{{ level.0 }}" name="{{ product|replace_dj:" |_" }}_{{ discipline|replace_dj:" |_" }}" required>
+                                                    </label>
+                                                </td>
+                                                {% endfor %}
+                                            </tr>
+                                        </table>
+                                </div>
+                            {% endfor %}
                         </div>
                     {% endfor %}
                 </div>
             {% endfor %}
+
+        </form>
+        <div id="modal" class="modal">
+            <div class="modal-content">
+                <p>Найдена ваша незавершенная форма. Хотите продолжить?
+                (В случае отказа данные будут стёрты)</p>
+                <button id="modal-accept">Продолжить</button>
+                <button id="modal-decline">Очистить</button>
+            </div>
         </div>
-    {% endfor %}
-</form>
-    <div id="modal" class="modal">
-    <div class="modal-content">
-        <p>Найдена ваша незавершенная форма. Хотите продолжить?
-        (В случае отказа данные будут стёрты)</p>
-        <button id="modal-accept">Продолжить</button>
-        <button id="modal-decline">Очистить</button>
-    </div>
-</div>
-    <script src={% static "GlobalJS/header.js" %}></script>
-    <script src={% static "JS/self_assessment.js" %}></script>
+        <button id="back"><img style="max-height: 60px; max-width: 60px" src="{% static "Images/arrow-up.png" %}" alt="to header"></button>
+
+<footer></footer>
+<script src={% static "GlobalJS/header.js" %}></script>
+<script src={% static "JS/self-assessment-commons.js" %}></script>
+<script src={% static "JS/self-assessment-page.js" %}></script>
+<script src={% static "JS/self-assessment-hw.js" %}></script>
+<script src={% static "JS/self-assessment-sw.js" %}></script>
+<script src={% static "JS/self-assessment-processes.js" %}></script>
 </body>
 </html>

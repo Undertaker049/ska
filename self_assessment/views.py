@@ -24,20 +24,20 @@ def main(request):
                "subpages": "hw-element",
                "tech": hw,
                "disciplines": hw_disciplines,
-               "subpages_radio": "hw-radio",
-               "button": "hw-button"}
+               "subpages_radio": "hw-radio"
+               }
     sw_page = {"id": "SW",
                "subpages": "sw-element",
                "tech": sw,
                "disciplines": sw_disciplines,
-               "subpages_radio": "sw-radio",
-               "button": "sw-button"}
-    skills_page = {"id": "Skills",
-                   "subpages": "skills-element",
+               "subpages_radio": "sw-radio"
+               }
+    skills_page = {"id": "Processes",
+                   "subpages": "processes-element",
                    "tech": skills,
                    "disciplines": skills_disciplines,
-                   "subpages_radio": "skills-radio",
-                   "button": "skills-button"}
+                   "subpages_radio": "processes-radio"
+                   }
 
     data = {"pages": [hw_page, sw_page, skills_page],
             "levels": levels}

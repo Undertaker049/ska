@@ -322,7 +322,6 @@ function load_form() {
                             element.checked = true;
                         }
                     })
-                    console.log("############")
                 }
             }
         }
