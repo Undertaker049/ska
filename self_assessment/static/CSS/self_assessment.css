@@ -3,10 +3,12 @@ html, body
     height: 100%;
     width: 100%;
 }
+
 body{
     margin: 0;
     padding: 0;
 }
+
 html{
     scroll-behavior: smooth
 }
@@ -40,14 +42,14 @@ form{
     overflow: hidden;
     user-select: none;
 }
+
 .form-navigation-button:hover, #back:hover, #self-assessment-button{
     background-color: rgb(0,126,146);
 }
-.form-element{
-    padding-left: 10px;
-    display: flex;
-    flex-direction: column;
-}
+/*.form-element{*/
+/*    display: flex;*/
+/*    flex-direction: column;*/
+/*}*/
 .form-element, .form-button{
     display: none;
 }
@@ -57,9 +59,15 @@ form{
     top: 0;
     left: 10px;
     z-index: 100;
-    background-color: white;
-    width: 10000px; !important;
+    background: rgba(211,211,211, .6);
+    border-radius: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+}
 
+.sub-block{
+    padding-bottom: 20px;
 }
 
 .wrapper{
@@ -69,6 +77,13 @@ form{
 
 .element{
     border-left:solid salmon 10px;
+}
+
+#form-navigation{
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
 #error-box{
@@ -83,10 +98,11 @@ form{
     line-height: 25px;
     border-radius: 5px;
 }
+
 #back{
     position: fixed;
-    bottom: 30px;
-    right: 30px;
+    bottom: 20px;
+    right: 20px;
     border-radius: 50%;
     height: 70px;
     width: 70px;

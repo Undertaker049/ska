@@ -23,36 +23,32 @@ def main(request):
     hw_page = {"id": "HW",
                "subpages": "hw-element",
                "tech": hw,
-               "disciplines": hw_disciplines,
-               "subpages_radio": "hw-radio"
+               "disciplines": hw_disciplines
                }
     sw_page = {"id": "SW",
                "subpages": "sw-element",
                "tech": sw,
-               "disciplines": sw_disciplines,
-               "subpages_radio": "sw-radio"
+               "disciplines": sw_disciplines
                }
     skills_page = {"id": "Processes",
                    "subpages": "processes-element",
                    "tech": skills,
-                   "disciplines": skills_disciplines,
-                   "subpages_radio": "processes-radio"
+                   "disciplines": skills_disciplines
                    }
 
     data = {"pages": [hw_page, sw_page, skills_page],
             "levels": levels}
     # return render(request, 'self_assessment.html', data)
-    response = render(request, 'testPage.html', data)
-    response.set_cookie("user", request.user.email, expires=request.session.get_expiry_date())
-    return response
+    return render(request, 'self_assessment.html', data)
 
 
 @login_required
 def validate_name(request):
-    employee = Employees.objects.filter(name=request.GET.get("name")).first()
+    employee = Employees.objects.filter(name=f'{request.user.first_name} {request.user.last_name}').first()
     if employee is not None:
-        if SkillsHW.objects.filter(employee_id=employee.id).exists() | SkillsSW.objects.filter(
-                employee_id=employee.id).exists() | SKillsPr.objects.filter(employee_id=employee.id).exists():
+        if (SkillsHW.objects.filter(employee_id=employee.id).exists() |
+                SkillsSW.objects.filter(employee_id=employee.id).exists() |
+                SKillsPr.objects.filter(employee_id=employee.id).exists()):
             return HttpResponse("Ваши данные уже есть в базе", status=403)
     else:
         return HttpResponse("Работник не найден", status=404)
@@ -63,7 +59,7 @@ def validate_name(request):
 @login_required
 def upload_assessment(request):
     data = json.loads(request.POST.get("form"))
-    user_id = Employees.objects.filter(name=data.get("name")).values_list('id', flat=True).first()
+    user_id = Employees.objects.filter(name=f'{request.user.first_name} {request.user.last_name}').values_list('id', flat=True).first()
 
     hw_tasks = TaskHW.objects.values_list("task", flat=True).distinct()
     for product in data.get("HW"):
@@ -88,7 +84,6 @@ def upload_assessment(request):
             obj.save()
 
     for product in data.get("Processes"):
-        print(product)
         process_name = product.get("_product").replace('\'', "")
         processes_tasks_level = product.get("_selections")[0]
         obj = SKillsPr(employee_id=user_id,
