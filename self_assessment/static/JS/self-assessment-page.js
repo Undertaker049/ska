@@ -7,9 +7,9 @@ const $modal_accept_button = document.getElementById("modal-accept");
 const $modal_decline_button = document.getElementById("modal-decline");
 
 window.addEventListener('load', function () {
-    fetch('/validate-name').then(response => {
+    fetch('self-assessment/validate-name').then(response => {
         if (!response.ok) {
-            $finish_button.disabled = true
+            $finish_button.disabled = true;
             return response.text().then(text => {void show_warning(text)});
         } else {
             if (localStorage.getItem("formData") !== null) {
@@ -17,8 +17,8 @@ window.addEventListener('load', function () {
                 document.body.classList.add("modal-open");
             }
         }
-    })
-})
+    });
+});
 
 $hw_page_button.addEventListener('click', function (){
     hide_form_elements();
@@ -47,7 +47,7 @@ $finish_button.addEventListener("click", function() {
             "Processes": form_data(document.getElementById('Processes')),
         };
 
-        fetch('/upload-assessment', {
+        fetch('self-assessment/upload', {
             method: "POST",
             headers: {
                 'Accept': 'application/text',
@@ -72,9 +72,8 @@ $finish_button.addEventListener("click", function() {
     }
 });
 
-window.addEventListener('beforeunload', function(event) {
+window.addEventListener('beforeunload', function() {
     if (hw_page_object._count !== 0 || sw_page_object._count !== 0 || pr_page_object._count !== 0) {
-        console.log("saved")
         save_form();
     }
 });
@@ -120,23 +119,24 @@ function hide_form_elements() {
 function save_form(){
     let data = {};
     document.querySelectorAll('input[type="radio"]:checked').forEach(function (e) {
-        data[e.name] = e.value
+        data[e.name] = e.value;
     });
     localStorage.setItem("formData", JSON.stringify(data));
 }
 
 function load_form() {
-    let form = JSON.parse(localStorage.getItem("formData"))
-    let keys = Object.keys(form)
+    let form = JSON.parse(localStorage.getItem("formData"));
+    let keys = Object.keys(form);
     for (let i = 0; i < keys.length; i++) {
         document.querySelectorAll(`input[name="${keys[i]}"]`).forEach(function (e) {
             if (e.value === form[keys[i]]) {
+                console.log(e)
                 e.checked = true;
                 // Асинхронная функция решает проблемы с блокировкой связанной с вызовом eventListener'ов, как я понял.
                 // Да это самый простой способ и восстановить счетчики и снять флажки. Нет не стыдно.
-                void emulateClick(e)
+                void emulateClick(e);
             }
-        })
+        });
     }
 }
 

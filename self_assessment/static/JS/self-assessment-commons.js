@@ -1,5 +1,5 @@
 /**
- * Автоскролл до следующего блока вопросов
+ * Автоматическое перемещение до следующего блока вопросов
  * @param {string}parent_id ID блока формы (HW, SW etc.)
  * @param {number}shift На сколько блоков сместится вперед(+1) или назад(-1)
  * @param page_blocks
@@ -19,6 +19,7 @@ function move_to_another_block(parent_id, shift, page_blocks) {
  * Функция для отображения счетчика пройденных вопросов блока формы в тексте кнопки перехода к блоку.
  * @param {string}button_id ID элемента button
  * @param {{_count: number, _total: number}}page_object объект в котором хранятся счетчики страниц
+ * @param {string}name Исходный текст кнопки
  */
 function update_button_counter(button_id, page_object, name) {
     document.getElementById(button_id).textContent = `${name} (${page_object._count}/${page_object._total})`;
@@ -44,15 +45,4 @@ async function show_warning(text) {
     await new Promise(r => setTimeout(r, 500));
 
     errorBox.style.display = "none";
-}
-
-/**
- * Метод для чтения cookie
- * @param name имя cookie
- * @returns {string} строка со значением
- */
-function getCookie(name) {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop().split(';').shift();
 }

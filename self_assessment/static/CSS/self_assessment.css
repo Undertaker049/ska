@@ -1,24 +1,23 @@
-html, body
-{
+html{
     height: 100%;
     width: 100%;
+    scroll-behavior: smooth
 }
 
 body{
+    height: 100%;
+    width: 100%;
     margin: 0;
     padding: 0;
 }
 
-html{
-    scroll-behavior: smooth
-}
 
 td{
     width: 100px;
     text-align: center;
 }
 
-input[type="radio"] {
+input[type="radio"]{
   -ms-transform: scale(1.8); /* IE 9 */
   -webkit-transform: scale(1.8); /* Chrome, Safari, Opera */
   transform: scale(1.8);
@@ -41,15 +40,14 @@ form{
     text-align: center;
     overflow: hidden;
     user-select: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
 .form-navigation-button:hover, #back:hover, #self-assessment-button{
     background-color: rgb(0,126,146);
 }
-/*.form-element{*/
-/*    display: flex;*/
-/*    flex-direction: column;*/
-/*}*/
+
 .form-element, .form-button{
     display: none;
 }
@@ -99,14 +97,37 @@ form{
     border-radius: 5px;
 }
 
-#back{
+/*#back{*/
+/*    position: fixed;*/
+/*    bottom: 20px;*/
+/*    right: 20px;*/
+/*    border-radius: 50%;*/
+/*    height: 70px;*/
+/*    width: 70px;*/
+/*    background-color:  rgb(0,182,197);*/
+/*    border: none;*/
+/*    z-index: 150;*/
+/*}*/
+
+#back {
     position: fixed;
     bottom: 20px;
     right: 20px;
     border-radius: 50%;
     height: 70px;
     width: 70px;
-    background-color:  rgb(0,182,197);
+    background-color: rgb(0, 182, 197);
     border: none;
     z-index: 150;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+    transition: background-color 0.3s ease;
+}
+
+#back:hover {
+    background-color: rgb(0, 126, 146);
 }

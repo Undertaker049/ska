@@ -13,20 +13,20 @@ let sw_page_blocks = {};
 window.addEventListener('load', function () {
     $sw_page.querySelectorAll('.sub-block').forEach(function (e) {
         sw_page_blocks[e.id] = e;
-    })
-})
+    });
+});
 
 $sw_page_button_nxt.forEach(function (e) {
     e.addEventListener('click', function () {
         move_to_another_block(this.closest('.sub-block').id, 1, sw_page_blocks);
-    })
-})
+    });
+});
 
 $sw_page_button_prv.forEach(function (e) {
     e.addEventListener('click', function () {
         move_to_another_block(this.closest('.sub-block').id, -1, sw_page_blocks);
-    })
-})
+    });
+});
 
 $sw_page_radio.forEach(function (e) {
     e.addEventListener('click', function () {
@@ -36,5 +36,5 @@ $sw_page_radio.forEach(function (e) {
             update_button_counter('sw-page', sw_page_object, 'Software');
             this.closest('div').style.border = 'none';
         }
-    })
-})
+    });
+});

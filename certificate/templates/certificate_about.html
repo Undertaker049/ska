@@ -1,0 +1,65 @@
+{#TODO 2. добавить обработку кнопок редактировать и удалить#}
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Certificate - About</title>
+    <link rel="stylesheet" href="{% static "GlobalCSS/Header.css" %}" />
+    <link rel="stylesheet" href="{% static "CSS/certificate_about.css" %}" />
+    <link rel="stylesheet" href="{% static "GlobalCSS/snackbar.css" %}" />
+    <link rel="shortcut icon" href="https://cdn-icons-png.freepik.com/512/709/709612.png" />
+</head>
+<body>
+{% csrf_token %}
+{% if request.user.is_authenticated %}
+    {% include "logged-header.html" %}
+{% else %}
+    {% include "header.html" %}
+{% endif %}
+{% include "snackbar.html" %}
+<div class="row">
+    <div id="info" class="column left">
+        <p><button onclick="location.href = '/certificate'" class="navigation-button">Назад</button></p>
+        <div>
+            <h2>Информация о сертификате</h2>
+            <strong>ID:</strong>
+            <p id="id" class="certificate-data">{{ certificate.id }}</p>
+            <strong>Название:</strong>
+            <p id="name" class="certificate-data">{{ certificate.name }}</p>
+            <strong>Тип:</strong>
+            <p id="type" class="certificate-data">{{ certificate.type }}</p>
+            <strong>Дата:</strong>
+            <p id="date" class="certificate-data">{{ certificate.date }}</p>
+            <strong>Категория:</strong>
+            <p id="category" class="certificate-data">{{ certificate.category }}</p>
+            <strong>Подкатегория:</strong>
+            <p id="sub-category" class="certificate-data">{{ certificate.subcategory }}</p>
+        </div>
+        <div>
+            <p>
+{#                <button id="edit" class="navigation-button">Редактировать</button>#}
+{#                <button id="finish" style="display: none" class="navigation-button">Сохранить</button>#}
+                <button id="delete" style="background-color: salmon" class="navigation-button">Удалить</button>
+            </p>
+        </div>
+    </div>
+    <div id="file" class="column right">
+        <embed id="verPDF" src="{{ certificate.file }}">
+    </div>
+</div>
+
+<dialog id="delete-confirmation-modal">
+    <div>
+        Вы уверены, что хотите удалить данный сертификат?
+    </div>
+    <div>
+        <button id="confirm-delete" class="navigation-button">Да</button>
+        <button id="cancel-delete" class="navigation-button">Нет</button
+    </div>
+</dialog>
+
+<script src={% static "GlobalJS/snackbar.js" %}></script>
+<script src={% static "JS/certificate_about.js" %}></script>
+</body>
+</html>

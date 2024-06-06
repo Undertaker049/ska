@@ -14,6 +14,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
 
@@ -23,18 +24,24 @@ from main import views as main_views
 from selection import views as selection_views
 from self_assessment import views as self_assessment_views
 from authentication import views as auth_views
-
+from ska import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', main_views.main),
     path('self-assessment', self_assessment_views.main),
-    path('upload-assessment', self_assessment_views.upload_assessment),
-    path('validate-name', self_assessment_views.validate_name),
+    path('self-assessment/upload', self_assessment_views.upload_assessment),
+    path('self-assessment/validate-name', self_assessment_views.validate_name),
     path('certificate', certificate_views.main),
+    path('certificate/about', certificate_views.about),
+    path('certificate/delete', certificate_views.delete_certificate),
     path('employee-evaluation', employee_evaluation_views.main),
     path('selection', selection_views.main),
     path('auth', auth_views.main),
     path('registration', auth_views.registration),
     path('logout', auth_views.user_logout)
 ]
+
+# TODO выяснить как работать с файлами с проде
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

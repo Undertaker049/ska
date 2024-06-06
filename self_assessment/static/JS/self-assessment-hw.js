@@ -13,20 +13,20 @@ let hw_page_blocks = {};
 window.addEventListener('load', function () {
     $hw_page.querySelectorAll('.sub-block').forEach(function (e) {
         hw_page_blocks[e.id] = e;
-    })
-})
+    });
+});
 
 $hw_page_button_nxt.forEach(function (e) {
     e.addEventListener('click', function () {
         move_to_another_block(this.closest('.sub-block').id, 1, hw_page_blocks);
-    })
-})
+    });
+});
 
 $hw_page_button_prv.forEach(function (e) {
     e.addEventListener('click', function () {
         move_to_another_block(this.closest('.sub-block').id, -1, hw_page_blocks);
-    })
-})
+    });
+});
 
 $hw_page_radio.forEach(function (e) {
     e.addEventListener('click', function () {
@@ -36,8 +36,8 @@ $hw_page_radio.forEach(function (e) {
             update_button_counter('hw-page', hw_page_object, 'Hardware');
             this.closest('div').style.border = 'none';
         }
-    })
-})
+    });
+});
 
 
 

@@ -9,72 +9,89 @@
     <link rel="shortcut icon" href="https://cdn-icons-png.freepik.com/512/709/709612.png" />
 </head>
 <body>
-    {% if request.user.is_authenticated %}
-        {% include "logged-header.html" %}
-    {% else %}
-        {% include "header.html" %}
-    {% endif %}
+{% if request.user.is_authenticated %}
+    {% include "logged-header.html" %}
+{% else %}
+    {% include "header.html" %}
+{% endif %}
+
+<button id="upload-certificate">Загрузить сертификат</button>
+<table id="certificates">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Название</th>
+        <th>Дата получения</th>
+    </tr>
+    </thead>
+    <tbody>
+        {% for certificate in certificates %}
+            <tr>
+                <td>{{ certificate.id }}</td>
+                <td>{{ certificate.training_name }}</td>
+                <td>{{ certificate.date }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<dialog id="form-modal">
 <div id="wrapper">
-<form id="certificate-form" onkeydown="if(event.keyCode === 13) {return false}" method="post" action="/certificate" enctype="multipart/form-data">
-    {% csrf_token %}
-    <p>
-        <label for="name">Фамилия и Имя</label><br>
-        <input type="text" id="name" name="name" pattern="[А-ЯЁ][а-яё]*\s[А-ЯЁ][а-яё]*" title="Фамилия и имя с заглавной буквы " required />
-    </p>
+    <button id="close-modal">X</button>
+    <form id="certificate-form" method="post" action="/certificate" enctype="multipart/form-data">
+        {% csrf_token %}
 
-    <p>
-        <label for="training_name">Название тренинга</label><br>
-        <input type="text" id="training_name" name="training_name" required />
-    </p>
+        <p>
+            <label for="training_name">Название тренинга</label><br>
+            <input type="text" id="training_name" name="training_name" required />
+        </p>
 
-    <p>
-        <label for="type">Сертификат</label><br>
-        <select name="training_type" id="type" required >
-            <option name="DEF" value="Placeholder" disabled selected>— Выберите —</option>
-            <option name="CER" value="certification"> о вендорской сертификации</option><br>
-            <option name="TR" value="training">о прохождении тренинга</option>
-            <option name="EX" value="exam">о сдаче экзамена</option>
-        </select>
-    </p>
+        <p>
+            <label for="type">Сертификат</label><br>
+            <select name="training_type" id="type" required >
+                <option name="DEF" value="Placeholder" disabled selected>— Выберите —</option>
+                <option name="CER" value="certification"> о вендорской сертификации</option>
+                <option name="TR" value="training">о прохождении тренинга</option>
+                <option name="EX" value="exam">о сдаче экзамена</option>
+            </select>
+        </p>
 
-    <p>
-        <label for="date">Дата получения</label><br>
-        <input type="date" id="date" name="date" required />
-    </p>
+        <p>
+            <label for="date">Дата получения</label><br>
+            <input type="date" id="date" name="date" required />
+        </p>
 
-    <p>
-        <label for="category">Категория</label><br>
-        <select id="category" name="category" required >
-            <option value="DEF" disabled selected>— Выберите —</option>
-            <option value="BURA">BURA</option>
-            <option value="Compute">Compute</option>
-            <option value="Generic">Generic</option>
-            <option value="Hybrid IT">Hybrid IT</option>
-            <option value="ITIL">ITIL</option>
-            <option value="Networking">Networking</option>
-            <option value="Operating System">Operating System</option>
-            <option value="Software">Software</option>
-            <option value="Storage">Storage</option>
-            <option value="Support">Support</option>
-        </select>
-    </p>
+        <p>
+            <label for="category">Категория</label><br>
+            <select id="category" name="category" required >
+                <option value="DEF" disabled selected>— Выберите —</option>
+                <option value="BURA">BURA</option>
+                <option value="Compute">Compute</option>
+                <option value="Generic">Generic</option>
+                <option value="Hybrid IT">Hybrid IT</option>
+                <option value="ITIL">ITIL</option>
+                <option value="Networking">Networking</option>
+                <option value="Operating System">Operating System</option>
+                <option value="Software">Software</option>
+                <option value="Storage">Storage</option>
+                <option value="Support">Support</option>
+            </select>
+        </p>
 
-    <p id="for-sub-cat"></p>
+        <p id="for-sub-cat"></p>
 
-    <p>
-        <label for="file">Сертификат в формате .jpg, .png, .pdf</label><br>
-        <input type="file" id="file" name="certificate" accept=".jpg,.png,.pdf" required />
-    </p>
-
-    <p>
-        <input id="sb" type="submit"/>
-    </p>
-</form>
-{#    <button id="send">Отправить</button>#}
+        <p id="file-block">
+            <label for="file">Сертификат в формате .jpg, .png, .pdf</label><br>
+            <input type="file" id="file" name="certificate" accept=".jpg,.png,.pdf" required />
+        </p>
+        <p>
+            <input type="submit" value="Галочка">
+        </p>
+    </form>
 </div>
+</dialog>
 
-<footer>
-</footer>
+<footer></footer>
 <script src="{% static "JS/certificate.js" %}"></script>
 </body>
 </html>
