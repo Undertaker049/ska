@@ -1,10 +1,10 @@
-{#TODO 2. добавить обработку кнопок редактировать и удалить#}
+{#TODO Доделать стили#}
 <!DOCTYPE html>
 {% load static %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Certificate - About</title>
+    <title>Certificate | About</title>
     <link rel="stylesheet" href="{% static "GlobalCSS/Header.css" %}" />
     <link rel="stylesheet" href="{% static "CSS/certificate_about.css" %}" />
     <link rel="stylesheet" href="{% static "GlobalCSS/snackbar.css" %}" />
@@ -40,23 +40,27 @@
             <p>
 {#                <button id="edit" class="navigation-button">Редактировать</button>#}
 {#                <button id="finish" style="display: none" class="navigation-button">Сохранить</button>#}
-                <button id="delete" style="background-color: salmon" class="navigation-button">Удалить</button>
+                <button id="delete" class="navigation-button">Удалить</button>
             </p>
         </div>
     </div>
     <div id="file" class="column right">
-        <embed id="verPDF" src="{{ certificate.file }}">
+        {% if certificate.is_pdf %}
+        	<embed id="pdf" src="{{ certificate.file }}">
+        {% else %}
+            <img id="image" src="{{ certificate.file }}" alt="Certificate" width="100%">
+        {% endif %}
     </div>
 </div>
 
 <dialog id="delete-confirmation-modal">
-    <div>
+    <p>
         Вы уверены, что хотите удалить данный сертификат?
-    </div>
-    <div>
+    </p>
+    <p>
         <button id="confirm-delete" class="navigation-button">Да</button>
-        <button id="cancel-delete" class="navigation-button">Нет</button
-    </div>
+        <button id="cancel-delete" class="navigation-button">Нет</button>
+    </p>
 </dialog>
 
 <script src={% static "GlobalJS/snackbar.js" %}></script>

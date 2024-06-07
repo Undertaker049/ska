@@ -1,3 +1,4 @@
+import http
 import os
 
 from django.contrib.auth.decorators import login_required
@@ -39,8 +40,9 @@ def main(request):
 def about(request):
     if request.method == 'GET':
         c = Certificate.objects.filter(employee_name=f"{request.user.first_name} {request.user.last_name}",
-                                       id=request.GET.get("id")).values()[0]
+                                       id=request.GET.get("id"))
         if c:
+            c = c.values()[0]
             # sl = CertificateSubCategory.objects.values()
             # selections = {}
             #
@@ -54,18 +56,21 @@ def about(request):
             data = {"id": c["id"],
                     "name": c["training_name"],
                     "type": c["training_type"],
-                    "date": c["date"].strftime('%Y-%m-%d'),
+                    # "date": c["date"].strftime('%Y-%m-%d'),
+                    "date": c["date"],
                     "category": c["category_id"],
                     "subcategory": c["sub_category_id"],
-                    "file": f"{settings.MEDIA_URL}{c['certificate_file']}"}
+                    "file": f"{settings.MEDIA_URL}{c['certificate_file']}",
+                    "is_pdf": True if c['certificate_file'].split(".")[1] == "pdf" else False}
             # "selections": selections}
             return render(request, 'certificate_about.html', {"certificate": data})
+        else:
+            return render(request, "certificate_about_not_found.html")
 
 
 @login_required
 def delete_certificate(request):
     if request.method == "POST":
-        print(request.POST.get("id"))
         obj = Certificate.objects.filter(employee_name=f"{request.user.first_name} {request.user.last_name}",
                                          id=request.POST["id"])
         if obj.exists():
@@ -73,5 +78,9 @@ def delete_certificate(request):
             print(path)
             if os.path.isfile(path):
                 os.remove(path)
-            obj.delete()
-            return HttpResponse(status=200, content="Сертификат удален")
+                obj.delete()
+                return HttpResponse(status=200, content="Сертификат удален")
+            else:
+                return HttpResponse(status=http.HTTPStatus.NOT_FOUND, content="Файл сертификата не найден.")
+        else:
+            return HttpResponse(status=http.HTTPStatus.NOT_FOUND, content="Запись не найдена на сервере.")

@@ -1,3 +1,4 @@
+{#TODO Доделать стили#}
 <!DOCTYPE html>
 {% load static %}
 <html lang="en">
@@ -15,12 +16,14 @@
     {% include "header.html" %}
 {% endif %}
 
+<div id="data">
 <button id="upload-certificate">Загрузить сертификат</button>
 <table id="certificates">
     <thead>
     <tr>
         <th>ID</th>
         <th>Название</th>
+        <th>Тип</th>
         <th>Дата получения</th>
     </tr>
     </thead>
@@ -29,11 +32,13 @@
             <tr>
                 <td>{{ certificate.id }}</td>
                 <td>{{ certificate.training_name }}</td>
+                <td>{{ certificate.training_type }}</td>
                 <td>{{ certificate.date }}</td>
             </tr>
         {% endfor %}
     </tbody>
 </table>
+</div>
 
 <dialog id="form-modal">
 <div id="wrapper">
