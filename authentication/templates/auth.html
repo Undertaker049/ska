@@ -3,27 +3,28 @@
 <html lang="en-US">
 <head>
     <meta charset="UTF-8">
-    <title>Auth test</title>
+    <title>Log in</title>
     <link rel="stylesheet" href="{% static "CSS/auth.css" %}" />
     <link rel="shortcut icon" href="https://cdn-icons-png.freepik.com/512/709/709612.png" />
 </head>
 <body>
-<div id="wrapper">
-<form id="auth" method="post" action="/auth">
-    {% csrf_token %}
-    <p>
-        <label for="login">Имя пользователя:</label><br>
-        <input id="login" name="login" type="text" placeholder="username" required>
-    </p>
-    <p>
-        <label for="password">Пароль:</label><br>
-        <input id="password" name="password" type="password" placeholder="Password" required>
-    </p>
-    <input type="submit">
-</form>
-    <a href="/registration">Регистрация</a>
+{% include "../../Global/Templates/sidebar.html" %}
+<div id="outer-wrapper">
+    <div id="inner-wrapper">
+        <form id="auth" method="post" action="/auth">
+            {% csrf_token %}
+            <p>
+                <label for="login">Имя пользователя:</label><br>
+                <input id="login" name="login" type="text" placeholder="username" required>
+            </p>
+            <p>
+                <label for="password">Пароль:</label><br>
+                <input id="password" name="password" type="password" placeholder="Password" required>
+            </p>
+            <input type="submit" class="navigation-button" value="Войти">
+        </form>
+        <a href="/auth/registration">Регистрация</a>
+    </div>
 </div>
-
-<script src="{% static "GlobalJS/header.js" %}"></script>
 </body>
 </html>

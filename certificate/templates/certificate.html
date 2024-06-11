@@ -5,16 +5,18 @@
 <head>
     <meta charset="UTF-8">
     <title>Certificate</title>
-    <link rel="stylesheet" href="{% static "GlobalCSS/Header.css" %}" />
+{#    <link rel="stylesheet" href="{% static "GlobalCSS/Header.css" %}" />#}
+    <link rel="stylesheet" href="{% static "GlobalCSS/sidebar.css" %}" />
     <link rel="stylesheet" href="{% static "CSS/certificate.css" %}" />
     <link rel="shortcut icon" href="https://cdn-icons-png.freepik.com/512/709/709612.png" />
 </head>
 <body>
-{% if request.user.is_authenticated %}
-    {% include "logged-header.html" %}
-{% else %}
-    {% include "header.html" %}
-{% endif %}
+{%  include "sidebar.html" %}
+{#{% if request.user.is_authenticated %}#}
+{#    {% include "logged-header.html" %}#}
+{#{% else %}#}
+{#    {% include "header.html" %}#}
+{#{% endif %}#}
 
 <div id="data">
 <button id="upload-certificate">Загрузить сертификат</button>
@@ -97,6 +99,7 @@
 </dialog>
 
 <footer></footer>
+<script src="{% static "GlobalJS/sidebar.js" %}"></script>
 <script src="{% static "JS/certificate.js" %}"></script>
 </body>
 </html>

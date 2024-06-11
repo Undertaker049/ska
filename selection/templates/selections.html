@@ -4,20 +4,23 @@
 <head>
     <meta charset="UTF-8">
     <title>Selection</title>
-    <link rel="stylesheet" href="{% static "GlobalCSS/Header.css" %}" />
+{#    <link rel="stylesheet" href="{% static "GlobalCSS/Header.css" %}" />#}
+    <link rel="stylesheet" href="{% static "GlobalCSS/sidebar.css" %}" />
     <link rel="stylesheet" href="{% static "CSS/selections.css" %}" />
     <link rel="shortcut icon" href="https://i.pinimg.com/474x/67/bf/21/67bf2179ae48b0513c7a067200e006c5.jpg" />
 </head>
 <body>
-    {% if request.user.is_authenticated %}
-        {% include "logged-header.html" %}
-    {% else %}
-        {% include "header.html" %}
-    {% endif %}
+    {%  include "sidebar.html" %}
+{#    {% if request.user.is_authenticated %}#}
+{#        {% include "logged-header.html" %}#}
+{#    {% else %}#}
+{#        {% include "header.html" %}#}
+{#    {% endif %}#}
 
     <div id="wrapper">
     <p>В процессе...</p>
     <img src="https://media1.tenor.com/m/6RLqkhjqa7sAAAAd/anton-klockan-klockan.gif" alt="monke">
     </div>
+<script src="{% static "GlobalJS/sidebar.js" %}"></script>
 </body>
 </html>

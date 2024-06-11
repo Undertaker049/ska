@@ -28,7 +28,7 @@ def registration(request):
         user.save()
         return redirect("/auth")
     elif request.method == "GET":
-        return render(request, "register.html")
+        return render(request, "registration.html")
 
 
 @login_required

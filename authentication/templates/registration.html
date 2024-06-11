@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <title>Registration</title>
+    <link rel="stylesheet" href="{% static "CSS/auth.css" %}"/>
+    <link rel="stylesheet" href="{% static "GlobalCSS/snackbar.css" %}"/>
+    <link rel="shortcut icon" href="https://cdn-icons-png.freepik.com/512/709/709612.png" />
+</head>
+<body>
+<div id="outer-wrapper">
+    <div id="inner-wrapper">
+        {% include "snackbar.html" %}
+        <form id="reg" method="post" action="/registration">
+            {% csrf_token %}
+            <p>
+                <label for="username">Имя пользователя:</label><br>
+                <input id="username" name="username" type="text" required>
+            </p>
+            <p>
+                <label for="email">Почта:</label><br>
+                <input id="email" name="email" type="email" required>
+            </p>
+            <p>
+                <label for="first-name">Имя:</label><br>
+                <input  id="first-name" name="first-name" type="text" required>
+            </p>
+                <p>
+                <label for="last-name">Фамилия:</label><br>
+                <input  id="last-name" name="last-name" type="text" required>
+            </p>
+            <p>
+
+            </p>
+            <p>
+                <label for="password">Пароль:</label><br>
+                <input id="password" name="password" type="password" placeholder="Password" required><br>
+                <label for="re-password">Повторите Пароль:</label><br>
+                <input id="re-password" name="password" type="password" placeholder="Password" required>
+            </p>
+            <input type="submit" class="navigation-button">
+        </form>
+    </div>
+</div>
+
+<script src="{% static "GlobalJS/snackbar.js" %}"></script>
+<script src="{% static "JS/registration.js" %}"></script>
+</body>
+</html>

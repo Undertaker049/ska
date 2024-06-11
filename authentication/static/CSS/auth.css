@@ -1,20 +1,64 @@
 /*TODO дописать свойства форм.*/
-html, body
-{
+html, body {
     height: 100%;
 }
-body{
+
+body {
     margin: 0;
     padding: 0;
+    display: table;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    font-family: Arial, sans-serif;
 }
+
 header {
     width: 100%;
     height: 80px;
 }
-#wrapper{
-  margin: auto;
-  width: fit-content;
-  padding: 10px;
-  user-select: none;
-  font-size: 18px;
+
+#outer-wrapper {
+    display: table-cell;
+    vertical-align: middle;
+    horiz-align: center;
+}
+
+#inner-wrapper {
+    margin: auto;
+    height: fit-content;
+    width: fit-content;
+    user-select: none;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    font-size: clamp(15px, 5vw, 20px);
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 20px;
+}
+
+.navigation-button {
+    width: 100%;
+    height: 30px;
+    background-color: rgb(0,182,197);
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: clamp(15px, 5vw, 20px);
+}
+
+form label {
+    font-size: clamp(15px, 5vw, 25px);
+}
+
+form input {
+    width: 100%;
+    height: 30px;
+}
+
+.navigation-button:hover {
+    background-color: rgb(0, 126, 146);
 }

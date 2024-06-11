@@ -5,19 +5,21 @@
 <head>
     <meta charset="UTF-8">
     <title>Certificate | About</title>
-    <link rel="stylesheet" href="{% static "GlobalCSS/Header.css" %}" />
+{#    <link rel="stylesheet" href="{% static "GlobalCSS/Header.css" %}" />#}
+    <link rel="stylesheet" href="{% static "GlobalCSS/sidebar.css" %}" />
     <link rel="stylesheet" href="{% static "CSS/certificate_about.css" %}" />
     <link rel="stylesheet" href="{% static "GlobalCSS/snackbar.css" %}" />
     <link rel="shortcut icon" href="https://cdn-icons-png.freepik.com/512/709/709612.png" />
 </head>
 <body>
 {% csrf_token %}
-{% if request.user.is_authenticated %}
-    {% include "logged-header.html" %}
-{% else %}
-    {% include "header.html" %}
-{% endif %}
-{% include "snackbar.html" %}
+{%  include "sidebar.html" %}
+{#{% if request.user.is_authenticated %}#}
+{#    {% include "logged-header.html" %}#}
+{#{% else %}#}
+{#    {% include "header.html" %}#}
+{#{% endif %}#}
+{#{% include "snackbar.html" %}#}
 <div class="row">
     <div id="info" class="column left">
         <p><button onclick="location.href = '/certificate'" class="navigation-button">Назад</button></p>
@@ -48,6 +50,7 @@
         {% if certificate.is_pdf %}
         	<embed id="pdf" src="{{ certificate.file }}">
         {% else %}
+{#            <button id="download-image" class="navigation-button">Скачать</button>#}
             <img id="image" src="{{ certificate.file }}" alt="Certificate" width="100%">
         {% endif %}
     </div>
@@ -63,6 +66,7 @@
     </p>
 </dialog>
 
+<script src={% static "GlobalJS/sidebar.js" %}></script>
 <script src={% static "GlobalJS/snackbar.js" %}></script>
 <script src={% static "JS/certificate_about.js" %}></script>
 </body>

@@ -10,7 +10,7 @@ window.addEventListener('load', function () {
     fetch('self-assessment/validate-name').then(response => {
         if (!response.ok) {
             $finish_button.disabled = true;
-            return response.text().then(text => {void show_warning(text)});
+            return response.text().then(text => {showSnackbar(text)});
         } else {
             if (localStorage.getItem("formData") !== null) {
                 document.getElementById("modal").classList.add("show");
@@ -60,7 +60,7 @@ $finish_button.addEventListener("click", function() {
         })
         .then(response => {
             if (!response.ok) {
-                return response.json().then(err => { void show_warning(err.message || "Unknown error") });
+                return response.json().then(err => { showSnackbar(err.message || "Unknown error") });
             }
             return response.json();
         })
@@ -68,7 +68,7 @@ $finish_button.addEventListener("click", function() {
             console.log(err.text);
         });
     } else {
-        void show_warning("Сначала заполните форму до конца!");
+        showSnackbar("Сначала заполните форму!");
     }
 });
 
@@ -130,7 +130,6 @@ function load_form() {
     for (let i = 0; i < keys.length; i++) {
         document.querySelectorAll(`input[name="${keys[i]}"]`).forEach(function (e) {
             if (e.value === form[keys[i]]) {
-                console.log(e)
                 e.checked = true;
                 // Асинхронная функция решает проблемы с блокировкой связанной с вызовом eventListener'ов, как я понял.
                 // Да это самый простой способ и восстановить счетчики и снять флажки. Нет не стыдно.
