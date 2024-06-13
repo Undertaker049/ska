@@ -1,13 +1,20 @@
-html, body
-{
+:root {
+    --system-ui: system-ui, "Helvetica Neue", Arial, sans-serif;
+}
+
+html, body {
     height: 100%;
 }
-body{
+
+body {
     margin: 0;
     padding: 0;
+
+    font-family: var(--system-ui), serif;
 }
-#wrapper{
-  margin: auto;
-  width: fit-content;
-  padding: 10px;
+
+#wrapper {
+    width: fit-content;
+    margin: auto;
+    padding: 10px;
 }

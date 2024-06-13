@@ -23,11 +23,11 @@ $category.addEventListener("change", function (){
     if (document.getElementById("subcategory") === null) {
         document.getElementById("for-sub-cat").innerHTML = "<p><label for='subcategory'>Суб-категория</label><br><select id='subcategory' name='subcategory'></select></p>";
     }
-    document.getElementById("subcategory").innerHTML = ""
+    document.getElementById("subcategory").innerHTML = "";
 
     let sub_cat = document.getElementById("subcategory");
 
-    let arr = category_data[cat]
+    let arr = category_data[cat];
     for (let i = 0; i < arr.length; i++) {
         const option = document.createElement('option');
         option.value = arr[i];
@@ -50,34 +50,7 @@ $form_modal.addEventListener("close", ()=>{
 
 $table_row.forEach(function (e) {
     e.addEventListener("click", function (ev) {
-        location.href = "certificate/about?id=" + ev.target.parentElement.querySelector("td").textContent
-    })
-})
-
-
-// $form.addEventListener("submit", function (event) {
-//     event.preventDefault();
-//
-//     let data = new FormData(event.target)
-//     fetch('/certificate', {
-//             method: "POST",
-//             headers: {
-//                 // 'Accept': 'application/text',
-//                 // 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-//                 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-//                 'Content-Type': 'multipart/form-data'
-//             },
-//             body:
-//                 // csrfmiddlewaretoken: document.querySelector('input[name="csrfmiddlewaretoken"]').value,
-//                 data
-//         })
-//         .then(response => {
-//             if (!response.ok) {
-//                 return response.json().then(err => { console.log(err)});
-//             }
-//             return response.json();
-//         })
-//         .catch(err => {
-//             console.log(err.text);
-//         });
-// })
+        // первый элемент строки таблицы - id, так что можно обойтись querySelector
+        location.href = "certificate/about?id=" + ev.target.parentElement.querySelector("td").textContent;
+    });
+});

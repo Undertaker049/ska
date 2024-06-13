@@ -36,7 +36,7 @@ $pr_page_button.addEventListener('click', function (){
 });
 
 $back_button.addEventListener('click', function () {
-    document.querySelector('header').scrollIntoView();
+    window.scrollTo(0,0)
 })
 
 $finish_button.addEventListener("click", function() {

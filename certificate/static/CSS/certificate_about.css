@@ -1,6 +1,11 @@
+:root{
+    --system-ui: system-ui, "Helvetica Neue", Arial, sans-serif;
+}
+
 html {
     height: 100%;
     width: 100%;
+
     overflow: hidden
 }
 body {
@@ -8,16 +13,21 @@ body {
     width: 100%;
     margin: 0;
     padding: 0;
+
+    font-family: var(--system-ui), serif;
 }
 
 * {
-  box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 .row {
-    display: flex;
-    width: 100%;
+    /* Самый мирный способ убрать наложение сайдбара из за position:fixed */
+    width: calc(100% - 60px);
     height: 100%;
+
+    display: flex;
+    margin-left: 60px;
     padding-top: 10px;
 }
 
@@ -43,11 +53,15 @@ embed {
 .navigation-button {
     width:150px;
     height: 30px;
-    background-color: rgb(0,182,197);
+
     border: none;
+
+    font-size: clamp(15px, 5vw, 20px);
+
+    background-color: rgb(0,182,197);
+
     cursor: pointer;
     transition: background-color 0.3s ease;
-    font-size: clamp(15px, 5vw, 20px);
 }
 
 .navigation-button:hover {
@@ -55,13 +69,14 @@ embed {
 }
 
 #info {
-    border: 1px solid #ccc;
-    /*padding: 15px;*/
-    /*margin: 15px 0;*/
-    border-radius: 5px;
-    background-color: #f9f9f9;
-    font-size: clamp(15px, 5vw, 20px);
     height: fit-content;
+
+    border: 1px solid #ccc;
+    border-radius: 5px;
+
+    font-size: clamp(15px, 5vw, 20px);
+
+    background-color: #f9f9f9;
 }
 
 #info h2 {
@@ -73,18 +88,19 @@ embed {
 }
 
 #info strong {
-    display: inline-block;
     width: 120px;
+
+    display: inline-block;
 }
 
-#delete-confirmation-modal{
+#delete-confirmation-modal {
     user-select: none;
 }
 
-#delete{
+#delete {
     background-color: salmon
 }
 
-#delete:hover{
+#delete:hover {
     background-color: #f62109;
 }

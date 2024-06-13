@@ -47,7 +47,6 @@
     <button id="close-modal">X</button>
     <form id="certificate-form" method="post" action="/certificate" enctype="multipart/form-data">
         {% csrf_token %}
-
         <p>
             <label for="training_name">Название тренинга</label><br>
             <input type="text" id="training_name" name="training_name" required />
@@ -92,13 +91,12 @@
             <input type="file" id="file" name="certificate" accept=".jpg,.png,.pdf" required />
         </p>
         <p>
-            <input type="submit" value="Галочка">
+            <input id="send-certificate" type="submit" value="Загрузить">
         </p>
     </form>
 </div>
 </dialog>
 
-<footer></footer>
 <script src="{% static "GlobalJS/sidebar.js" %}"></script>
 <script src="{% static "JS/certificate.js" %}"></script>
 </body>

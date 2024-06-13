@@ -1,4 +1,4 @@
-const $delete_confirmation_modal = document.getElementById("delete-confirmation-modal")
+const $delete_confirmation_modal = document.getElementById("delete-confirmation-modal");
 
 const $delete_button = document.getElementById("delete");
 const $confirm_delete_button = document.getElementById("confirm-delete");
