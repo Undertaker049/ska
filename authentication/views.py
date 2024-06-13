@@ -1,3 +1,5 @@
+import http
+
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
@@ -12,7 +14,7 @@ def main(request):
             login(request, user)
             return redirect("/")
         else:
-            return redirect("/registration")
+            return HttpResponse(status=http.HTTPStatus.NOT_FOUND, content="Пользователь с таким логином/паролем не найден!")
     elif request.method == "GET":
         return render(request, "auth.html")
 

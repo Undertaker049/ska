@@ -4,14 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <title>Log in</title>
+    <link rel="stylesheet" href="{% static "GlobalCSS/snackbar.css" %}" />
     <link rel="stylesheet" href="{% static "CSS/auth.css" %}" />
     <link rel="shortcut icon" href="https://cdn-icons-png.freepik.com/512/709/709612.png" />
 </head>
 <body>
-{% include "../../Global/Templates/sidebar.html" %}
+{% include "snackbar.html" %}
 <div id="outer-wrapper">
     <div id="inner-wrapper">
-        <form id="auth" method="post" action="/auth">
+        <div id="auth">
             {% csrf_token %}
             <p>
                 <label for="login">Имя пользователя:</label><br>
@@ -21,10 +22,13 @@
                 <label for="password">Пароль:</label><br>
                 <input id="password" name="password" type="password" placeholder="Password" required>
             </p>
-            <input type="submit" class="navigation-button" value="Войти">
-        </form>
-        <a href="/auth/registration">Регистрация</a>
+            <button id="submit" class="navigation-button">Войти</button>
+            <a href="/auth/registration">Регистрация</a>
+        </div>
     </div>
 </div>
+
+<script src="{% static "JS/login.js" %}"></script>
+<script src="{% static "GlobalJS/snackbar.js" %}"></script>
 </body>
 </html>

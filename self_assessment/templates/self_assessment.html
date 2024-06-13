@@ -15,12 +15,7 @@
 </head>
 <body>
 {% include "sidebar.html" %}
-{#    {% if request.user.is_authenticated %}#}
-{#        {% include "logged-header.html" %}#}
-{#    {% else %}#}
-{#        {% include "header.html" %}#}
-{#    {% endif %}#}
-    {% include "snackbar.html" %}
+{% include "snackbar.html" %}
 
     <div id="form-navigation" class="wrapper">
         <button id="hw-page" class="form-navigation-button" type="button">Hardware</button>
@@ -35,11 +30,18 @@
             <div id="{{ page.id }}" class="form-element"><h1 class="wrapper">{{ page.id }}</h1>
                 {% for product in page.tech %}
                     <div class="sub-block" id="{{ product|replace_dj:" |_" }}">
-                        <div class="form-navigation-block wrapper">
-                            <button id="{{ product|replace_dj:" |_" }}_previous"  class="form-navigation-button block-button-prev"  type="button">Previous</button>
+                    {% if page.longList %}
+                    	<div class="form-navigation-block wrapper">
+                            <button class="form-navigation-button block-button-prev"  type="button">Previous</button>
                             <h2 style="display: inline-block">{{ product }}</h2>
-                            <button id="{{ product|replace_dj:" |_" }}_next"  class="form-navigation-button block-button-next" type="button">Next</button>
+                            <button class="form-navigation-button block-button-next" type="button">Next</button>
                         </div>
+                        {% else %}
+                        <div class="form-navigation-block wrapper">
+                            <h2 style="display: inline-block">{{ product }}</h2>
+                        </div>
+                    {% endif %}
+
                         {% for discipline in page.disciplines %}
                             <div class="{{ page.subpages}} element wrapper"><h3>{{ discipline }}</h3>
                                 <table style="display: inline">
@@ -69,7 +71,8 @@
     </form>
     <div id="modal" class="modal" style="color: black">
         <div class="modal-content">
-            <p>Найдена ваша незавершенная форма. Хотите продолжить?<br>
+            <p>
+                Найдена ваша незавершенная форма. Хотите продолжить?<br>
                 (В случае отказа данные будут стёрты)
             </p>
             <div>

@@ -20,25 +20,33 @@ def main(request):
 
     levels = Levels.objects.values_list('weight', 'level').distinct()
 
+    # Id - id html-блока,
+    # subpages - название класса html-блоков для конкретных процессов/технологий etc.,
+    # tech - конкретная технология/процесс etc., по которой есть вопросы,
+    # disciplines - Вопросы по конкретной технологии/процессу etc.,
+    # long-list - Пока я не придумал как нормально переписать форму - костыль, чтобы убрать генерацию кнопок перехода
+    # к следующему блоку на страницах, где блоки вопросов короткие(как Processes например)
     hw_page = {"id": "HW",
                "subpages": "hw-element",
                "tech": hw,
-               "disciplines": hw_disciplines
+               "disciplines": hw_disciplines,
+               "longList": True
                }
     sw_page = {"id": "SW",
                "subpages": "sw-element",
                "tech": sw,
-               "disciplines": sw_disciplines
+               "disciplines": sw_disciplines,
+               "longList": True
                }
     skills_page = {"id": "Processes",
                    "subpages": "processes-element",
                    "tech": skills,
-                   "disciplines": skills_disciplines
+                   "disciplines": skills_disciplines,
+                   "longList": False
                    }
 
     data = {"pages": [hw_page, sw_page, skills_page],
             "levels": levels}
-    # return render(request, 'self_assessment.html', data)
     return render(request, 'self_assessment.html', data)
 
 
