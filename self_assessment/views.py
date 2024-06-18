@@ -56,7 +56,7 @@ def validate_name(request):
     if employee is not None:
         if (SkillsHW.objects.filter(employee_id=employee.id).exists() |
                 SkillsSW.objects.filter(employee_id=employee.id).exists() |
-                SKillsPr.objects.filter(employee_id=employee.id).exists()):
+                SkillsPR.objects.filter(employee_id=employee.id).exists()):
             return HttpResponse("Ваши данные уже есть в базе", status=403)
     else:
         return HttpResponse("Работник не найден", status=404)
@@ -94,7 +94,7 @@ def upload_assessment(request):
     for product in data.get("Processes"):
         process_name = product.get("_product").replace('\'', "")
         processes_tasks_level = product.get("_selections")[0]
-        obj = SKillsPr(employee_id=user_id,
+        obj = SkillsPR(employee_id=user_id,
                        process=Processes.objects.get(process=process_name),
                        level=Levels.objects.get(weight=processes_tasks_level))
         obj.save()

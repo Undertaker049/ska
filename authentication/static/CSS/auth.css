@@ -33,7 +33,7 @@ header {
     horiz-align: center;
 }
 
-#auth {
+#auth, form {
     height: fit-content;
     width: fit-content;
 

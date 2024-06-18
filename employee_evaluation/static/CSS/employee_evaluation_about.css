@@ -1,0 +1,110 @@
+:root {
+    --system-ui: system-ui, "Helvetica Neue", Arial, sans-serif;
+}
+
+html {
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    height: 100%;
+    width: 100%;
+
+    margin: 0;
+    padding: 0;
+
+    font-family: var(--system-ui), serif;
+}
+
+#content {
+    width: calc(100% - 60px);
+    margin-left: 60px;
+    height: 100%;
+}
+
+#back {
+    position: fixed;
+    top: 10px;
+    left: 70px;
+    padding: 10px;
+    border: none;
+    background-color: rgb(0, 182, 197);
+    transition: .3s;
+}
+
+#back:hover {
+    background-color: rgb(0, 126, 146);
+}
+
+#content-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    margin: auto;
+}
+
+.column {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    width: 200px;
+
+    padding-left: 10px;
+
+    background-color: teal;
+
+    transition: 1s;
+}
+
+.column:hover {
+    height: 95%;
+    width: 40%;
+    align-items: stretch;
+}
+
+.column-header {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    gap: 10px
+}
+
+.column-header strong{
+    font-size: 2rem;
+}
+
+.column-wrapper {
+    display: block;
+    overflow: hidden;
+}
+
+.data {
+    font-size: small;
+    display: none;
+}
+
+.column:hover .data {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    font-size: 0.9rem;
+}
+
+.expand-button {
+    display: none;
+    padding: 5px;
+    border: none;
+    background-color: rgb(0, 182, 197);
+}
+
+.expand-button:hover{
+    background-color: rgb(0, 126, 146);
+}
+
+.column:hover .expand-button {
+    display: block;
+}

@@ -12,6 +12,7 @@ def main(request):
         user = authenticate(username=request.POST["login"], password=request.POST["password"])
         if user:
             login(request, user)
+            print("redirecting...")
             return redirect("/")
         else:
             return HttpResponse(status=http.HTTPStatus.NOT_FOUND, content="Пользователь с таким логином/паролем не найден!")
@@ -36,4 +37,4 @@ def registration(request):
 @login_required
 def user_logout(request):
     logout(request)
-    return redirect('/')
+    return redirect('/auth')

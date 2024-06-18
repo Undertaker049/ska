@@ -48,7 +48,7 @@ class SkillsSW(models.Model):
     time = models.DateTimeField(auto_now_add=True)
 
 
-class SKillsPr(models.Model):
+class SkillsPR(models.Model):
     employee = models.ForeignKey(Employees, on_delete=models.CASCADE)
     process = models.ForeignKey(Processes, on_delete=models.DO_NOTHING, to_field="process")
     level = models.ForeignKey(Levels, on_delete=models.DO_NOTHING, to_field="level")

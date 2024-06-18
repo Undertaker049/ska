@@ -24,15 +24,15 @@
             <i><img alt="PR" src="{% static 'Images/profile.svg' %}"></i>
             <span class="menu-item">Профиль</span>
         </li>
-        <li id="logout">
+        <li id="logout" onclick="location.href = '/auth/logout'">
             <i><img alt="LgO" src="{% static 'Images/logout.svg' %}"></i>
-            <span class="menu-item" onclick="location.href = '/auth/logout'">Выход</span>
+            <span class="menu-item" >Выход</span>
         </li>
     </ul>
     <div id="theme">
         <div id="icon-wrapper">
-        <img id="light-theme-icon" class="theme-icon" src="{% static "Images/light.svg" %}" alt="light">
-        <img id="dark-theme-icon" class="theme-icon" src="{% static "Images/dark.svg" %}" alt="dark">
+            <div id="light-theme-icon"><img class="theme-icon" src="{% static "Images/light.svg" %}" alt="light"></div>
+            <div id="dark-theme-icon"><img class="theme-icon" src="{% static "Images/dark.svg" %}" alt="dark"></div>
         </div>
     </div>
 </div>

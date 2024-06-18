@@ -6,21 +6,39 @@
     <title>Evaluation</title>
 {#    <link rel="stylesheet" href="{% static "GlobalCSS/Header.css" %}" />#}
     <link rel="stylesheet" href="{% static "GlobalCSS/sidebar.css" %}" />
+    <link rel="stylesheet" href="{% static "GlobalCSS/snackbar.css" %}" />
     <link rel="stylesheet" href="{% static "CSS/employee_evaluation.css" %}" />
     <link rel="shortcut icon" href="https://cdn-icons-png.freepik.com/512/709/709612.png" />
 </head>
 <body>
 {%  include "sidebar.html" %}
-{#    {% if request.user.is_authenticated %}#}
-{#        {% include "logged-header.html" %}#}
-{#    {% else %}#}
-{#        {% include "header.html" %}#}
-{#    {% endif %}#}
-
-    <div id="wrapper">
-    <p>Когда-нибудь тут что-то будет</p>
-    <img src="https://media1.tenor.com/m/9PSk2ESa3mkAAAAC/dramatic-music-hi-res.gif" alt="monke">
+{%  include "snackbar.html" %}
+<div id="content">
+    <div id="employees">
+{#        <h2>Список сотрудников</h2>#}
+        <label for="table-search">Search the site:</label><br/>
+        <input type="search" id="table-search" name="ts" placeholder="id,name"/>
+        <button id="search">Найти</button>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>ФИО</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for employee in employees %}
+                    <tr>
+                        <td>{{ employee.id }}</td>
+                        <td>{{ employee.name }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
+</div>
 <script src="{% static "GlobalJS/sidebar.js" %}"></script>
+<script src="{% static "GlobalJS/snackbar.js" %}"></script>
+<script src="{% static "JS/employee_evaluation.js" %}"></script>
 </body>
 </html>

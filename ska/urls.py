@@ -36,6 +36,7 @@ urlpatterns = [
     path('certificate/about', certificate_views.about),
     path('certificate/delete', certificate_views.delete_certificate),
     path('employee-evaluation', employee_evaluation_views.main),
+    path('employee-evaluation/about',employee_evaluation_views.about),
     path('selection', selection_views.main),
     path('auth', auth_views.main),
     path('auth/registration', auth_views.registration),

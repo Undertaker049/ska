@@ -5,7 +5,7 @@ const $theme_block = document.getElementById("theme");
 if (localStorage.getItem("ThemeSKA") === null){
     if(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
         localStorage.setItem("ThemeSKA", "dark-mode");
-        swipe_theme("_", "dark-mode")
+        swipe_theme("_", "dark-mode");
     } else {
         localStorage.setItem("ThemeSKA", "light-mode");
         swipe_theme("_", "light-mode");
@@ -28,12 +28,11 @@ $light_theme.addEventListener("click", ()=>{
 
 
 /**
- * Меняет тему добавляя\удаляя классы и обновляет значение в localStorage
- * @param {string}from
- * @param {string}to
+ * Меняет тему добавляя\удаляя классы(light-mode | dark-mode) и обновляет значение в localStorage
+ * @param {string}from с <...> темы
+ * @param {string}to на <...> тему
  */
 function swipe_theme(from, to) {
-    console.log("swiping")
     document.body.classList.remove(from);
     document.body.classList.add(to);
     $theme_block.classList.remove(from);

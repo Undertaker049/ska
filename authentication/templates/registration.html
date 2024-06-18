@@ -12,7 +12,7 @@
 <div id="outer-wrapper">
     <div id="inner-wrapper">
         {% include "snackbar.html" %}
-        <form id="reg" method="post" action="/registration">
+        <form id="reg" method="post" action="/auth/registration">
             {% csrf_token %}
             <p>
                 <label for="username">Имя пользователя:</label><br>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static "GlobalCSS/sidebar.css" %}" />
+    <link rel="stylesheet" href="{% static "GlobalCSS/snackbar.css" %}" />
+    <link rel="stylesheet" href="{% static "CSS/employee_evaluation_about.css" %}" />
+    <link rel="shortcut icon" href="https://cdn-icons-png.freepik.com/512/709/709612.png" />
+    <title>Evaluation | About</title>
+</head>
+<body>
+{%  include "sidebar.html" %}
+{%  include "snackbar.html" %}
+<div id="content">
+{#    <button id="back" onclick="location.href = '/employee-evaluation'">Назад</button>#}
+    <div id="content-wrapper">
+        <div class="column">
+            <div class="column-wrapper">
+                <div class="column-header">
+                    <strong>Hardware</strong>
+                    <button class="expand-button">Подробнее</button>
+                </div>
+                <div class="data">
+                    {% for data in hw_data %}
+                        <p>
+                            <strong>{{ data.product }}</strong><br/>
+                            Score: {{ data.score }}/{{ hw_max_score }}
+                        </p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+            <div class="column">
+                <div class="column-wrapper">
+                    <div class="column-header">
+                        <strong>Software</strong>
+                        <button class="expand-button">Подробнее</button>
+                    </div>
+                    <div class="data">
+                        {% for data in sw_data %}
+                        <p>
+                            <strong>{{ data.product }}</strong><br/>
+                            Score: {{ data.score }}/{{ sw_max_score }}
+                        </p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="column">
+                <div class="column-wrapper">
+                    <div class="column-header">
+                        <strong>Processes</strong>
+                        <button class="expand-button">Подробнее</button>
+                    </div>
+                    <div class="data">
+                        {% for data in pr_data %}
+                        <p>
+                            <strong>{{ data.process }}</strong><br/>
+                            Level: {{ data.level }}
+                        </p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
+<script src="{% static "GlobalJS/sidebar.js" %}"></script>
+<script src="{% static "GlobalJS/snackbar.js" %}"></script>
+<script src="{% static "JS/employee_evaluation_about.js" %}"></script>
+</body>
+</html>
