@@ -1,0 +1,15 @@
+{% load static %}
+<div>
+{% if long %}
+    {% for pr in data %}
+        <div class="product">
+            <h2>{{ pr.product }}</h2>
+            {% for task in pr.tasks %}
+                <p>{{ task.0 }}<br/>Level: {{ task.1 }}</p>
+            {% endfor %}
+        </div>
+    {% endfor %}
+{% else %}
+    <span></span>
+{% endif %}
+</div>

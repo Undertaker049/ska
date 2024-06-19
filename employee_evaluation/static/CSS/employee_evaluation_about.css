@@ -53,10 +53,11 @@ body {
     align-items: center;
     height: 200px;
     width: 200px;
-
     padding-left: 10px;
 
     background-color: teal;
+
+    color: white;
 
     transition: 1s;
 }
@@ -80,7 +81,7 @@ body {
 
 .column-wrapper {
     display: block;
-    overflow: hidden;
+    overflow: scroll;
 }
 
 .data {
@@ -92,6 +93,10 @@ body {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     font-size: 0.9rem;
+}
+
+p{
+    padding: 0 3px;
 }
 
 .expand-button {
@@ -107,4 +112,29 @@ body {
 
 .column:hover .expand-button {
     display: block;
+}
+
+::-webkit-scrollbar {
+  width: 7px; /* Ширина вертикального скроллбара */
+  height: 7px; /* Высота горизонтального скроллбара */
+}
+
+/* Стили для трека скроллбара (полоса по которой движется бегунок) */
+::-webkit-scrollbar-track {
+    background: none; /* Цвет фона трека */
+}
+
+/* Стили для бегунка скроллбара (сам скролл) */
+::-webkit-scrollbar-thumb {
+  background: #888; /* Цвет бегунка */
+  border-radius: 10px; /* Закругленные углы */
+}
+
+/* Стили для бегунка при наведении */
+::-webkit-scrollbar-thumb:hover {
+    background: #555; /* Цвет бегунка при наведении */
+}
+
+::-webkit-scrollbar-corner {
+  background: none; /* Цвет угла */
 }

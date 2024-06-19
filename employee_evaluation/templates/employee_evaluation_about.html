@@ -19,7 +19,7 @@
             <div class="column-wrapper">
                 <div class="column-header">
                     <strong>Hardware</strong>
-                    <button class="expand-button">Подробнее</button>
+                    <button id="expand-hw" class="expand-button">Подробнее</button>
                 </div>
                 <div class="data">
                     {% for data in hw_data %}
@@ -35,7 +35,7 @@
                 <div class="column-wrapper">
                     <div class="column-header">
                         <strong>Software</strong>
-                        <button class="expand-button">Подробнее</button>
+                        <button id="expand-sw" class="expand-button">Подробнее</button>
                     </div>
                     <div class="data">
                         {% for data in sw_data %}
@@ -51,7 +51,7 @@
                 <div class="column-wrapper">
                     <div class="column-header">
                         <strong>Processes</strong>
-                        <button class="expand-button">Подробнее</button>
+                        <button id="expand-pr" class="expand-button">Подробнее</button>
                     </div>
                     <div class="data">
                         {% for data in pr_data %}
@@ -64,7 +64,19 @@
                 </div>
             </div>
         </div>
+    <div id="block-wrapper">
+        <div id="hw">
+
+        </div>
+        <div id="sw">
+
+        </div>
+        <div id="pr">
+
+        </div>
+    </div>
 </div>
+
 <script src="{% static "GlobalJS/sidebar.js" %}"></script>
 <script src="{% static "GlobalJS/snackbar.js" %}"></script>
 <script src="{% static "JS/employee_evaluation_about.js" %}"></script>
