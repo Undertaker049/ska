@@ -30,23 +30,22 @@ def about(request):
     return render(request, "employee_evaluation_about.html", data)
 
 
+@login_required
 def about_block(request):
     employee = Employees.objects.get(id=request.GET.get("id"))
 
-    data = ""
+    data = {}
     match request.GET.get("block"):
         case "hw":
             hw_data = get_products_tasks_levels(SkillsHW, employee, get_products(employee, "hw"))
-            print(hw_data)
-            data = render_to_string("employee-evaluation-about-block.html", {"data": hw_data, "long": True})
+            data = {"data": hw_data, "long": True}
         case "sw":
-            sw_data = get_products_tasks_levels(SkillsHW, employee, get_products(employee, "sw"))
-            data = render_to_string("employee-evaluation-about-block.html", {"data": sw_data, "long": True})
+            sw_data = get_products_tasks_levels(SkillsSW, employee, get_products(employee, "sw"))
+            data = {"data": sw_data, "long": True}
         case "pr":
-            pr_data = get_products_tasks_levels(SkillsHW, employee, get_products(employee, "pr"), False)
-            data = render_to_string("employee-evaluation-about-block.html", {"data": pr_data, "long": False})
-    print(data)
-    return JsonResponse({"data": data})
+            pr_data = get_products_tasks_levels(SkillsPR, employee, get_products(employee, "pr"), False)
+            data = {"data": pr_data, "long": False}
+    return render(request, "employee-evaluation-about-block.html", data)
 
 
 def get_products(employee, key="all"):
@@ -66,8 +65,7 @@ def get_products_scores(DBObject, employee, product_list, levelVals, is_long=Tru
     arr = []
     if is_long:
         for product in product_list:
-            data = DBObject.objects.filter(employee_id=employee.id, product_id=product).values_list("level_id",
-                                                                                                    flat=True)
+            data = DBObject.objects.filter(employee_id=employee.id, product_id=product).values_list("level_id", flat=True)
             score = 0
             for i in data:
                 score += levelVals[i]
@@ -75,8 +73,7 @@ def get_products_scores(DBObject, employee, product_list, levelVals, is_long=Tru
         return arr
     else:
         for process in product_list:
-            data = SkillsPR.objects.filter(employee_id=employee.id, process_id=process).values_list("level_id",
-                                                                                                    flat=True)
+            data = SkillsPR.objects.filter(employee_id=employee.id, process_id=process).values_list("level_id", flat=True)
             arr.append({"process": process, "level": data[0]})
         return arr
 
@@ -85,8 +82,7 @@ def get_products_tasks_levels(DBObject, employee, product_list, is_long=True):
     arr = []
     if is_long:
         for product in product_list:
-            data = DBObject.objects.filter(employee_id=employee.id, product_id=product).values_list("task_id",
-                                                                                                    "level_id")
+            data = DBObject.objects.filter(employee_id=employee.id, product_id=product).values_list("task_id", "level_id")
             tasks = []
             for i in data:
                 tasks.append((i[0], i[1]))
@@ -94,7 +90,6 @@ def get_products_tasks_levels(DBObject, employee, product_list, is_long=True):
         return arr
     else:
         for process in product_list:
-            data = SkillsPR.objects.filter(employee_id=employee.id, process_id=process).values_list("level_id",
-                                                                                                    flat=True)
+            data = SkillsPR.objects.filter(employee_id=employee.id, process_id=process).values_list("level_id", flat=True)
             arr.append({"process": process, "level": data[0]})
         return arr

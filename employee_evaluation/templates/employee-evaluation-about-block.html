@@ -1,15 +1,53 @@
+<!DOCTYPE html>>
 {% load static %}
-<div>
-{% if long %}
-    {% for pr in data %}
-        <div class="product">
-            <h2>{{ pr.product }}</h2>
-            {% for task in pr.tasks %}
-                <p>{{ task.0 }}<br/>Level: {{ task.1 }}</p>
-            {% endfor %}
-        </div>
-    {% endfor %}
-{% else %}
-    <span></span>
-{% endif %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static "GlobalCSS/sidebar.css" %}" />
+    <link rel="stylesheet" href="{% static "GlobalCSS/snackbar.css" %}" />
+    <link rel="stylesheet" href="{% static "CSS/employee_evaluation_about_block.css" %}" />
+    <link rel="shortcut icon" href="https://cdn-icons-png.freepik.com/512/709/709612.png" />
+    <title>Evaluation | About</title>
+</head>
+<body>
+{%  include "sidebar.html" %}
+{%  include "snackbar.html" %}
+<div id="content">
+{#    <button id="back" onclick="location.href = '/employee-evaluation'">Назад</button>#}
+    <button id="back">Назад</button>
+    {% if long %}
+        {% for pr in data %}
+            <div class="product">
+                <h2>{{ pr.product }}</h2>
+                <button class="add-comment">Добавить комментарий</button>
+                <div class="product-cell">
+                    {% for task in pr.tasks %}
+                        <p>{{ task.0 }}<br/>Level: {{ task.1 }}</p>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        {% for pr in data %}
+            <div class="product">
+                <div>
+                    <h2>{{ pr.process }}</h2>
+                    <button class="add-comment">Добавить комментарий</button>
+                    <br/>
+                    {{ pr.level }}
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
 </div>
+<dialog id="dialog-modal">
+    <button id="dialog-modal-preview">Предпросмотр</button>
+    <div id="dialog-content">
+        <label for="dialog-modal-message">Отзыв:</label>
+        <textarea id="dialog-modal-message" placeholder="Поддерживается html разметка"></textarea>
+    </div>
+</dialog>
+<script src="{% static "GlobalJS/sidebar.js" %}"></script>
+<script src="{% static "GlobalJS/snackbar.js" %}"></script>
+</body>
+</html>

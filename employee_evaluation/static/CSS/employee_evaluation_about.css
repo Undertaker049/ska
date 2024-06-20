@@ -59,13 +59,21 @@ body {
 
     color: white;
 
-    transition: 1s;
+    transition: .5s;
 }
 
 .column:hover {
-    height: 95%;
+    height: 100%;
     width: 40%;
     align-items: stretch;
+}
+
+.column-wrapper {
+    display: block;
+    overflow: scroll;
+
+    /* Нормально(без библиотек) кастомизировать скроллбары вне chromium-браузеров нельзя, так что пришлось просто убрать*/
+    scrollbar-width: none;
 }
 
 .column-header {
@@ -77,26 +85,6 @@ body {
 
 .column-header strong{
     font-size: 2rem;
-}
-
-.column-wrapper {
-    display: block;
-    overflow: scroll;
-}
-
-.data {
-    font-size: small;
-    display: none;
-}
-
-.column:hover .data {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    font-size: 0.9rem;
-}
-
-p{
-    padding: 0 3px;
 }
 
 .expand-button {
@@ -114,27 +102,45 @@ p{
     display: block;
 }
 
-::-webkit-scrollbar {
-  width: 7px; /* Ширина вертикального скроллбара */
-  height: 7px; /* Высота горизонтального скроллбара */
+.data {
+    font-size: small;
+    display: none;
 }
 
-/* Стили для трека скроллбара (полоса по которой движется бегунок) */
-::-webkit-scrollbar-track {
-    background: none; /* Цвет фона трека */
+.column:hover .data {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    font-size: 0.9rem;
 }
 
-/* Стили для бегунка скроллбара (сам скролл) */
-::-webkit-scrollbar-thumb {
-  background: #888; /* Цвет бегунка */
-  border-radius: 10px; /* Закругленные углы */
+p {
+    padding: 0 3px;
 }
 
-/* Стили для бегунка при наведении */
-::-webkit-scrollbar-thumb:hover {
-    background: #555; /* Цвет бегунка при наведении */
-}
+/* До времен, когда кастомизацию скроллбара введут полностью */
+/*::-webkit-scrollbar {*/
+/*    width: 7px; !* Ширина вертикального скроллбара *!*/
+/*    height: 7px; !* Высота горизонтального скроллбара *!*/
+/*}*/
 
-::-webkit-scrollbar-corner {
-  background: none; /* Цвет угла */
-}
+/*!* Стили для трека скроллбара (полоса по которой движется бегунок) *!*/
+/*::-webkit-scrollbar-track {*/
+/*    background: none; !* Цвет фона трека *!*/
+/*}*/
+
+/*!* Стили для бегунка скроллбара (сам скролл) *!*/
+/*::-webkit-scrollbar-thumb {*/
+/*    background: #888; !* Цвет бегунка *!*/
+/*    border-radius: 10px; !* Закругленные углы *!*/
+/*}*/
+
+/*!* Стили для бегунка при наведении *!*/
+/*::-webkit-scrollbar-thumb:hover {*/
+/*    background: #555; !* Цвет бегунка при наведении *!*/
+/*}*/
+
+/*::-webkit-scrollbar-corner {*/
+/*    background: none; !* Цвет угла *!*/
+/*}*/
+
+
