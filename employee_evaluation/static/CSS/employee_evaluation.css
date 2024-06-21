@@ -19,8 +19,9 @@ body {
 }
 
 #content{
-    width: calc(100% - 60px);
-    margin-left: 60px;
+    display: flex;
+    width: 100%;
+    height: fit-content;
 }
 
 #employees{

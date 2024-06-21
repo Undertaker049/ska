@@ -6,45 +6,43 @@
     <meta charset="UTF-8">
     <title>Certificate</title>
 {#    <link rel="stylesheet" href="{% static "GlobalCSS/Header.css" %}" />#}
-    <link rel="stylesheet" href="{% static "GlobalCSS/sidebar.css" %}" />
+    <link rel="stylesheet" href="{% static "GlobalCSS/sidebar-sticky.css" %}" />
     <link rel="stylesheet" href="{% static "CSS/certificate.css" %}" />
     <link rel="shortcut icon" href="https://cdn-icons-png.freepik.com/512/709/709612.png" />
 </head>
 <body>
+<div id="content">
 {%  include "sidebar.html" %}
-{#{% if request.user.is_authenticated %}#}
-{#    {% include "logged-header.html" %}#}
-{#{% else %}#}
-{#    {% include "header.html" %}#}
-{#{% endif %}#}
-
-<div id="data">
-<button id="upload-certificate">Загрузить сертификат</button>
-<table id="certificates">
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>Название</th>
-        <th>Тип</th>
-        <th>Дата получения</th>
-    </tr>
-    </thead>
-    <tbody>
-        {% for certificate in certificates %}
+    <div id="data">
+        {# безымянный div чтобы кнопка была в длину таблицы #}
+        <div>
+        <button id="upload-certificate">Загрузить сертификат</button>
+        <table id="certificates">
+            <thead>
             <tr>
-                <td>{{ certificate.id }}</td>
-                <td>{{ certificate.training_name }}</td>
-                <td>{{ certificate.training_type }}</td>
-                <td>{{ certificate.date }}</td>
+                <th>ID</th>
+                <th>Название</th>
+                <th>Тип</th>
+                <th>Дата получения</th>
             </tr>
-        {% endfor %}
-    </tbody>
-</table>
-</div>
+            </thead>
+            <tbody>
+                {% for certificate in certificates %}
+                    <tr>
+                        <td>{{ certificate.id }}</td>
+                        <td>{{ certificate.training_name }}</td>
+                        <td>{{ certificate.training_type }}</td>
+                        <td>{{ certificate.date }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        </div>
+    </div>
 
 <dialog id="form-modal">
 <div id="wrapper">
-{#    TODO: Заменить кнопку закрыть на svg #}
+{#    TODO: Заменить кнопку "закрыть" на svg #}
     <button id="close-modal">X</button>
     <form id="certificate-form" method="post" action="/certificate" enctype="multipart/form-data">
         {% csrf_token %}
@@ -97,7 +95,7 @@
     </form>
 </div>
 </dialog>
-
+</div>
 <script src="{% static "GlobalJS/sidebar.js" %}"></script>
 <script src="{% static "JS/certificate.js" %}"></script>
 </body>

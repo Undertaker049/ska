@@ -41,10 +41,19 @@ tbody tr:hover {
     cursor: pointer;
 }
 
-#data {
-    width: fit-content;
+#content {
+    display: flex;
+    width: 100%;
+    height: fit-content;
+}
 
-    margin: auto;
+#data {
+    display: flex;
+    top: 0;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+
 }
 
 #upload-certificate {

@@ -8,14 +8,17 @@
     <title>Self-assessment</title>
     <link rel="stylesheet" href="{% static "CSS/self_assessment.css" %}" />
     <link rel="stylesheet" href="{% static "CSS/self_assessment_modal.css" %}" />
+{#    <link rel="stylesheet" href="{% static "GlobalCSS/Header.css" %}" />#}
     <link rel="stylesheet" href="{% static "GlobalCSS/snackbar.css" %}" />
-    <link rel="stylesheet" href="{% static "GlobalCSS/sidebar.css" %}" />
+    <link rel="stylesheet" href="{% static "GlobalCSS/sidebar-sticky.css" %}" />
     <link rel="shortcut icon" href="https://cdn-icons-png.freepik.com/512/709/709612.png" />
 </head>
 <body>
-{% include "sidebar.html" %}
 {% include "snackbar.html" %}
 
+<div id="content">
+    {% include "sidebar.html" %}
+<div id="data">
     <div id="form-navigation" class="wrapper">
         <button id="hw-page" class="form-navigation-button" type="button">Hardware</button>
         <button id="sw-page" class="form-navigation-button" type="button">Software</button>
@@ -80,7 +83,8 @@
         </div>
     </div>
     <button id="back"><img style="max-height: 60px; max-width: 60px" src="{% static "Images/arrow-up.png" %}" alt="to header"></button>
-<footer></footer>
+</div>
+</div>
 <script src={% static "GlobalJS/snackbar.js" %}></script>
 <script src={% static "GlobalJS/sidebar.js" %}></script>
 <script src={% static "JS/self-assessment-commons.js" %}></script>

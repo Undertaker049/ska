@@ -3,16 +3,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="{% static "GlobalCSS/sidebar.css" %}" />
+    <link rel="stylesheet" href="{% static "GlobalCSS/sidebar-sticky.css" %}" />
     <link rel="stylesheet" href="{% static "GlobalCSS/snackbar.css" %}" />
     <link rel="stylesheet" href="{% static "CSS/employee_evaluation_about.css" %}" />
     <link rel="shortcut icon" href="https://cdn-icons-png.freepik.com/512/709/709612.png" />
     <title>Evaluation | About</title>
 </head>
 <body>
-{%  include "sidebar.html" %}
 {%  include "snackbar.html" %}
 <div id="content">
+{%  include "sidebar.html" %}
 {#    <button id="back" onclick="location.href = '/employee-evaluation'">Назад</button>#}
     <div id="content-wrapper">
         <div class="column">

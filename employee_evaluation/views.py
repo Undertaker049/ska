@@ -1,7 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
 from django.shortcuts import render
-from django.template.loader import render_to_string
 
 from self_assessment.models import Employees, SkillsHW, SkillsSW, SkillsPR, Levels
 
@@ -45,7 +43,7 @@ def about_block(request):
         case "pr":
             pr_data = get_products_tasks_levels(SkillsPR, employee, get_products(employee, "pr"), False)
             data = {"data": pr_data, "long": False}
-    return render(request, "employee-evaluation-about-block.html", data)
+    return render(request, "employee_evaluation_about_block.html", data)
 
 
 def get_products(employee, key="all"):
