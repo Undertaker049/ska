@@ -1,23 +1,29 @@
+"""Методы для отображения и работы с данными блока certificate"""
 import http
 import os
 
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, FileResponse
-from django.shortcuts import render, redirect
+from django.http import HttpResponse
+from django.shortcuts import render
 from ska import settings
 
-from .models import *
+from .models import Certificate, CertificateCategory, CertificateSubCategory
 
 
 @login_required
 def main(request):
+    """
+    Выводит список сертификатов пользователя и предоставляет возможность загрузить новый.
+    @param request: Объект запроса
+    @return: GET - загружает страницу с сертификатами, POST - загружает сертификат на сервер
+    """
     if request.method == 'GET':
         certificates = (Certificate.
                         objects.
                         filter(employee_name=f'{request.user.first_name} {request.user.last_name}').
                         values())
         return render(request, "certificate.html", {"certificates": certificates})
-    elif request.method == 'POST':
+    if request.method == 'POST':
         data = request.POST
         print(data)
         obj = Certificate(employee_name=f'{request.user.first_name} {request.user.last_name}',
@@ -35,9 +41,16 @@ def main(request):
         #         destination.write(chunk)
         return HttpResponse(status=200, content="Сертификат загружен", content_type="text/*")
 
+    return HttpResponse(status=http.HTTPStatus.METHOD_NOT_ALLOWED)
+
 
 @login_required
 def about(request):
+    """
+    Предоставляет подробную информацию о сертификате и выводит сам сертификат
+    @param request: Объект запроса
+    @return: GET - страница с сертификатом
+    """
     if request.method == 'GET':
         c = Certificate.objects.filter(employee_name=f"{request.user.first_name} {request.user.last_name}",
                                        id=request.GET.get("id"))
@@ -67,9 +80,16 @@ def about(request):
         else:
             return render(request, "certificate_about_not_found.html")
 
+    return HttpResponse(status=http.HTTPStatus.METHOD_NOT_ALLOWED)
+
 
 @login_required
 def delete_certificate(request):
+    """
+    Удаляет сертификат, принадлежащий конкретному пользователю
+    @param request: Объект запроса
+    @return: POST - Удаляет сертификат
+    """
     if request.method == "POST":
         obj = Certificate.objects.filter(employee_name=f"{request.user.first_name} {request.user.last_name}",
                                          id=request.POST["id"])
@@ -84,3 +104,5 @@ def delete_certificate(request):
                 return HttpResponse(status=http.HTTPStatus.NOT_FOUND, content="Файл сертификата не найден.")
         else:
             return HttpResponse(status=http.HTTPStatus.NOT_FOUND, content="Запись не найдена на сервере.")
+
+    return HttpResponse(status=http.HTTPStatus.METHOD_NOT_ALLOWED)
