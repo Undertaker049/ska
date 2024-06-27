@@ -17,6 +17,34 @@ body {
     font-family: var(--system-ui), serif;
 }
 
+/* Full HD (1920x1080) */
+@media screen and (min-width: 1920px) and (max-width: 2559px) {
+  html {
+    font-size: 18px; /* Размер текста для Full HD */
+  }
+}
+
+/* 2K (2560x1440) */
+@media screen and (min-width: 2560px) and (max-width: 3839px) {
+  html {
+    font-size: 20px; /* Размер текста для 2K */
+  }
+}
+
+/* 4K (3840x2160) */
+@media screen and (min-width: 3840px) {
+  html {
+    font-size: 24px; /* Размер текста для 4K */
+  }
+}
+
+/* UltraWide (например, 3440x1440) */
+@media screen and (min-width: 3440px) and (max-width: 3839px) and (min-height: 1440px) {
+  html {
+    font-size: 30px; /* Размер текста для UltraWide */
+  }
+}
+
 #content {
     /*width: calc(100% - 60px);*/
     /*margin-left: 60px;*/
@@ -98,7 +126,7 @@ body {
 .column:hover .data {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    font-size: 0.9rem;
+    font-size: 1rem;
 }
 
 p {
