@@ -14,8 +14,8 @@ from .models import Certificate, CertificateCategory, CertificateSubCategory
 def main(request):
     """
     Выводит список сертификатов пользователя и предоставляет возможность загрузить новый.
-    @param request: Объект запроса
-    @return: GET - загружает страницу с сертификатами, POST - загружает сертификат на сервер
+    :param request: Объект запроса
+    :return: GET - загружает страницу с сертификатами, POST - загружает сертификат на сервер
     """
     if request.method == 'GET':
         certificates = (Certificate.
@@ -48,8 +48,8 @@ def main(request):
 def about(request):
     """
     Предоставляет подробную информацию о сертификате и выводит сам сертификат
-    @param request: Объект запроса
-    @return: GET - страница с сертификатом
+    :param request: Объект запроса
+    :return: GET - страница с сертификатом
     """
     if request.method == 'GET':
         c = Certificate.objects.filter(employee_name=f"{request.user.first_name} {request.user.last_name}",
@@ -87,8 +87,8 @@ def about(request):
 def delete_certificate(request):
     """
     Удаляет сертификат, принадлежащий конкретному пользователю
-    @param request: Объект запроса
-    @return: POST - Удаляет сертификат
+    :param request: Объект запроса
+    :return: POST - Удаляет сертификат
     """
     if request.method == "POST":
         obj = Certificate.objects.filter(employee_name=f"{request.user.first_name} {request.user.last_name}",

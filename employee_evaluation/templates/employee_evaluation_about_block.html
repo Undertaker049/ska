@@ -10,11 +10,12 @@
     <title>Evaluation | About</title>
 </head>
 <body>
+{% csrf_token %}
 {%  include "snackbar.html" %}
 <div id="content">
 {%  include "sidebar.html" %}
     <div id="data">
-    <button id="back" onclick="location.href = document.referrer">Назад</button>
+    <button id="back">Назад</button>
         {% if long %}
         {% for pr in data %}
             <div class="product">
@@ -43,6 +44,7 @@
     <div id="dialog-content">
         <div id="dialog-edit">
             <button id="dialog-edit--preview">Предпросмотр</button><br/>
+            <button id="dialog-edit--submit">Отправить</button><br/>
             <label for="dialog-edit--message">Отзыв:</label>
             <textarea id="dialog-edit--message" placeholder="Поддерживается html разметка"></textarea>
         </div>

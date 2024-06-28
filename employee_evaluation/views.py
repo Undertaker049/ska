@@ -3,10 +3,14 @@ import http
 from array import array
 
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.db.models import Q
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
-
+from .models import Reviews
 from self_assessment.models import Employees, SkillsHW, SkillsSW, SkillsPR, Levels
+
+HW_MAX_SCORE = 48
+SW_MAX_SCORE = 20
 
 
 @login_required
@@ -14,8 +18,8 @@ def main(request):
     """
     Выводит список сотрудников в виде таблицы
 
-    @param request: Объект запроса
-    @return: GET - загружает страницу со списком сотрудников
+    :param request: Объект запроса
+    :return: GET - загружает страницу со списком сотрудников
     """
     if request.method == "GET":
         data = {"employees": Employees.objects.values()}
@@ -29,8 +33,8 @@ def about(request):
     """
     Выводит информацию о навыках сотрудника на основе данных формы из self assessment
 
-    @param request: Объект запроса
-    @return: GET - Загружает страницу с навыками сотрудника
+    :param request: Объект запроса
+    :return: GET - Загружает страницу с навыками сотрудника
     """
     if request.method == "GET":
         level_vals = {}
@@ -46,9 +50,9 @@ def about(request):
         pr_data = get_products_scores(SkillsPR, employee, pr, level_vals, False)
 
         data = {"hw_data": hw_data,
-                "hw_max_score": 48,
+                "hw_max_score": HW_MAX_SCORE,
                 "sw_data": sw_data,
-                "sw_max_score": 20,
+                "sw_max_score": SW_MAX_SCORE,
                 "pr_data": pr_data}
         return render(request, "employee_evaluation_about.html", data)
 
@@ -60,8 +64,8 @@ def about_block(request):
     """
     Выводит подробную информацию об уровнях компетенций определенного блока
 
-    @param request: Объект запроса
-    @return: GET - Загружает страницу с информацией об уровнях компетенций
+    :param request: Объект запроса
+    :return: GET - Загружает страницу с информацией об уровнях компетенций
     """
     if request.method == "GET":
         employee = Employees.objects.get(id=request.GET.get("id"))
@@ -88,14 +92,75 @@ def about_block(request):
     return HttpResponse(status=http.HTTPStatus.METHOD_NOT_ALLOWED)
 
 
+@login_required
+def reviews(request):
+    """
+
+    :param request:
+    :return:
+    """
+    if request.method == "GET":
+        employee = (Employees.
+                    objects.
+                    filter(name=f'{request.user.first_name} {request.user.last_name}').
+                    values().
+                    first())
+
+        revs = Reviews.objects.filter(Q(reviewer_id=employee["id"]) | Q(reviewed_id=employee["id"])).values()
+        return render(request, "employee_evaluation_reviews.html", {"revs": revs})
+
+    return HttpResponse(status=http.HTTPStatus.METHOD_NOT_ALLOWED)
+
+
+@login_required
+def review(request):
+    if request.method == "GET":
+        return JsonResponse({"data": Reviews.objects.filter(id=request.GET["id"]).values().first()["message"]})
+    return HttpResponse(status=http.HTTPStatus.METHOD_NOT_ALLOWED)
+
+
+@login_required
+def upload_review(request):
+    """
+
+    :param request:
+    :return:
+    """
+    if request.method == "POST":
+        employee = (Employees.
+                    objects.
+                    filter(name=f'{request.user.first_name} {request.user.last_name}').
+                    values().
+                    first())
+
+        data = request.POST
+
+        if employee["id"] == data["rev_id"]:
+            return HttpResponse(status=http.HTTPStatus.FORBIDDEN, content="Нельзя писать отзыв себе же")
+
+        obj = Reviews(reviewer_id=employee["id"],
+                      reviewed_id=data["rev_id"],
+                      block=data["block"],
+                      message=data["message"],
+                      theme=data["theme"])
+        try:
+            obj.save()
+            return HttpResponse(status=200)
+        except Exception as e:
+            # TODO переделать в логгер
+            print(e)
+            return HttpResponse(status=http.HTTPStatus.INTERNAL_SERVER_ERROR, content="Не удалось сохранить запись")
+
+    return HttpResponse(status=http.HTTPStatus.METHOD_NOT_ALLOWED)
+
+
 def get_products(employee: Employees, key="all"):
     """
     Возвращает список продуктов или процессов из базы данных
 
-    @param employee: Объект БД, представляющий работника
-    @param key: Ключ, ["all","hw","sw","pr"],
-     в зависимости от него возвращаются продукты или процессы разных блоков
-    @return: Массив(ы) строк
+    :param employee: Объект БД, представляющий работника
+    :param key: Ключ, ["all","hw","sw","pr"], в зависимости от него возвращаются продукты или процессы разных блоков
+    :return: Массив(ы) строк
     """
     if key == "all":
         return (SkillsHW.
@@ -137,14 +202,14 @@ def get_products_scores(db_object: type[SkillsHW | SkillsSW | SkillsPR],
     """
     Возвращает массив словарей, где 1 словарь - 1 продукт или процесс и его суммарный уровень
 
-    @param db_object: Объект БД, представляющий таблицу с компетенциями сотрудников по блоку
-    @param employee: Объект БД, представляющий работника
-    @param product_list: Список продуктов или процессов, для которых нужно собрать информацию
-    @param level_vals: Словарь, с числовыми значениями строковых для уровней в БД
-    @param is_long: Ключ, определяющий по какому шаблону будет составлен итоговый массив.
-    True - у каждой дисциплины есть суб-дисциплины, а у них уже уровни.
-    False - у дисциплины есть только ее собственный уровень.
-    @return: Массив словарей формата [{"product", "score"}, ...] | [{"process", "level"}, ...]
+    :param db_object: Объект БД, представляющий таблицу с компетенциями сотрудников по блоку
+    :param employee: Объект БД, представляющий работника
+    :param product_list: Список продуктов или процессов, для которых нужно собрать информацию
+    :param level_vals: Словарь, с числовыми значениями строковых для уровней в БД
+    :param is_long: Ключ, определяющий по какому шаблону будет составлен итоговый массив.
+        True - у каждой дисциплины есть суб-дисциплины, а у них уже уровни.
+        False - у дисциплины есть только ее собственный уровень.
+    :return: Массив словарей формата [{"product", "score"}, ...] | [{"process", "level"}, ...]
     """
     arr = []
     if is_long:
@@ -171,17 +236,14 @@ def get_products_scores(db_object: type[SkillsHW | SkillsSW | SkillsPR],
 # Разбить на два?
 def get_products_tasks_levels(db_object, employee, product_list, is_long=True):
     """
-    Возвращает массив словарей, где 1 словарь - 1 продукт, его подкатегории и их уровни,
-    либо же 1 процесс и его уровень
+    Возвращает массив словарей, где 1 словарь - 1 продукт,
+    его подкатегории и их уровни, либо же 1 процесс и его уровень
 
-    @param db_object: Объект БД, представляющий таблицу с компетенциями сотрудников по блоку
-    @param employee: Объект БД, представляющий работника
-    @param product_list: Список продуктов или процессов, для которых нужно собрать информацию
-    @param is_long: Ключ, определяющий по какому шаблону будет составлен итоговый массив.
-    True - у каждой дисциплины есть суб-дисциплины, а у них уже уровни.
-    False - у дисциплины есть только ее собственный уровень.
-    @return: Массив словарей формата [{"product", [("task", "level")...]}, ...] |
-     [{"process", "level"}, ...]
+    :param db_object: Объект БД, представляющий таблицу с компетенциями сотрудников по блоку
+    :param employee: Объект БД, представляющий работника
+    :param product_list: Список продуктов или процессов, для которых нужно собрать информацию
+    :param is_long: Ключ, определяющий по какому шаблону будет составлен итоговый массив
+    :return: Словари формата [{"product", [("task", "level")...]}, ...] | [{"process", "level"}, ...]
     """
     arr = []
     if is_long:

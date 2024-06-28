@@ -11,8 +11,8 @@ from django.contrib.auth import authenticate, login, logout
 def main(request):
     """
     Производит аутентификацию пользователя, или перенаправление на форму регистрации
-    @param request: Объект запроса
-    @return: Редирект - если произведен вход или требуется регистрация,
+    :param request: Объект запроса
+    :return: Редирект - если произведен вход или требуется регистрация,
      код 404 - если неверные логин/пароль
     """
     if request.method == "POST":
@@ -22,7 +22,7 @@ def main(request):
             print("redirecting...")
             return redirect("/")
         return HttpResponse(status=http.HTTPStatus.NOT_FOUND,
-                                content="Пользователь с таким логином/паролем не найден!")
+                            content="Пользователь с таким логином/паролем не найден!")
     if request.method == "GET":
         return render(request, "auth.html")
 
@@ -32,8 +32,8 @@ def main(request):
 def registration(request):
     """
     Регистрирует пользователя в системе
-    @param request: Объект запроса
-    @return: GET - загрузка страницы, POST - обработка формы регистрации
+    :param request: Объект запроса
+    :return: GET - загрузка страницы, POST - обработка формы регистрации
     """
     if request.method == "POST":
         data = request.POST
@@ -54,8 +54,8 @@ def registration(request):
 def user_logout(request):
     """
     Производит закрытие пользовательской сессии
-    @param request: Объект запроса
-    @return:
+    :param request: Объект запроса
+    :return: редирект на страницу входа
     """
     logout(request)
     return redirect('/auth')

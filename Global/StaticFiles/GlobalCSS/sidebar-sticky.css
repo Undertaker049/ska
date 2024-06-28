@@ -119,7 +119,6 @@
 body.dark-mode{
     background-color: #404040;
     color: white;
-    transition: 1.5s;
 }
 
 body.light-mode{

@@ -18,23 +18,23 @@ body {
 }
 
 /* Full HD (1920x1080) */
-@media screen and (min-width: 1920px) and (max-width: 2559px) {
+@media screen and (min-width: 1400px) and (max-width: 2559px) {
   html {
-    font-size: 18px; /* Размер текста для Full HD */
+    font-size: 15px; /* Размер текста для Full HD */
   }
 }
 
 /* 2K (2560x1440) */
-@media screen and (min-width: 2560px) and (max-width: 3839px) {
+@media screen and (min-width: 2400px) and (max-width: 3839px) {
   html {
     font-size: 20px; /* Размер текста для 2K */
   }
 }
 
 /* 4K (3840x2160) */
-@media screen and (min-width: 3840px) {
+@media screen and (min-width: 3700px) {
   html {
-    font-size: 24px; /* Размер текста для 4K */
+    font-size: 25px; /* Размер текста для 4K */
   }
 }
 
@@ -46,8 +46,6 @@ body {
 }
 
 #content {
-    /*width: calc(100% - 60px);*/
-    /*margin-left: 60px;*/
     display: flex;
     width: 100%;
     height: 100%;

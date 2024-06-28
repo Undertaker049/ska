@@ -21,8 +21,8 @@ from .models import (Hardware,
 def main(request):
     """
     Метод выводит опросник по заданным дисциплинам, дисциплины берутся и БД
-    @param request: Объект запроса
-    @return: django.shortcuts.render
+    :param request: Объект запроса
+    :return: рендер страницы
     """
     hw = Hardware.objects.values_list('product', flat=True).distinct()
     hw_disciplines = TaskHW.objects.values_list('task', flat=True).distinct()
@@ -70,8 +70,8 @@ def main(request):
 def validate_name(request):
     """
     Проверка на наличие работника с такими Фамилией и Именем в БД
-    @param request: Объект запроса
-    @return: код 200 - если найден, 404 - если не найден
+    :param request: Объект запроса
+    :return: код 200 - если найден, 404 - если не найден
     """
     employee = (Employees.
                 objects.
@@ -92,8 +92,8 @@ def validate_name(request):
 def upload_assessment(request) -> HttpResponse:
     """
     Метод обрабатывает результаты заполненной формы и вносит их в БД
-    @param request: Объект запроса
-    @return: Код 200 - если все результаты были успешно записаны в БД
+    :param request: Объект запроса
+    :return: Код 200 - если все результаты были успешно записаны в БД
     """
     data = json.loads(request.POST.get("form"))
     user_id = (Employees.

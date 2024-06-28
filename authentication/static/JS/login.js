@@ -10,7 +10,7 @@ document.getElementById("submit").addEventListener("click", ()=>{
                 showSnackbar(msg);
             });
         } else{
-            location.href = resp.url
+            location.href = resp.url;
         }
     });
-})
+});

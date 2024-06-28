@@ -20,10 +20,6 @@
   <component name="PackageRequirementsSettings">
     <option name="requirementsPath" value="" />
   </component>
-  <component name="PyDocumentationSettings">
-    <option name="format" value="EPYTEXT" />
-    <option name="myDocStringFormat" value="Epytext" />
-  </component>
   <component name="TemplatesService">
     <option name="TEMPLATE_CONFIGURATION" value="Django" />
   </component>

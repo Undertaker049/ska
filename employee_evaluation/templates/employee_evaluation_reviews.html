@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Evaluation | Reviews</title>
+    <link rel="stylesheet" href="{% static "GlobalCSS/sidebar-sticky.css" %}" />
+    <link rel="stylesheet" href="{% static "GlobalCSS/snackbar.css" %}" />
+    <link rel="stylesheet" href="{% static "CSS/employee_evaluation_review.css" %}" />
+    <link rel="shortcut icon" href="https://cdn-icons-png.freepik.com/512/709/709612.png" />
+</head>
+<body>
+{% include "snackbar.html" %}
+<div id="content">
+    {% include "sidebar.html" %}
+    <div id="data">
+    <button id="back" onclick="location.href = '/employee-evaluation'">Назад</button>
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Отправитель</th>
+                <th>Получатель</th>
+                <th>Блок</th>
+                <th>Тема</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for r in revs %}
+                    <tr>
+                        <td>{{ r.id }}</td>
+                        <td>{{ r.reviewer_id }}</td>
+                        <td>{{ r.reviewed_id }}</td>
+                        <td>{{ r.block }}</td>
+                        <td>{{ r.theme }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<dialog id="review">
+    <div id="review-data"></div>
+</dialog>
+<script src="{% static "GlobalJS/sidebar.js" %}"></script>
+<script src="{% static "GlobalJS/snackbar.js" %}"></script>
+<script src="{% static "JS/employee_evaluation_reviews.js" %}"></script>
+</body>
+</html>
