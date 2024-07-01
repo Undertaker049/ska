@@ -20,6 +20,7 @@ $expand_pr_button.addEventListener("click", ()=>{
     fetch_block("pr");
 });
 
+
 function fetch_block(block_name){
     sessionStorage.setItem("ee_block", block_name);
     location.href = "/employee-evaluation/about-block?"+ new URLSearchParams({'block': block_name, 'id': id});

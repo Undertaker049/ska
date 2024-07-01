@@ -7,7 +7,7 @@ const $modal_accept_button = document.getElementById("modal-accept");
 const $modal_decline_button = document.getElementById("modal-decline");
 
 window.addEventListener('load', function () {
-    fetch('self-assessment/validate-name').then(response => {
+    fetch('/self-assessment/validate-name').then(response => {
         if (!response.ok) {
             $finish_button.disabled = true;
             return response.text().then(text => {showSnackbar(text)});

@@ -51,6 +51,6 @@ $form_modal.addEventListener("close", ()=>{
 $table_row.forEach(function (e) {
     e.addEventListener("click", function (ev) {
         // первый элемент строки таблицы - id, так что можно обойтись querySelector
-        location.href = "certificate/about?id=" + ev.target.parentElement.querySelector("td").textContent;
+        location.href = "/certificate/about?id=" + ev.target.parentElement.querySelector("td").textContent;
     });
 });

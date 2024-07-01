@@ -95,9 +95,10 @@ def about_block(request):
 @login_required
 def reviews(request):
     """
+    Выводит список полученных и отправленных ревью
 
-    :param request:
-    :return:
+    :param request: Объект запроса
+    :return: Рендер страницы с ревью | method_not_allowed если запрос не GET
     """
     if request.method == "GET":
         employee = (Employees.
@@ -116,6 +117,19 @@ def reviews(request):
 def review(request):
     if request.method == "GET":
         return JsonResponse({"data": Reviews.objects.filter(id=request.GET["id"]).values().first()["message"]})
+    return HttpResponse(status=http.HTTPStatus.METHOD_NOT_ALLOWED)
+
+
+@login_required
+def delete_review(request, review_id):
+    if request.method == "DELETE":
+        obj = Reviews.objects.get(id=review_id)
+        employee_id = Employees.objects.get(name=f"{request.user.first_name} {request.user.last_name}").id
+        if obj.reviewer_id == employee_id:
+            obj.delete()
+            return HttpResponse(status=http.HTTPStatus.OK)
+        else:
+            return HttpResponse(status=http.HTTPStatus.FORBIDDEN, content="Нельзя удалить чужое ревью!")
     return HttpResponse(status=http.HTTPStatus.METHOD_NOT_ALLOWED)
 
 
@@ -222,14 +236,13 @@ def get_products_scores(db_object: type[SkillsHW | SkillsSW | SkillsPR],
             for i in data:
                 score += level_vals[i]
             arr.append({"product": product, "score": score})
-        return arr
-
-    for process in product_list:
-        data = (SkillsPR.
-                objects.
-                filter(employee_id=employee.id, process_id=process).
-                values_list("level_id", flat=True))
-        arr.append({"process": process, "level": data[0]})
+    else:
+        for process in product_list:
+            data = (SkillsPR.
+                    objects.
+                    filter(employee_id=employee.id, process_id=process).
+                    values_list("level_id", flat=True))
+            arr.append({"process": process, "level": data[0]})
     return arr
 
 
@@ -256,12 +269,12 @@ def get_products_tasks_levels(db_object, employee, product_list, is_long=True):
             for i in data:
                 tasks.append((i[0], i[1]))
             arr.append({"product": product, "tasks": tasks})
-        return arr
+    else:
+        for process in product_list:
+            data = (SkillsPR.
+                    objects.
+                    filter(employee_id=employee.id, process_id=process).
+                    values_list("level_id", flat=True))
+            arr.append({"process": process, "level": data[0]})
 
-    for process in product_list:
-        data = (SkillsPR.
-                objects.
-                filter(employee_id=employee.id, process_id=process).
-                values_list("level_id", flat=True))
-        arr.append({"process": process, "level": data[0]})
     return arr

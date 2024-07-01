@@ -10,6 +10,7 @@
     <link rel="shortcut icon" href="https://cdn-icons-png.freepik.com/512/709/709612.png" />
 </head>
 <body>
+{% csrf_token %}
 {% include "snackbar.html" %}
 <div id="content">
     {% include "sidebar.html" %}
@@ -42,6 +43,7 @@
 
 <dialog id="review">
     <div id="review-data"></div>
+    <button id="delete">Удалить</button>
 </dialog>
 <script src="{% static "GlobalJS/sidebar.js" %}"></script>
 <script src="{% static "GlobalJS/snackbar.js" %}"></script>

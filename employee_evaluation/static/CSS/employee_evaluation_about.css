@@ -45,6 +45,10 @@ body {
   }
 }
 
+p {
+    padding: 0 3px;
+}
+
 #content {
     display: flex;
     width: 100%;
@@ -127,8 +131,12 @@ body {
     font-size: 1rem;
 }
 
-p {
-    padding: 0 3px;
+#back {
+    min-width: 100px;
+    min-height: 100px;
+
+    border-radius: 50%;
+    border: none;
 }
 
 /* До времен, когда кастомизацию скроллбара введут полностью */
