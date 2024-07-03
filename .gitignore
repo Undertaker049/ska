@@ -2,3 +2,4 @@
 local_stuff/
 files/
 *.pyc
+db.json
