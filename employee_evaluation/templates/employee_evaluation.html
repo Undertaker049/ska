@@ -4,7 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Evaluation</title>
-{#    <link rel="stylesheet" href="{% static "GlobalCSS/Header.css" %}" />#}
     <link rel="stylesheet" href="{% static "GlobalCSS/sidebar-sticky.css" %}" />
     <link rel="stylesheet" href="{% static "GlobalCSS/snackbar.css" %}" />
     <link rel="stylesheet" href="{% static "CSS/employee_evaluation.css" %}" />
@@ -16,10 +15,14 @@
 {%  include "sidebar.html" %}
     <div id="employees">
     <button onclick="location.href='/employee-evaluation/reviews'">Оценки</button>
-{#        <h2>Список сотрудников</h2>#}
-        <label for="table-search">Search:</label><br/>
-        <input type="search" id="table-search" name="ts" placeholder="id,name"/>
-        <button id="search">Найти</button>
+        {% if is_supervisor %}
+            {% include "supervisor_filters.html" %}
+        {% endif %}
+        <div>
+            <label for="table-search">Search:</label><br/>
+            <input type="search" id="table-search" name="ts" placeholder="id,name"/>
+            <button id="search">Найти</button>
+        </div>
         <table>
             <thead>
                 <tr>
@@ -41,5 +44,8 @@
 <script src="{% static "GlobalJS/sidebar.js" %}"></script>
 <script src="{% static "GlobalJS/snackbar.js" %}"></script>
 <script src="{% static "JS/employee_evaluation.js" %}"></script>
+{% if is_supervisor %}
+    <script src="{% static "JS/employee_evaluation-supervisor.js" %}"></script>
+{% endif %}
 </body>
 </html>

@@ -6,8 +6,10 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
+
+from certificate.models import CertificateSubCategory, CertificateCategory
 from .models import Reviews
-from self_assessment.models import Employees, SkillsHW, SkillsSW, SkillsPR, Levels
+from self_assessment.models import Employees, SkillsHW, SkillsSW, SkillsPR, Levels, Hardware, TaskHW, Software, TaskSW, Processes
 
 HW_MAX_SCORE = 48
 SW_MAX_SCORE = 20
@@ -22,7 +24,22 @@ def main(request):
     :return: GET - загружает страницу со списком сотрудников
     """
     if request.method == "GET":
-        data = {"employees": Employees.objects.values()}
+        employee = Employees.objects.get(name=f"{request.user.first_name} {request.user.last_name}")
+        data = {"employees": Employees.objects.values(),
+                "is_supervisor": employee.is_supervisor}
+        if employee.is_supervisor:
+            data["hw"] = Hardware.objects.values_list('product', flat=True)
+            data["hw_tasks"] = TaskHW.objects.values_list('task', flat=True)
+            data["sw"] = Software.objects.values_list('product', flat=True)
+            data["sw_tasks"] = TaskSW.objects.values_list('task', flat=True)
+            data["processes"] = Processes.objects.values_list('process', flat=True)
+            data["certificate_category"] = CertificateCategory.objects.values_list('category', flat=True)
+            data["certificate_subcategory"] = []
+            for obj in CertificateSubCategory.objects.values_list('subcategory', 'subcategory_of'):
+                data["certificate_subcategory"].append(obj)
+            data["hw_max"] = HW_MAX_SCORE
+            data["sw_msx"] = SW_MAX_SCORE
+
         return render(request, "employee_evaluation.html", data)
 
     return HttpResponse(status=http.HTTPStatus.METHOD_NOT_ALLOWED)

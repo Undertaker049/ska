@@ -1,0 +1,83 @@
+<div>
+    <span>
+        <b>Режим начальника</b>
+        <label class="switch">
+            <input type="checkbox" id="supervisor-switch">
+            <span class="switch-slider"></span>
+        </label>
+    </span>
+</div>
+<div id="filters">
+    <div id="hw">
+        <h2>Hardware</h2>
+        <select id="hw--product">
+            {% for p in hw %}
+                <option value="{{ p }}">{{ p }}</option>
+            {% endfor %}
+        </select> :
+        <select id="hw--task">
+            <option value="Total">-Total-</option>
+            {% for t in hw_tasks %}
+                <option value="{{ t }}">{{ t }}</option>
+            {% endfor %}
+        </select>
+        <select id="hw--sign">
+            <option value="MR">></option>
+            <option value="LS"><</option>
+            <option value="EQ">=</option>
+        </select>
+        <input type="number" min="0" max="{{ hw_max }}">
+        <button id="hw--add_filter">Добавить</button>
+    </div>
+    <div id="sw">
+        <h2>Software</h2>
+        <select id="sw--product">
+            {% for p in sw %}
+                <option value="{{ p }}">{{ p }}</option>
+            {% endfor %}
+        </select> :
+        <select id="sw--task">
+            <option value="Total">-Total-</option>
+            {% for t in sw_tasks %}
+                <option value="{{ t }}">{{ t }}</option>
+            {% endfor %}
+        </select>
+        <select id="sw--sign">
+            <option value="MR">></option>
+            <option value="LS"><</option>
+            <option value="EQ">=</option>
+        </select>
+        <input type="number" min="0" max="{{ sw_max }}">
+        <button id="sw--add_filter">Добавить</button>
+    </div>
+    <div id="pr">
+        <h2>Processes</h2>
+        <select id="pr--product">
+            {% for p in processes %}
+                <option value="{{ p }}">{{ p }}</option>
+            {% endfor %}
+        </select> :
+        <select id="pr--sign">
+            <option value="MR">></option>
+            <option value="LS"><</option>
+            <option value="EQ">=</option>
+        </select>
+        <input type="number" min="0" max="4">
+        <button id="pr--add_filter">Добавить</button>
+    </div>
+    <div id="cert">
+        <h2>Certificates</h2>
+        <select id="cert--class">
+            {% for c in certificate_category %}
+                <option value="{{ c }}">{{ c }}</option>
+            {% endfor %}
+        </select> :
+        <select id="cert--subclass">
+            <option class="DF" disabled selected>------</option>
+            {% for cr in certificate_subcategory %}
+                <option class="{{ cr.1 }}" value="{{ cr.0 }}">{{ cr.0 }}</option>
+            {% endfor %}
+        </select>
+        <button id="sw--add_filter">Добавить</button>
+    </div>
+</div>

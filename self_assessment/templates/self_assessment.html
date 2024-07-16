@@ -29,7 +29,7 @@
     <form id="self-assessment-form" class="wrapper" onkeydown="if(event.keyCode === 13) {return false}">
         {% csrf_token %}
         {% for page in pages %}
-            <div id="{{ page.id }}" class="form-element"><h1 class="wrapper">{{ page.id }}</h1>
+            <div id="{{ page.id }}" class="form-element"><h1 class="wrapper">{{ page.name }}</h1>
                 {% for product in page.tech %}
                     <div class="sub-block" id="{{ product|replace_dj:" |_" }}">
                     {% if page.longList %}
@@ -73,7 +73,7 @@
     <div id="modal" class="modal" style="color: black">
         <div class="modal-content">
             <p>
-                Найдена ваша незавершенная форма. Хотите продолжить?<br>
+                Найдена незавершенная форма. Хотите продолжить?<br>
                 (В случае отказа данные будут стёрты)
             </p>
             <div>

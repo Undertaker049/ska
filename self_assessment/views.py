@@ -43,18 +43,21 @@ def main(request):
     # чтобы убрать генерацию кнопок перехода
     # к следующему блоку на страницах, где блоки вопросов короткие(как Processes например)
     hw_page = {"id": "HW",
+               "name": "Hardware",
                "subpages": "hw-element",
                "tech": hw,
                "disciplines": hw_disciplines,
                "longList": True
                }
     sw_page = {"id": "SW",
+               "name": "Software",
                "subpages": "sw-element",
                "tech": sw,
                "disciplines": sw_disciplines,
                "longList": True
                }
     skills_page = {"id": "Processes",
+                   "name": "Processes",
                    "subpages": "processes-element",
                    "tech": skills,
                    "disciplines": skills_disciplines,
