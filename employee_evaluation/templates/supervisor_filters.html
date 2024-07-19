@@ -8,76 +8,138 @@
     </span>
 </div>
 <div id="filters">
+{#    <div>#}
+{#        <select id="global-type" aria-label="Block select">#}
+{#            <option value="DF">--------</option>#}
+{#            <option value="HW">Hardware</option>#}
+{#            <option value="SW">Software</option>#}
+{#            <option value="PR">Processes</option>#}
+{#        </select> :#}
+{#        <select id="product" aria-label="Product select">#}
+{#            <option class="DF" disabled selected>--------</option>#}
+{#            {% for p in hw %}#}
+{#                <option value="{{ p }}" class="hw-product">{{ p }}</option>#}
+{#            {% endfor %}#}
+{#            {% for p in sw %}#}
+{#                <option value="{{ p }}" class="sw-product">{{ p }}</option>#}
+{#            {% endfor %}#}
+{#            {% for p in hw %}#}
+{#                <option value="{{ p }}">{{ p }}</option>#}
+{#            {% endfor %}#}
+{#        </select> :#}
+{#        <select id="task" aria-label="Task select">#}
+{#            <option value="Total">-Total-</option>#}
+{#            {% for t in hw_tasks %}#}
+{#                <option value="{{ t }}" class="hw-task">{{ t }}</option>#}
+{#            {% endfor %}#}
+{#            {% for t in sw_tasks %}#}
+{#                <option value="{{ t }}" class="sw-task">{{ t }}</option>#}
+{#            {% endfor %}#}
+{#        </select>#}
+{#        <select id="sign" aria-label="Comparison sign select">#}
+{#            <option value="MR">></option>#}
+{#            <option value="LS"><</option>#}
+{#            <option value="EQ">=</option>#}
+{#        </select>#}
+{#        <select id="level" aria-label="Filter level">#}
+{#            {% for level in levels %}#}
+{#                <option value="{{ level }}">{{ level }}</option>#}
+{#            {% endfor %}#}
+{#        </select>#}
+{#        <input type="number" min="0" aria-label="Filter value">#}
+{#    </div>#}
+
     <div id="hw">
         <h2>Hardware</h2>
-        <select id="hw--product">
+        <select class="product" aria-label="Hardware product select">
             {% for p in hw %}
                 <option value="{{ p }}">{{ p }}</option>
             {% endfor %}
         </select> :
-        <select id="hw--task">
+        <select class="task" aria-label="Hardware task select">
             <option value="Total">-Total-</option>
             {% for t in hw_tasks %}
                 <option value="{{ t }}">{{ t }}</option>
             {% endfor %}
         </select>
-        <select id="hw--sign">
-            <option value="MR">></option>
-            <option value="LS"><</option>
-            <option value="EQ">=</option>
+        <select class="sign" aria-label="Hardware comparison sign select">
+            <option value=">">></option>
+            <option value="<"><</option>
+            <option value="=">=</option>
         </select>
-        <input type="number" min="0" max="{{ hw_max }}">
-        <button id="hw--add_filter">Добавить</button>
+        <input class="filter_value" type="number" min="0" max="{{ hw_max }}" aria-label="Hardware filter value">
+        <select class="level" aria-label="Hardware filter level" style="display: none">
+            {% for level in levels %}
+                <option value="{{ level }}">{{ level }}</option>
+            {% endfor %}
+        </select>
+        <button class="add-filter">Добавить</button>
+        <div class="filters"></div>
     </div>
     <div id="sw">
         <h2>Software</h2>
-        <select id="sw--product">
+        <select class="product" aria-label="Software product select">
             {% for p in sw %}
                 <option value="{{ p }}">{{ p }}</option>
             {% endfor %}
         </select> :
-        <select id="sw--task">
+        <select class="task" aria-label="Software task select">
             <option value="Total">-Total-</option>
             {% for t in sw_tasks %}
                 <option value="{{ t }}">{{ t }}</option>
             {% endfor %}
         </select>
-        <select id="sw--sign">
-            <option value="MR">></option>
-            <option value="LS"><</option>
-            <option value="EQ">=</option>
+        <select class="sign" aria-label="Software comparison sign select">
+            <option value=">">></option>
+            <option value="<"><</option>
+            <option value="=">=</option>
         </select>
-        <input type="number" min="0" max="{{ sw_max }}">
-        <button id="sw--add_filter">Добавить</button>
+        <input class="filter_value" type="number" min="0" max="{{ sw_max }}" aria-label="Software filer number">
+        <select class="level" aria-label="Software filter level" style="display: none">
+            {% for level in levels %}
+                <option value="{{ level }}">{{ level }}</option>
+            {% endfor %}
+        </select>
+        <button class="add-filter">Добавить</button>
+        <div class="filters"></div>
     </div>
     <div id="pr">
         <h2>Processes</h2>
-        <select id="pr--product">
+        <select class="product" aria-label="Process select">
             {% for p in processes %}
                 <option value="{{ p }}">{{ p }}</option>
             {% endfor %}
         </select> :
-        <select id="pr--sign">
-            <option value="MR">></option>
-            <option value="LS"><</option>
-            <option value="EQ">=</option>
+        <select class="sign" aria-label="Process comparison sign select">
+            <option value=">">></option>
+            <option value="<"><</option>
+            <option value="=">=</option>
         </select>
-        <input type="number" min="0" max="4">
-        <button id="pr--add_filter">Добавить</button>
+        <select class="level" aria-label="Process filter level">
+            {% for level in levels %}
+                <option value="{{ level }}">{{ level }}</option>
+            {% endfor %}
+        </select>
+        <button class="add-filter">Добавить</button>
+        <div class="filters"></div>
     </div>
-    <div id="cert">
+    <div id="cr">
         <h2>Certificates</h2>
-        <select id="cert--class">
+        <select id="class" aria-label="Certificate class select">
+            <option class="DF" disabled selected>------</option>
             {% for c in certificate_category %}
                 <option value="{{ c }}">{{ c }}</option>
             {% endfor %}
         </select> :
-        <select id="cert--subclass">
+        <select id="sub-class" aria-label="Certificate sub-class select">
             <option class="DF" disabled selected>------</option>
             {% for cr in certificate_subcategory %}
                 <option class="{{ cr.1 }}" value="{{ cr.0 }}">{{ cr.0 }}</option>
             {% endfor %}
         </select>
-        <button id="sw--add_filter">Добавить</button>
+        <button class="add-filter">Добавить</button>
+        <div class="filters"></div>
     </div>
+    <button id="apply-filters">Применить фильтры</button>
+    <button id="saveCSV">Сохранить в csv</button>
 </div>

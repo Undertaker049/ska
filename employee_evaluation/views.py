@@ -39,6 +39,7 @@ def main(request):
                 data["certificate_subcategory"].append(obj)
             data["hw_max"] = HW_MAX_SCORE
             data["sw_msx"] = SW_MAX_SCORE
+            data["levels"] = Levels.objects.values_list('level', flat=True)
 
         return render(request, "employee_evaluation.html", data)
 
@@ -183,6 +184,12 @@ def upload_review(request):
             return HttpResponse(status=http.HTTPStatus.INTERNAL_SERVER_ERROR, content="Не удалось сохранить запись")
 
     return HttpResponse(status=http.HTTPStatus.METHOD_NOT_ALLOWED)
+
+
+@login_required
+def get_subordinates(request):
+    employee = Employees.objects.get(name=f"{request.user.first_name} {request.user.last_name}")
+    return JsonResponse({"data": list(Employees.objects.filter(subordinate_of=employee.id).values_list('id', flat=True))})
 
 
 def get_products(employee: Employees, key="all"):

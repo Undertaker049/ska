@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="{% static "GlobalCSS/sidebar-sticky.css" %}" />
     <link rel="stylesheet" href="{% static "GlobalCSS/snackbar.css" %}" />
     <link rel="stylesheet" href="{% static "CSS/employee_evaluation.css" %}" />
+    <link rel="stylesheet" href="{% static "CSS/employee_evaluation_supervisor_filters.css" %}" />
     <link rel="shortcut icon" href="https://cdn-icons-png.freepik.com/512/709/709612.png" />
 </head>
 <body>
@@ -45,7 +46,7 @@
 <script src="{% static "GlobalJS/snackbar.js" %}"></script>
 <script src="{% static "JS/employee_evaluation.js" %}"></script>
 {% if is_supervisor %}
-    <script src="{% static "JS/employee_evaluation-supervisor.js" %}"></script>
+    <script src="{% static "JS/employee_evaluation_supervisor.js" %}"></script>
 {% endif %}
 </body>
 </html>
