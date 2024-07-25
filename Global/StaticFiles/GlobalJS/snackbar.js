@@ -1,3 +1,7 @@
+/** Метод для отображения сообщения в снэкбаре
+ *
+ * @param msg Сообщение
+ */
 function showSnackbar(msg) {
     const x = document.getElementById("snackbar");
     x.textContent = msg

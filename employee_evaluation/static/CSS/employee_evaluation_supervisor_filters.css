@@ -23,3 +23,16 @@
 .delete-filter:hover {
     background-color: red;
 }
+
+.failing-filter {
+    animation-name: warning-glowing;
+    animation-duration: 3s;
+    animation-iteration-count: infinite;
+    /*animation: warning-glowing 3s infinite;*/
+}
+
+@keyframes warning-glowing {
+    0% {background-color: lightgray;}
+    50% {background-color: red}
+    100% {background-color: lightgray}
+}

@@ -1,4 +1,5 @@
 """Методы для отображения и работы с данными блока self_assessment"""
+import http
 import json
 
 from django.contrib.auth.decorators import login_required
@@ -105,6 +106,11 @@ def upload_assessment(request) -> HttpResponse:
                values_list('id', flat=True).
                first())
 
+    if SkillsSW.objects.filter(employee_id=user_id).exists() | \
+            SkillsHW.objects.filter(employee_id=user_id).exists() | \
+            SkillsPR.objects.filter(employee_id=user_id).exists():
+        return HttpResponse(http.HTTPStatus.FORBIDDEN, content="Ваши данные полностью или частично есть в базе!")
+
     hw_tasks = TaskHW.objects.values_list("task", flat=True).distinct()
     for product in data.get("HW"):
         product_name = product.get("_product").replace('\'', "")
@@ -135,4 +141,4 @@ def upload_assessment(request) -> HttpResponse:
                        level=Levels.objects.get(weight=processes_tasks_level))
         obj.save()
 
-    return HttpResponse(status=200)
+    return HttpResponse(status=http.HTTPStatus.OK)

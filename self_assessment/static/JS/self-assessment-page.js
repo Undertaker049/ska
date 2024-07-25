@@ -47,7 +47,7 @@ $finish_button.addEventListener("click", function() {
             "Processes": form_data(document.getElementById('Processes')),
         };
 
-        fetch('self-assessment/upload', {
+        fetch('/self-assessment/upload', {
             method: "POST",
             headers: {
                 'Accept': 'application/text',

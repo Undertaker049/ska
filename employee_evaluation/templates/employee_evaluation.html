@@ -17,6 +17,7 @@
     <div id="employees">
     <button onclick="location.href='/employee-evaluation/reviews'">Оценки</button>
         {% if is_supervisor %}
+            {% csrf_token %}
             {% include "supervisor_filters.html" %}
         {% endif %}
         <div>
@@ -33,7 +34,7 @@
             </thead>
             <tbody>
                 {% for employee in employees %}
-                    <tr>
+                    <tr class="employee">
                         <td>{{ employee.id }}</td>
                         <td>{{ employee.name }}</td>
                     </tr>
