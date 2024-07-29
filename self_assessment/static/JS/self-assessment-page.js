@@ -62,6 +62,10 @@ $finish_button.addEventListener("click", function() {
             if (!response.ok) {
                 return response.json().then(err => { showSnackbar(err.message || "Unknown error") });
             }
+            else {
+                showSnackbar("Результаты записаны!")
+                $finish_button.disabled = true
+            }
             return response.json();
         })
         .catch(err => {

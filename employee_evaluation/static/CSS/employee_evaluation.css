@@ -5,7 +5,6 @@
 html{
     height: 100%;
     width: 100%;
-
 }
 
 body {
@@ -101,6 +100,19 @@ input:checked + .switch-slider {
 
 input:checked + .switch-slider:before {
     transform: translateX(26px);
+}
+
+.default-button {
+    width: fit-content;
+    height: fit-content;
+    padding: 5px;
+    background-color: rgb(0, 182, 197);
+    transition: background 0.3s;
+    border: none;
+}
+
+.default-button:hover {
+    background-color: rgb(0, 126, 146);
 }
 
 #filters {

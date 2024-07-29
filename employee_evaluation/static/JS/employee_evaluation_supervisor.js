@@ -7,6 +7,8 @@ const $task_select = document.querySelectorAll(".task")
 const $add_filter_button = document.querySelectorAll(".add-filter")
 const $employees = document.querySelectorAll(".employee");
 
+const $table = document.getElementById("employees-table")
+
 let subordinates = [];
 let filters = {};
 let filterIDCounter = -1;
@@ -111,8 +113,8 @@ $add_filter_button.forEach(function (el) {
                 filter = {
                     "id":getID(),
                     "block": "cr",
-                    "class": $cert__class.value,
-                    "subclass": $cert__subclass.value};
+                    "category": $cert__class.value,
+                    "subcategory": $cert__subclass.value};
                 break;
             default:
                 showSnackbar(`Не понятно, из какого блока фильтр ${node.id}!`);
@@ -121,9 +123,9 @@ $add_filter_button.forEach(function (el) {
         filters[filter.id] = filter;
         node.querySelector(".filters").innerHTML +=
             `<span class="filter" data-id="${filter["id"]}">` +
-            filterToString(filter) +
+            `<span class="filter--data">${filterToString(filter)}</span>` +
             `<button class="delete-filter" onclick="` +
-            `delete filters[this.dataset.id];`+
+            `delete filters[this.parentNode.dataset.id];`+
             `this.parentNode.remove();` +
             `">x</button>` +
             `</span>`;
@@ -157,7 +159,7 @@ function filterToString(filter){
         case "pr":
             return `${filter["product"]} ${filter["sign"]} ${filter["value"]}`;
         case "cr":
-            return `${filter["class"]}: ${filter["subclass"]}`;
+            return `${filter["category"]}: ${filter["subcategory"]}`;
         default:
             return "unknown filter";
     }
@@ -189,24 +191,58 @@ function disableSupervisor(){
  * Отправляет список фильтров и id сотрудников для фильтрации на сервер
  */
 function sendFilters() {
-    let data = {subordinates: subordinates, filters: filters};
+    console.log()
+    if (Object.keys(filters).length === 0) {
+        showSnackbar("Сначала добавьте фильтры!")
+        return
+    }
+
     fetch("/employee-evaluation/subordinates/filter", {
         method: "POST",
         headers:{"X-CSRFToken": document.querySelector('input[name="csrfmiddlewaretoken"]').value},
-        body: new URLSearchParams({"data": JSON.stringify(data)}),
+        body: new URLSearchParams({"data": JSON.stringify({subordinates: subordinates, filters: filters})}),
     }).then(resp => {
        if (resp.ok) {
            resp.text().then(msg => {
-               console.log(msg);
+
+               /**
+                * @type {{data: Array, data_for_table: Array, headers_for_table: Array}}
+                */
+               let d = JSON.parse(msg)
+               let matches = d.data;
+               let data_for_table = d.data_for_table;
+
+               let thead = $table.querySelector("thead")
+               let tr_tbody = $table.querySelectorAll("tbody > tr")
+
+
+               console.log(data_for_table[Object.keys(data_for_table)[0]][0])
+               console.log(d.headers_for_table)
+
+
+               document.querySelectorAll(".subordinate").forEach(el =>{
+                   if (matches.indexOf(Number(el.querySelector("td").textContent)) === -1) {
+                       el.style.display = 'none';
+                   } else {
+                       el.style.display = 'table-row';
+                   }
+
+               });
+               // for (const id in JSON.parse(msg).data) {
+               //
+               // }
            });
-       } else {
+       } else if (resp.status === 404) {
            resp.text().then(e =>{
                showSnackbar("После отмеченного фильтра осталось 0 сущностей для фильтрации!");
-               document.querySelector(`.filter[data-id="${e}"]`).classList.add("failing-filter")
-           })
-
+               document.querySelector(`.filter[data-id="${e}"]`).classList.add("failing-filter");
+           });
        }
     });
+}
+
+function appendToTable(data) {
+
 }
 
 /**
@@ -215,4 +251,3 @@ function sendFilters() {
 function saveCSV() {
 
 }
-

@@ -32,7 +32,7 @@
                 <option value="{{ level }}">{{ level }}</option>
             {% endfor %}
         </select>
-        <button class="add-filter">Добавить</button>
+        <button class="default-button add-filter">Добавить</button>
         <div class="filters"></div>
     </div>
     <div id="sw">
@@ -59,7 +59,7 @@
                 <option value="{{ level }}">{{ level }}</option>
             {% endfor %}
         </select>
-        <button class="add-filter">Добавить</button>
+        <button class="default-button add-filter">Добавить</button>
         <div class="filters"></div>
     </div>
     <div id="pr">
@@ -79,7 +79,7 @@
                 <option value="{{ level }}">{{ level }}</option>
             {% endfor %}
         </select>
-        <button class="add-filter">Добавить</button>
+        <button class="default-button add-filter">Добавить</button>
         <div class="filters"></div>
     </div>
     <div id="cr">
@@ -96,9 +96,9 @@
                 <option class="{{ cr.1 }}" value="{{ cr.0 }}">{{ cr.0 }}</option>
             {% endfor %}
         </select>
-        <button class="add-filter">Добавить</button>
+        <button class="default-button add-filter">Добавить</button>
         <div class="filters"></div>
     </div>
-    <button id="apply-filters" onclick="sendFilters()">Применить фильтры</button>
-    <button id="saveCSV" onclick="saveCSV()">Сохранить в .csv</button>
+    <button id="apply-filters" class="default-button" onclick="sendFilters()">Применить фильтры</button>
+    <button id="saveCSV" class="default-button" onclick="saveCSV()">Сохранить в .csv</button>
 </div>

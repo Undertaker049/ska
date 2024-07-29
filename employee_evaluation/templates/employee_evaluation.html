@@ -18,14 +18,14 @@
     <button onclick="location.href='/employee-evaluation/reviews'">Оценки</button>
         {% if is_supervisor %}
             {% csrf_token %}
-            {% include "supervisor_filters.html" %}
+            {% include "employee_evaluation_supervisor_filters.html" %}
         {% endif %}
         <div>
             <label for="table-search">Search:</label><br/>
             <input type="search" id="table-search" name="ts" placeholder="id,name"/>
             <button id="search">Найти</button>
         </div>
-        <table>
+        <table id="employees-table">
             <thead>
                 <tr>
                     <th>ID</th>
