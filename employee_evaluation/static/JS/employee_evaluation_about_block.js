@@ -76,4 +76,3 @@ $modal_edit_text_button.addEventListener("click", () => {
 $nav_menu_button.addEventListener("click", ()=>{
     $nav_menu.classList.toggle("expanded")
 })
-

@@ -1,5 +1,7 @@
 from django.db import models
 
+from self_assessment.models import Employees
+
 TYPES = {"CER": "certification", "TR": "training", "EX": "exam"}
 
 
@@ -13,7 +15,7 @@ class CertificateSubCategory(models.Model):
 
 
 class Certificate(models.Model):
-    employee_name = models.CharField(max_length=128)
+    employee = models.ForeignKey(Employees, null=True, on_delete=models.CASCADE, to_field="id")
     training_name = models.CharField(max_length=256)
     training_type = models.CharField(max_length=13, choices=TYPES)
     date = models.DateField()

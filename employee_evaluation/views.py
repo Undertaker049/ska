@@ -27,9 +27,7 @@ SW_PRODUCTS = Software.objects.values_list('product', flat=True)
 SW_TASKS = TaskSW.objects.values_list('task', flat=True)
 PROCESSES = Processes.objects.values_list('process', flat=True)
 CERTIFICATE_CATEGORIES = CertificateCategory.objects.values_list('category', flat=True)
-CERTIFICATE_SUBCATEGORIES = []
-for o in CertificateSubCategory.objects.values_list('subcategory', 'subcategory_of'):
-    CERTIFICATE_SUBCATEGORIES.append(o)
+CERTIFICATE_SUBCATEGORIES = list(CertificateSubCategory.objects.values_list('subcategory', 'subcategory_of'))
 
 
 @login_required
@@ -233,12 +231,10 @@ def subordinates_apply_filters(request):
     subordinates = list(Employees.objects.filter(id__in=data["subordinates"]).values())
     sub_to_remove = []
     data_for_table = {key: [] for key in data["subordinates"]}
-    headers_for_table = []
     for _id in filters:
         _filter = filters[_id]
         if _filter["block"] in ["hw", "sw"]:
             if _filter["task"] != "Total":
-                headers_for_table.append(f"{_filter['block']} {_filter['product']}:{_filter['task']}")
                 for index, subordinate in enumerate(subordinates):
                     if _filter["block"] == "hw":
                         obj = SkillsHW
@@ -256,7 +252,6 @@ def subordinates_apply_filters(request):
                     sub_to_remove.append(index)
 
             elif _filter["task"] == "Total":
-                headers_for_table.append(f"{_filter['block']} {_filter['product']}: {'Total'}")
                 for index, subordinate in enumerate(subordinates):
                     score = get_product_score(SkillsHW if _filter["block"] == "hw" else SkillsSW,
                                               subordinate["id"], _filter["product"])
@@ -267,7 +262,6 @@ def subordinates_apply_filters(request):
                     sub_to_remove.append(index)
 
         elif _filter["block"] == "pr":
-            headers_for_table.append(f"pr {_filter['process']}")
             for index, subordinate in enumerate(subordinates):
                 obj = SkillsPR.objects.filter(process=_filter["process"], employee_id=subordinate["id"]).get()
                 if compare_to_filter(_filter["sign"], LEVELS_VAL[obj.level_id], LEVELS_VAL[_filter["value"]]):
@@ -281,9 +275,8 @@ def subordinates_apply_filters(request):
             if _filter["subcategory"] != "any":
                 obj = obj.filter(sub_category=_filter["subcategory"])
 
-            headers_for_table.append(f"crt {obj.category}")
             for index, subordinate in enumerate(subordinates):
-                if obj.filter(employee_name=subordinate["name"]):
+                if obj.filter(employee=subordinate["id"]):
                     data_for_table[subordinate["id"]].append(f"{obj.sub_category}")
                     continue
 
@@ -299,9 +292,8 @@ def subordinates_apply_filters(request):
     data = []
     for subordinate in subordinates:
         data.append(subordinate["id"])
-    return JsonResponse(status=http.HTTPStatus.OK, data={"data": data,
-                                                         "data_for_table": data_for_table,
-                                                         "headers_for_table": headers_for_table})
+    return JsonResponse(status=http.HTTPStatus.OK, data={"employees_id": data,
+                                                         "data_for_table": data_for_table})
 
 
 # Вынести все вспомогательные функции в отдельный файл

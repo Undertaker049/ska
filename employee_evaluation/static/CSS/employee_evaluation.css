@@ -27,27 +27,29 @@ body {
     padding-left: 10px;
 }
 
-table {
+#employees-table {
     font-size: clamp(10px, 5vw, 20px);
     letter-spacing: 1px;
 
     border-collapse: collapse;
     border: 2px solid rgb(140 140 140);
+
+    overflow-x: scroll;
 }
 
-thead, tfoot {
+#employees-table thead, tfoot {
     color: #fff;
     background-color: #2c5e77;
 }
 
-th, td {
+#employees-table th, td {
     padding: 10px;
     border-bottom: 1px solid black;
 
     text-align: center;
 }
 
-tbody tr:hover {
+#employees-table tbody tr:hover {
     background-color: rgba(0,182,197, 0.3);
 
     cursor: pointer;

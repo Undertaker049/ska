@@ -5,6 +5,8 @@ import os
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render
+
+from self_assessment.models import Employees
 from ska import settings
 
 from .models import Certificate, CertificateCategory, CertificateSubCategory
@@ -17,16 +19,19 @@ def main(request):
     :param request: Объект запроса
     :return: GET - загружает страницу с сертификатами, POST - загружает сертификат на сервер
     """
+    employee = Employees.objects.filter(name=f'{request.user.first_name} {request.user.last_name}').get()
     if request.method == 'GET':
         certificates = (Certificate.
                         objects.
-                        filter(employee_name=f'{request.user.first_name} {request.user.last_name}').
+                        filter(employee=employee.id).
                         values())
         return render(request, "certificate.html", {"certificates": certificates})
+
     if request.method == 'POST':
+        employee = Employees.objects.filter(name=f'{request.user.first_name} {request.user.last_name}').get()
+
         data = request.POST
-        print(data)
-        obj = Certificate(employee_name=f'{request.user.first_name} {request.user.last_name}',
+        obj = Certificate(employee=employee.id,
                           training_name=data.get("training_name"),
                           training_type=data.get("training_type"),
                           date=data.get("date"),
@@ -52,7 +57,8 @@ def about(request):
     :return: GET - страница с сертификатом
     """
     if request.method == 'GET':
-        c = Certificate.objects.filter(employee_name=f"{request.user.first_name} {request.user.last_name}",
+        employee = Employees.objects.filter(name=f'{request.user.first_name} {request.user.last_name}').get()
+        c = Certificate.objects.filter(employee=employee.id,
                                        id=request.GET.get("id"))
         if c:
             c = c.values()[0]
@@ -90,19 +96,19 @@ def delete_certificate(request):
     :param request: Объект запроса
     :return: POST - Удаляет сертификат
     """
-    if request.method == "POST":
-        obj = Certificate.objects.filter(employee_name=f"{request.user.first_name} {request.user.last_name}",
-                                         id=request.POST["id"])
-        if obj.exists():
-            path = f"{settings.MEDIA_ROOT}/{obj.values()[0]['certificate_file']}"
-            print(path)
-            if os.path.isfile(path):
-                os.remove(path)
-                obj.delete()
-                return HttpResponse(status=200, content="Сертификат удален")
-            else:
-                return HttpResponse(status=http.HTTPStatus.NOT_FOUND, content="Файл сертификата не найден.")
+    if request.method != "POST":
+        return HttpResponse(status=http.HTTPStatus.METHOD_NOT_ALLOWED)
+    employee = Employees.objects.filter(name=f'{request.user.first_name} {request.user.last_name}').get()
+    obj = Certificate.objects.filter(employee=employee.id,
+                                     id=request.POST["id"])
+    if obj.exists():
+        path = f"{settings.MEDIA_ROOT}/{obj.values()[0]['certificate_file']}"
+        print(path)
+        if os.path.isfile(path):
+            os.remove(path)
+            obj.delete()
+            return HttpResponse(status=200, content="Сертификат удален")
         else:
-            return HttpResponse(status=http.HTTPStatus.NOT_FOUND, content="Запись не найдена на сервере.")
-
-    return HttpResponse(status=http.HTTPStatus.METHOD_NOT_ALLOWED)
+            return HttpResponse(status=http.HTTPStatus.NOT_FOUND, content="Файл сертификата не найден.")
+    else:
+        return HttpResponse(status=http.HTTPStatus.NOT_FOUND, content="Запись не найдена на сервере.")

@@ -38,7 +38,3 @@ $hw_page_radio.forEach(function (e) {
         }
     });
 });
-
-
-
-

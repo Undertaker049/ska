@@ -45,7 +45,8 @@ $supervisor_switch.addEventListener("click", (ev)=>{
         });
     } else {
         $filters.classList.toggle("expanded");
-        disableSupervisor()
+        clearFiltersFromTable();
+        disableSupervisor();
     }
 });
 
@@ -71,42 +72,45 @@ $task_select.forEach(function (el) {
 /**
  * Добавление фильтра, в зависимости от блока, к которому он добавляется, зависит его формат
  */
-$add_filter_button.forEach(function (el) {
+$add_filter_button.forEach(el => {
     el.addEventListener("click", ()=> {
         let node = el.parentNode;
         let filter = {};
+
+        const getValue = (selector) => node.querySelector(selector).value;
+
         switch (node.id) {
             case "hw":
             case "sw":
                 filter = {
                     "id":getID(),
                     "block": node.id,
-                    "product": node.querySelector(".product").value,
-                    "task": node.querySelector(".task").value,
-                    "sign": node.querySelector(".sign").value
+                    "product": getValue(".product"),
+                    "task": getValue(".task"),
+                    "sign": getValue(".sign")
                 };
 
                 if (filter["task"] === "Total") {
-                    filter["value"] = node.querySelector(".filter_value").value;
+                    filter["value"] = getValue(".filter_value");
                     if (filter["value"] === ""){
                         showSnackbar("Введите значение для фильтра!");
                         return;
                     }
                 } else {
-                    filter["value"] = node.querySelector(".level").value;
+                    filter["value"] = getValue(".level");
                 }
                 break;
             case "pr":
                 filter = {
                     "id":getID(),
                     "block": "pr",
-                    "process": node.querySelector(".process").value,
-                    "sign": node.querySelector(".sign").value,
-                    "value": node.querySelector(".level").value,
+                    "process": getValue(".process"),
+                    "sign": getValue(".sign"),
+                    "value": getValue(".level"),
                     };
                 break;
             case "cr":
-                if (node.querySelector("#class").value === "any"){
+                if (getValue("#class") === "any"){
                     showSnackbar("Укажите класс сертификата!")
                     return;
                 }
@@ -114,7 +118,8 @@ $add_filter_button.forEach(function (el) {
                     "id":getID(),
                     "block": "cr",
                     "category": $cert__class.value,
-                    "subcategory": $cert__subclass.value};
+                    "subcategory": $cert__subclass.value
+                };
                 break;
             default:
                 showSnackbar(`Не понятно, из какого блока фильтр ${node.id}!`);
@@ -123,11 +128,11 @@ $add_filter_button.forEach(function (el) {
         filters[filter.id] = filter;
         node.querySelector(".filters").innerHTML +=
             `<span class="filter" data-id="${filter["id"]}">` +
-            `<span class="filter--data">${filterToString(filter)}</span>` +
-            `<button class="delete-filter" onclick="` +
-            `delete filters[this.parentNode.dataset.id];`+
-            `this.parentNode.remove();` +
-            `">x</button>` +
+                `<span class="filter--data">${filterToString(filter)}</span>` +
+                `<button class="delete-filter" onclick="` +
+                    `delete filters[this.parentNode.dataset.id];`+
+                    `this.parentNode.remove();` +
+                `">x</button>` +
             `</span>`;
     });
 });
@@ -157,7 +162,7 @@ function filterToString(filter){
         case "sw":
             return `${filter["product"]}: ${filter["task"]} ${filter["sign"]} ${filter["value"]}`;
         case "pr":
-            return `${filter["product"]} ${filter["sign"]} ${filter["value"]}`;
+            return `${filter["process"]} ${filter["sign"]} ${filter["value"]}`;
         case "cr":
             return `${filter["category"]}: ${filter["subcategory"]}`;
         default:
@@ -191,7 +196,6 @@ function disableSupervisor(){
  * Отправляет список фильтров и id сотрудников для фильтрации на сервер
  */
 function sendFilters() {
-    console.log()
     if (Object.keys(filters).length === 0) {
         showSnackbar("Сначала добавьте фильтры!")
         return
@@ -205,19 +209,14 @@ function sendFilters() {
        if (resp.ok) {
            resp.text().then(msg => {
 
+               clearFiltersFromTable();
+
                /**
-                * @type {{data: Array, data_for_table: Array, headers_for_table: Array}}
+                * @type {{employees_id: Array, data_for_table: Array}}
                 */
-               let d = JSON.parse(msg)
-               let matches = d.data;
+               let d = JSON.parse(msg);
+               let matches = d.employees_id;
                let data_for_table = d.data_for_table;
-
-               let thead = $table.querySelector("thead")
-               let tr_tbody = $table.querySelectorAll("tbody > tr")
-
-
-               console.log(data_for_table[Object.keys(data_for_table)[0]][0])
-               console.log(d.headers_for_table)
 
 
                document.querySelectorAll(".subordinate").forEach(el =>{
@@ -228,9 +227,9 @@ function sendFilters() {
                    }
 
                });
-               // for (const id in JSON.parse(msg).data) {
-               //
-               // }
+
+               appendHeadersToTable($table.querySelector("thead > tr"));
+               appendRowsToTable(data_for_table, $table.querySelectorAll(".subordinate"))
            });
        } else if (resp.status === 404) {
            resp.text().then(e =>{
@@ -241,13 +240,104 @@ function sendFilters() {
     });
 }
 
-function appendToTable(data) {
+/**
+ * Расширяет таблицу, создавая заголовки для колонок, отражающих фильтруемые значения
+ * @param headerSelector
+ */
+function appendHeadersToTable(headerSelector) {
+    let buff;
+    for (const i in filters) {
+        let th = document.createElement("th");
+        th.classList.add("tmp-table");
+        buff = filters[i];
+        switch (buff["block"]) {
+            case "hw":
+            case "sw":
+                th.textContent = `${buff["product"]}:${buff["task"]}`;
+                break;
+            case "pr":
+                th.textContent = buff["process"];
+                break;
+            case "cr":
+                th.textContent = buff["category"];
+                break;
+        }
+        headerSelector.append(th);
+    }
+}
 
+/**
+ * Дополняет строки-записи о сотрудниках, прошедших фильтры, дописывая значения, по которым их фильтровали
+ * @param data {Array}
+ * @param rowsSelector {NodeListOf<HTMLTableRowElement>}
+ */
+function appendRowsToTable(data, rowsSelector) {
+    // const start= new Date().getTime();
+    // let tds = ""
+    // for (let i = 0; i < rowsSelector.length; i++) {
+    //     let id = rowsSelector[i].querySelector("td").textContent
+    //     for (let d in data[id]) {
+    //         tds += `<td class="tmp-table">${data[id][d]}</td>`
+    //     }
+    //     rowsSelector[i].innerHTML += tds
+    //     tds = ""
+    // }
+
+    for (let i = 0; i < rowsSelector.length; i++) {
+        let id = rowsSelector[i].querySelector("td").textContent
+        for (let d in data[id]) {
+            let td = document.createElement("td")
+            td.classList.add("tmp-table");
+            td.textContent = data[id][d];
+            rowsSelector[i].append(td)
+        }
+    }
+
+    // const end = new Date().getTime();
+    // console.log(`SecondWay: ${end - start}ms`);
+    // console.log(`start: ${start}, end: ${end}`);
+
+}
+
+/**
+ * Метод для удаления из таблицы временных строк\колонок, которые были созданы для отображения результатов фильтрации
+ */
+function clearFiltersFromTable() {
+    document.querySelectorAll(".tmp-table").forEach(el => {
+        el.remove()
+    })
 }
 
 /**
  * Позволяет сохранить таблицу с отобранными сотрудниками в csv формате
  */
 function saveCSV() {
+    let csv_data = [];
 
+    $table.querySelectorAll("tr").forEach(el => {
+        let cols = el.querySelectorAll('tr.subordinate td,th');
+
+        if (cols.length !== 0) {
+            let row = [];
+            for (let j = 0; j < cols.length; j++) {
+                row.push(cols[j].textContent);
+            }
+            csv_data.push(row.join(","));
+        }
+
+    });
+    csv_data = csv_data.join('\n');
+
+    let CSVFile = new Blob([csv_data], { type: "text/csv" });
+
+    let temp_link = document.createElement('a');
+
+    temp_link.download = "filtered_employees.csv";
+    temp_link.href = window.URL.createObjectURL(CSVFile);
+
+    temp_link.style.display = "none";
+    document.body.appendChild(temp_link);
+
+    temp_link.click();
+    document.body.removeChild(temp_link);
 }

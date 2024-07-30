@@ -25,6 +25,3 @@ $confirm_delete_button.addEventListener("click", ()=>{
 $cancel_delete_button.addEventListener("click", ()=>{
     $delete_confirmation_modal.close();
 })
-
-
-
