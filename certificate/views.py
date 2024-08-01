@@ -62,26 +62,14 @@ def about(request):
                                        id=request.GET.get("id"))
         if c:
             c = c.values()[0]
-            # sl = CertificateSubCategory.objects.values()
-            # selections = {}
-            #
-            # for elem in sl:
-            #     arr = []
-            #     for e in sl.filter(subcategory_of_id=elem["subcategory_of_id"]).values():
-            #         arr.append(e["subcategory"])
-            #     arr.append("(Empty)")
-            #     selections[elem["subcategory_of_id"]] = arr
-
             data = {"id": c["id"],
                     "name": c["training_name"],
                     "type": c["training_type"],
-                    # "date": c["date"].strftime('%Y-%m-%d'),
                     "date": c["date"],
                     "category": c["category_id"],
                     "subcategory": c["sub_category_id"],
                     "file": f"{settings.MEDIA_URL}{c['certificate_file']}",
                     "is_pdf": True if c['certificate_file'].split(".")[1] == "pdf" else False}
-            # "selections": selections}
             return render(request, 'certificate_about.html', {"certificate": data})
         else:
             return render(request, "certificate_about_not_found.html")
@@ -98,11 +86,11 @@ def delete_certificate(request):
     """
     if request.method != "POST":
         return HttpResponse(status=http.HTTPStatus.METHOD_NOT_ALLOWED)
+
     employee = Employees.objects.filter(name=f'{request.user.first_name} {request.user.last_name}').get()
-    obj = Certificate.objects.filter(employee=employee.id,
-                                     id=request.POST["id"])
+    obj = Certificate.objects.filter(employee=employee.id, id=request.POST["id"]).get()
     if obj.exists():
-        path = f"{settings.MEDIA_ROOT}/{obj.values()[0]['certificate_file']}"
+        path = f"{settings.MEDIA_ROOT}/{obj['certificate_file']}"
         print(path)
         if os.path.isfile(path):
             os.remove(path)

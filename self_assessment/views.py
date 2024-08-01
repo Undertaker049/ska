@@ -17,6 +17,41 @@ from .models import (Hardware,
                      Levels,
                      Employees)
 
+HW_PRODUCTS = Hardware.objects.values_list('product', flat=True)
+SW_PRODUCTS = Software.objects.values_list('product', flat=True)
+HW_TASKS = TaskHW.objects.values_list('task', flat=True)
+SW_TASKS = TaskSW.objects.values_list('task', flat=True)
+PROCESSES = Processes.objects.values_list('process', flat=True)
+LEVELS = Levels.objects.values_list('level', flat=True)
+
+
+def new_main(request):
+    if request.method != "GET":
+        return HttpResponse(status=http.HTTPStatus.METHOD_NOT_ALLOWED)
+
+    data = {
+        "blocks": {
+            "hw": {
+                "name": "Hardware",
+                "products": HW_PRODUCTS,
+                "tasks": HW_TASKS
+            },
+            "sw": {
+                "name": "Software",
+                "products": SW_PRODUCTS,
+                "tasks": SW_TASKS
+            },
+            "pr": {
+                "name": "Processes",
+                "products": PROCESSES,
+            },
+        },
+        "levels": LEVELS}
+
+    print(data)
+
+    return render(request, "self_assessment_new.html", context={"data": data})
+
 
 @login_required
 def main(request):
@@ -25,6 +60,9 @@ def main(request):
     :param request: Объект запроса
     :return: рендер страницы
     """
+    if request.method != "GET":
+        return HttpResponse(status=http.HTTPStatus.METHOD_NOT_ALLOWED)
+
     hw = Hardware.objects.values_list('product', flat=True).distinct()
     hw_disciplines = TaskHW.objects.values_list('task', flat=True).distinct()
 
@@ -77,6 +115,9 @@ def validate_name(request):
     :param request: Объект запроса
     :return: код 200 - если найден, 404 - если не найден
     """
+    if request.method != "GET":
+        return HttpResponse(status=http.HTTPStatus.METHOD_NOT_ALLOWED)
+
     employee = (Employees.
                 objects.
                 filter(name=f'{request.user.first_name} {request.user.last_name}').
@@ -85,11 +126,11 @@ def validate_name(request):
         if (SkillsHW.objects.filter(employee_id=employee.id).exists() |
                 SkillsSW.objects.filter(employee_id=employee.id).exists() |
                 SkillsPR.objects.filter(employee_id=employee.id).exists()):
-            return HttpResponse("Ваши данные уже есть в базе", status=403)
+            return HttpResponse("Ваши данные уже есть в базе", status=http.HTTPStatus.FORBIDDEN)
     else:
-        return HttpResponse("Работник не найден", status=404)
+        return HttpResponse("Работник не найден", status=http.HTTPStatus.NOT_FOUND)
 
-    return HttpResponse(status=200)
+    return HttpResponse(status=http.HTTPStatus.OK)
 
 
 @login_required
@@ -99,6 +140,9 @@ def upload_assessment(request) -> HttpResponse:
     :param request: Объект запроса
     :return: Код 200 - если все результаты были успешно записаны в БД
     """
+    if request.method != "POST":
+        return HttpResponse(status=http.HTTPStatus.METHOD_NOT_ALLOWED)
+
     data = json.loads(request.POST.get("form"))
     user_id = (Employees.
                objects.

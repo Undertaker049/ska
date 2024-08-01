@@ -17,6 +17,14 @@ body {
     font-family: var(--system-ui), serif;
 }
 
+body.dark-mode {
+    border-color: white;
+}
+
+body.light-mode {
+    border-color: black;
+}
+
 #content{
     display: flex;
     width: 100%;
