@@ -38,6 +38,14 @@ body {
     background-color: var(--background-main-hover);
 }
 
+.nav-block-info {
+    display: none;
+}
+
+.button:hover .nav-block-info {
+    display: block;
+}
+
 .button--navigation {
     font-size: 1.5rem;
 }
@@ -110,7 +118,7 @@ body {
 
 @keyframes expand {
     0% {height: 0;}
-    100% {height: 90vh;}
+    100% {height: calc(100vh - 60px);}
 }
 
 .links.links--collapsed #links__list-wrapper {
@@ -118,7 +126,7 @@ body {
 }
 
 @keyframes collapse {
-    0% {height: 90vh;}
+    0% {height: calc(100vh - 60px);}
     100% {height: 0;}
 }
 
@@ -169,6 +177,10 @@ body {
     flex-direction: row;
     border-left: salmon solid 8px;
     padding: 10px;
+}
+
+.block__sub__task--checked {
+    border: none;
 }
 
 .block__sub__selection {

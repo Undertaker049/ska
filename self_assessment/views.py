@@ -22,7 +22,7 @@ SW_PRODUCTS = Software.objects.values_list('product', flat=True)
 HW_TASKS = TaskHW.objects.values_list('task', flat=True)
 SW_TASKS = TaskSW.objects.values_list('task', flat=True)
 PROCESSES = Processes.objects.values_list('process', flat=True)
-LEVELS = Levels.objects.values_list('level', flat=True)
+LEVELS = Levels.objects.order_by("weight").values_list('level', flat=True)
 
 
 def new_main(request):

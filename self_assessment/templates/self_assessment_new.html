@@ -40,7 +40,7 @@
                                                     {{ level }}
                                                 </span>
                                                 <span>
-                                                    <input type="radio" value="{{ level }}" aria-label="radio select {{ level }}" name="{{ p|replace_dj:" |_" }}{{ task|replace_dj:" |_" }}"/>
+                                                    <input type="radio" class="radio-button" value="{{ level }}" aria-label="radio select {{ level }}" name="{{ p|replace_dj:" |_" }}:{{ task|replace_dj:" |_" }}"/>
                                                 </span>
                                             </div>
                                         {% endfor %}
@@ -49,16 +49,22 @@
                             {% endfor %}
                             </div>
                         {% else %}
-                        	{% for level in data.levels %}
-                                <div class="block--sub--selection">
-                                    <span>
-                                        {{ p }}
-                                    </span>
-                                    <span>
-                                        <input type="radio" value="{{ level }}" aria-label="radio select "/>
-                                    </span>
+                            <div class="block__sub__task__outer-wrapper">
+                                <div class="block__sub__task__inner-wrapper">
+                                    <div class="block__sub__task">
+                                        {% for level in data.levels %}
+                                            <div class="block__sub__selection">
+                                                <span>
+                                                    {{ level }}
+                                                </span>
+                                                <span>
+                                                    <input type="radio" class="radio-button" value="{{ level }}" aria-label="radio select {{ level }}" name="{{ p|replace_dj:" |_" }}{{ task|replace_dj:" |_" }}"/>
+                                                </span>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
                                 </div>
-                            {% endfor %}
+                            </div>
                         {% endif %}
                     </div>
                 {% endfor %}
@@ -70,9 +76,11 @@
         <div id="links__list-wrapper">
             <ul id="links__list">
                 {% for key, block in data.blocks.items%}
+                    <div id="{{ key }}_links" class="hidden">
                     {% for p in block.products %}
-                        <li class="{{ key }} hidden"><a href="#{{ p|replace_dj:" |_" }}">{{ p }}</a></li>
+                        <li class="{{ key }}"><a href="#{{ p|replace_dj:" |_" }}">{{ p }}</a></li>
                 	{% endfor %}
+                    </div>
                 {% endfor %}
 
             </ul>
