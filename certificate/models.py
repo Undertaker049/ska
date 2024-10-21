@@ -1,6 +1,6 @@
 from django.db import models
 
-TYPES = {"CER": "certification", "TR": "training", "EX": "exam"}
+TYPES = [("CER", "certification"), ("TR", "training"), ("EX", "exam")]
 
 
 class CertificateCategory(models.Model):
