@@ -29,7 +29,7 @@ body.modal-open {
     transition: opacity 0.5s, visibility 0.5s;
 }
 
-.modal-content {
+.modal__content {
     width: 80%;
     max-width: 500px;
 
@@ -39,7 +39,18 @@ body.modal-open {
     text-align: center;
 
     background-color: white;
+    /*position: relative;*/
 }
+.modal__content p {
+    margin-bottom: 10px;
+}
+
+/*#modal__close-button {*/
+/*    position: absolute;*/
+/*    top: 0;*/
+/*    right: 0;*/
+/*    background-color: red;*/
+/*}*/
 
 .modal.show {
     opacity: 1;

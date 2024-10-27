@@ -430,14 +430,3 @@ def compare_to_filter(sign: str, val1: int, val2: int) -> bool:
         '=': operator.eq,
     }
     return operators.get(sign)(val1, val2)
-
-    # if sign == ">":
-    #     if val1 > val2:
-    #         return True
-    # elif sign == "<":
-    #     if val1 < val2:
-    #         return True
-    # elif sign == "=":
-    #     if val1 == val2:
-    #         return True
-    # return False

@@ -30,8 +30,12 @@ body {
     border: none;
     width: fit-content;
     transition: background-color 0.3s ease;
+}
+
+.nav-button {
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
+    font-size: 1.5rem;
 }
 
 .button:hover {
@@ -44,10 +48,6 @@ body {
 
 .button:hover .nav-block-info {
     display: block;
-}
-
-.button--navigation {
-    font-size: 1.5rem;
 }
 
 .button--finish {
@@ -199,3 +199,21 @@ body {
 .hidden {
     display: none;
 }
+
+/*#modal-message {*/
+/*    display: flex;*/
+/*    max-height: 20vh;*/
+/*    max-width: 40vw;*/
+
+/*    align-items: center;*/
+/*    flex-direction: column;*/
+
+/*    position: fixed;*/
+/*    top: 50%;*/
+/*    left: 50%;*/
+/*}*/
+
+/*.modal-button {*/
+/*    display: inline-block;*/
+/*}*/
+

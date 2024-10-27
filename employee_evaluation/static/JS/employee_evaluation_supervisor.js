@@ -1,3 +1,4 @@
+// TODO добавить возможность скачивать сертификаты
 const $filters = document.getElementById("filters");
 const $supervisor_switch = document.getElementById("supervisor-switch");
 const $cert__class = document.getElementById("class");

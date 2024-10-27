@@ -27,10 +27,18 @@ const $nav_menu_button = document.getElementById("nav-menu--resize");
 
 let theme = "";
 
+/**
+ * Переход обратно к общему обзору на странице сотрудника
+ */
 $back_button.addEventListener("click", ()=>{
    location.href = `/employee-evaluation/about?id=${id}`;
 });
 
+/**
+ * @deprecated
+ * Описание про блок функций отсюда и до конца файла.
+ * Добавить комментарий про дисциплины сотрудника, спорная функция, скорее всего нужно убрать
+ */
 $add_comment_button.forEach(function (el) {
     el.addEventListener("click", () => {
         theme = el.parentNode.querySelector("h2").textContent

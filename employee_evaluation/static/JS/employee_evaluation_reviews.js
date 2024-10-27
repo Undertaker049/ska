@@ -1,3 +1,4 @@
+// TODO Решить, нужен ли вообще функционал с отзывами о дисциплинах сотрудников
 const $table_rows = document.querySelectorAll("table > tbody > tr");
 const $review_modal = document.getElementById("review");
 const $review_modal_data = document.getElementById("review--data");
