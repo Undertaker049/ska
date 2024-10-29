@@ -43,7 +43,7 @@
 <div id="wrapper">
 {#    TODO: Заменить кнопку "закрыть" на svg #}
     <button id="close-modal">X</button>
-    <form id="certificate-form" method="post" action="/certificate" enctype="multipart/form-data">
+    <form id="certificate-form" method="post" action="/certificate/" enctype="multipart/form-data">
         {% csrf_token %}
         <p>
             <label for="training_name">Название тренинга</label><br>

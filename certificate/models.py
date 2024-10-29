@@ -2,8 +2,7 @@ from django.db import models
 
 from self_assessment.models import Employees
 
-TYPES = {"CER": "certification", "TR": "training", "EX": "exam"}
-
+TYPES = [("CER", "certification"), ("TR", "training"), ("EX", "exam")]
 
 class CertificateCategory(models.Model):
     category = models.CharField(max_length=128, unique=True)
