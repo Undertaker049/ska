@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<!--Тестовая страница для тестовых тестов-->
+{% load static %}
+{% load self_assessment_filters %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Self-assessment</title>
+    <link rel="stylesheet" href="{% static "CSS/self_assessment.css" %}" />
+    <link rel="stylesheet" href="{% static "CSS/self_assessment_modal.css" %}" />
+{#    <link rel="stylesheet" href="{% static "GlobalCSS/Header.css" %}" />#}
+    <link rel="stylesheet" href="{% static "GlobalCSS/snackbar.css" %}" />
+    <link rel="stylesheet" href="{% static "GlobalCSS/sidebar-sticky.css" %}" />
+    <link rel="shortcut icon" href="https://cdn-icons-png.freepik.com/512/709/709612.png" />
+</head>
+<body>
+{% include "snackbar.html" %}
+
+<div id="content">
+    {% include "sidebar.html" %}
+<div id="data">
+    <div id="form-navigation" class="wrapper">
+        <button id="hw-page" class="form-navigation-button" type="button">Hardware</button>
+        <button id="sw-page" class="form-navigation-button" type="button">Software</button>
+        <button id="processes-page" class="form-navigation-button" type="button">Processes</button>
+        <button id="finish" class="form-navigation-button" type="button">Finish</button>
+    </div>
+
+    <form id="self-assessment-form" class="wrapper" onkeydown="if(event.keyCode === 13) {return false}">
+        {% csrf_token %}
+        {% for page in pages %}
+            <div id="{{ page.id }}" class="form-element"><h1 class="wrapper">{{ page.name }}</h1>
+                {% for product in page.tech %}
+                    <div class="sub-block" id="{{ product|replace_dj:" |_" }}">
+                    {% if page.longList %}
+                    	<div class="form-navigation-block wrapper">
+                            <button class="form-navigation-button block-button-prev"  type="button">Previous</button>
+                            <h2 style="display: inline-block">{{ product }}</h2>
+                            <button class="form-navigation-button block-button-next" type="button">Next</button>
+                        </div>
+                        {% else %}
+                        <div class="form-navigation-block wrapper">
+                            <h2 style="display: inline-block">{{ product }}</h2>
+                        </div>
+                    {% endif %}
+                        {% for discipline in page.disciplines %}
+                            <div class="{{ page.subpages}} element wrapper"><h3>{{ discipline }}</h3>
+                                <table style="display: inline">
+                                    <tr>
+                                        {% for level in levels %}
+                                            <td>
+                                                {{ level.1 }}
+                                            </td>
+                                        {% endfor %}
+                                    </tr>
+                                    <tr>
+                                        {% for level in levels %}
+                                            <td>
+                                                <label>
+                                                    <input class="radio-button" type="radio" value="{{ level.0 }}" name="{{ product|replace_dj:" |_" }}_{{ discipline|replace_dj:" |_" }}" required>
+                                                </label>
+                                            </td>
+                                        {% endfor %}
+                                    </tr>
+                                </table>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </form>
+    <div id="modal" class="modal" style="color: black">
+        <div class="modal-content">
+            <p>
+                Найдена незавершенная форма. Хотите продолжить?<br>
+                (В случае отказа данные будут стёрты)
+            </p>
+            <div>
+                <button id="modal-accept" class="form-navigation-button">Продолжить</button>
+                <button id="modal-decline" class="form-navigation-button">Очистить</button>
+            </div>
+        </div>
+    </div>
+    <button id="back"><img style="max-height: 60px; max-width: 60px" src="{% static "Images/arrow-up.png" %}" alt="to header"></button>
+</div>
+</div>
+<script src={% static "GlobalJS/snackbar.js" %}></script>
+<script src={% static "GlobalJS/sidebar.js" %}></script>
+<script src={% static "JS/self-assessment-commons.js" %}></script>
+<script src={% static "JS/self-assessment-hw.js" %}></script>
+<script src={% static "JS/self-assessment-sw.js" %}></script>
+<script src={% static "JS/self-assessment-processes.js" %}></script>
+<script src={% static "JS/self-assessment-page.js" %}></script>
+</body>
+</html>

@@ -1,4 +1,6 @@
-
+/**
+ * Функция отправляет данные для аутентификации в системе
+ */
 document.getElementById("submit").addEventListener("click", ()=>{
         fetch("/auth/", {
         method: "POST",

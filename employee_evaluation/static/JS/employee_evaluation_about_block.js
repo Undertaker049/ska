@@ -15,19 +15,30 @@ const $modal_edit = document.getElementById("dialog-edit");
 const $modal_preview = document.getElementById("dialog-preview");
 const $modal_input = document.getElementById("dialog-edit--message");
 const $modal_input_preview = document.getElementById("dialog-preview--preview");
+const $nav_menu = document.getElementById("nav-menu");
 
 const $back_button = document.getElementById("back");
 const $add_comment_button = document.querySelectorAll(".add-comment");
 const $modal_show_preview_button = document.getElementById("dialog-edit--preview");
 const $modal_submit_button = document.getElementById("dialog-edit--submit");
 const $modal_edit_text_button = document.getElementById("dialog-preview--edit");
+const $nav_menu_button = document.getElementById("nav-menu--resize");
+
 
 let theme = "";
 
+/**
+ * Переход обратно к общему обзору на странице сотрудника
+ */
 $back_button.addEventListener("click", ()=>{
    location.href = `/employee-evaluation/about?id=${id}`;
 });
 
+/**
+ * @deprecated
+ * Описание про блок функций отсюда и до конца файла.
+ * Добавить комментарий про дисциплины сотрудника, спорная функция, скорее всего нужно убрать
+ */
 $add_comment_button.forEach(function (el) {
     el.addEventListener("click", () => {
         theme = el.parentNode.querySelector("h2").textContent
@@ -69,3 +80,7 @@ $modal_edit_text_button.addEventListener("click", () => {
     $modal_edit.style.display = "block";
     $modal_preview.style.display = "none";
 });
+
+$nav_menu_button.addEventListener("click", ()=>{
+    $nav_menu.classList.toggle("expanded")
+})

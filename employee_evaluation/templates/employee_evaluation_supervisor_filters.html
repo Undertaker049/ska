@@ -1,0 +1,104 @@
+<div>
+    <span>
+        <b>Режим начальника</b>
+        <label class="switch">
+            <input type="checkbox" id="supervisor-switch">
+            <span class="switch-slider"></span>
+        </label>
+    </span>
+</div>
+<div id="filters">
+    <div id="hw" >
+        <h2>Hardware</h2>
+        <select class="product" aria-label="Hardware product select">
+            {% for p in hw %}
+                <option value="{{ p }}">{{ p }}</option>
+            {% endfor %}
+        </select> :
+        <select class="task" aria-label="Hardware task select">
+            <option value="Total">-Total-</option>
+            {% for t in hw_tasks %}
+                <option value="{{ t }}">{{ t }}</option>
+            {% endfor %}
+        </select>
+        <select class="sign" aria-label="Hardware comparison sign select">
+            <option value=">">></option>
+            <option value="<"><</option>
+            <option value="=">=</option>
+        </select>
+        <input class="filter_value" type="number" min="0" max="{{ hw_max }}" aria-label="Hardware filter value">
+        <select class="level" aria-label="Hardware filter level" style="display: none">
+            {% for level in levels %}
+                <option value="{{ level }}">{{ level }}</option>
+            {% endfor %}
+        </select>
+        <button class="default-button add-filter">Добавить</button>
+        <div class="filters"></div>
+    </div>
+    <div id="sw">
+        <h2>Software</h2>
+        <select class="product" aria-label="Software product select">
+            {% for p in sw %}
+                <option value="{{ p }}">{{ p }}</option>
+            {% endfor %}
+        </select> :
+        <select class="task" aria-label="Software task select">
+            <option value="Total">-Total-</option>
+            {% for t in sw_tasks %}
+                <option value="{{ t }}">{{ t }}</option>
+            {% endfor %}
+        </select>
+        <select class="sign" aria-label="Software comparison sign select">
+            <option value=">">></option>
+            <option value="<"><</option>
+            <option value="=">=</option>
+        </select>
+        <input class="filter_value" type="number" min="0" max="{{ sw_max }}" aria-label="Software filer number">
+        <select class="level" aria-label="Software filter level" style="display: none">
+            {% for level in levels %}
+                <option value="{{ level }}">{{ level }}</option>
+            {% endfor %}
+        </select>
+        <button class="default-button add-filter">Добавить</button>
+        <div class="filters"></div>
+    </div>
+    <div id="pr">
+        <h2>Processes</h2>
+        <select class="process" aria-label="Process select">
+            {% for p in processes %}
+                <option value="{{ p }}">{{ p }}</option>
+            {% endfor %}
+        </select> :
+        <select class="sign" aria-label="Process comparison sign select">
+            <option value=">">></option>
+            <option value="<"><</option>
+            <option value="=">=</option>
+        </select>
+        <select class="level" aria-label="Process filter level">
+            {% for level in levels %}
+                <option value="{{ level }}">{{ level }}</option>
+            {% endfor %}
+        </select>
+        <button class="default-button add-filter">Добавить</button>
+        <div class="filters"></div>
+    </div>
+    <div id="cr">
+        <h2>Certificates</h2>
+        <select id="class" aria-label="Certificate class select">
+            <option class="DF" value="any" disabled selected>------</option>
+            {% for c in certificate_category %}
+                <option value="{{ c }}">{{ c }}</option>
+            {% endfor %}
+        </select> :
+        <select id="sub-class" aria-label="Certificate sub-class select">
+            <option class="DF" value="any" selected>Any</option>
+            {% for cr in certificate_subcategory %}
+                <option class="{{ cr.1 }}" value="{{ cr.0 }}">{{ cr.0 }}</option>
+            {% endfor %}
+        </select>
+        <button class="default-button add-filter">Добавить</button>
+        <div class="filters"></div>
+    </div>
+    <button id="apply-filters" class="default-button" onclick="sendFilters()">Применить фильтры</button>
+    <button id="saveCSV" class="default-button" onclick="saveCSV()">Сохранить в .csv</button>
+</div>

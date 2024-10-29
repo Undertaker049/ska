@@ -18,7 +18,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 MEDIA_ROOT = BASE_DIR / 'files'
 MEDIA_URL = '/files/'
 
-LOGIN_URL = '/auth'
+LOGIN_URL = '/auth/'
 
 
 # Quick-start development settings - unsuitable for production
@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     'employee_evaluation',
     'selection',
     'self_assessment',
-    'authentication'
+    'authentication',
+
 ]
 
 MIDDLEWARE = [

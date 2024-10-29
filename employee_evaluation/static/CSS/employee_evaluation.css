@@ -5,7 +5,6 @@
 html{
     height: 100%;
     width: 100%;
-
 }
 
 body {
@@ -18,6 +17,14 @@ body {
     font-family: var(--system-ui), serif;
 }
 
+body.dark-mode {
+    border-color: white;
+}
+
+body.light-mode {
+    border-color: black;
+}
+
 #content{
     display: flex;
     width: 100%;
@@ -28,28 +35,102 @@ body {
     padding-left: 10px;
 }
 
-table {
+#employees-table {
     font-size: clamp(10px, 5vw, 20px);
     letter-spacing: 1px;
 
     border-collapse: collapse;
     border: 2px solid rgb(140 140 140);
+
+    overflow-x: scroll;
 }
 
-thead, tfoot {
+#employees-table thead, tfoot {
     color: #fff;
     background-color: #2c5e77;
 }
 
-th, td {
+#employees-table th, td {
     padding: 10px;
     border-bottom: 1px solid black;
 
     text-align: center;
 }
 
-tbody tr:hover {
+#employees-table tbody tr:hover {
     background-color: rgba(0,182,197, 0.3);
 
     cursor: pointer;
+}
+
+/* Стили для переключателя */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+/* Скрываем настоящий checkbox */
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* Стили для ползунка */
+.switch-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 34px;
+}
+
+.switch-slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: 0.3s;
+    border-radius: 50%;
+}
+
+/* Изменение цвета и положения ползунка при включении */
+input:checked + .switch-slider {
+    background-color: rgb(0, 182, 197);
+}
+
+input:checked + .switch-slider:before {
+    transform: translateX(26px);
+}
+
+.default-button {
+    width: fit-content;
+    height: fit-content;
+    padding: 5px;
+    background-color: rgb(0, 182, 197);
+    transition: background 0.3s;
+    border: none;
+}
+
+.default-button:hover {
+    background-color: rgb(0, 126, 146);
+}
+
+#filters {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 1s ease-out;
+}
+
+#filters.expanded {
+    max-height: 100%;
 }
