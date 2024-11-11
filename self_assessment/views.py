@@ -17,50 +17,56 @@ from .models import (Hardware,
                      Levels,
                      Employees)
 
-HW_PRODUCTS = Hardware.objects.values_list('product', flat=True)
-SW_PRODUCTS = Software.objects.values_list('product', flat=True)
-HW_TASKS = TaskHW.objects.values_list('task', flat=True)
-SW_TASKS = TaskSW.objects.values_list('task', flat=True)
-PROCESSES = Processes.objects.values_list('process', flat=True)
-LEVELS = Levels.objects.order_by("weight").values_list('level', flat=True)
+def get_products_data():
+    return {
+        'hw_products': Hardware.objects.values_list('product', flat=True),
+        'sw_products': Software.objects.values_list('product', flat=True),
+        'hw_tasks': TaskHW.objects.values_list('task', flat=True),
+        'sw_tasks': TaskSW.objects.values_list('task', flat=True),
+        'processes': Processes.objects.values_list('process', flat=True)
+    }
 
+def get_levels():
+    return Levels.objects.order_by("weight").values_list('level', flat=True)
 
 @login_required
 def main(request):
     """
-    Метод выводит опросник по заданным дисциплинам, дисциплины берутся и БД
+    Метод выводит опросник по заданным дисциплинам, дисциплины берутся из БД
     :param request: Объект запроса
     :return: рендер страницы
     """
     if request.method != "GET":
         return HttpResponse(status=http.HTTPStatus.METHOD_NOT_ALLOWED)
 
+    products_data = get_products_data()
+
     data = {
         "blocks": {
             "hw": {
                 "name": "Hardware",
-                "products": HW_PRODUCTS,
-                "tasks": HW_TASKS
+                "products": products_data['hw_products'],
+                "tasks": products_data['hw_tasks']
             },
             "sw": {
                 "name": "Software",
-                "products": SW_PRODUCTS,
-                "tasks": SW_TASKS
+                "products": products_data['sw_products'],
+                "tasks": products_data['sw_tasks']
             },
             "pr": {
                 "name": "Processes",
-                "products": PROCESSES,
+                "products": products_data['processes'],
             },
         },
-        "levels": LEVELS}
+        "levels": get_levels()
+    }
 
     return render(request, "self_assessment.html", context={"data": data})
-
 
 @login_required
 def old(request):
     """
-    Старый метод выводит опросник по заданным дисциплинам, дисциплины берутся и БД
+    Старый метод выводит опросник по заданным дисциплинам, дисциплины берутся из БД
     :param request: Объект запроса
     :return: рендер страницы
     """
