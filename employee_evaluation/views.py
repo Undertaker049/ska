@@ -17,17 +17,29 @@ from .models import Reviews
 HW_MAX_SCORE = 48
 SW_MAX_SCORE = 20
 
-LEVELS_VAL = {}
-for o in Levels.objects.values():
-    LEVELS_VAL[o["level"]] = o["weight"]
+def get_levels_values():
+    """Получает словарь уровней и их весов"""
+    levels_val = {}
+    for o in Levels.objects.values():
+        levels_val[o["level"]] = o["weight"]
+    return levels_val
 
-HW_PRODUCTS = Hardware.objects.values_list('product', flat=True)
-HW_TASKS = TaskHW.objects.values_list('task', flat=True)
-SW_PRODUCTS = Software.objects.values_list('product', flat=True)
-SW_TASKS = TaskSW.objects.values_list('task', flat=True)
-PROCESSES = Processes.objects.values_list('process', flat=True)
-CERTIFICATE_CATEGORIES = CertificateCategory.objects.values_list('category', flat=True)
-CERTIFICATE_SUBCATEGORIES = list(CertificateSubCategory.objects.values_list('subcategory', 'subcategory_of'))
+def get_products_data():
+    """Получает данные о продуктах, задачах и процессах"""
+    return {
+        'hw_products': Hardware.objects.values_list('product', flat=True),
+        'hw_tasks': TaskHW.objects.values_list('task', flat=True),
+        'sw_products': Software.objects.values_list('product', flat=True),
+        'sw_tasks': TaskSW.objects.values_list('task', flat=True),
+        'processes': Processes.objects.values_list('process', flat=True)
+    }
+
+def get_certificate_data():
+    """Получает данные о категориях сертификатов"""
+    return {
+        'categories': CertificateCategory.objects.values_list('category', flat=True),
+        'subcategories': list(CertificateSubCategory.objects.values_list('subcategory', 'subcategory_of'))
+    }
 
 
 @login_required
@@ -35,30 +47,33 @@ def main(request):
     """
     Выводит список сотрудников в виде таблицы, если пользователь - руководитель -
      дополнительно подгружает данные для интерфейса фильтрации подчиненных
-
-    :param request: Объект запроса
-    :return: GET - загружает страницу со списком сотрудников
     """
     if request.method == "GET":
         employee = Employees.objects.get(name=f"{request.user.first_name} {request.user.last_name}")
         data = {"employees": Employees.objects.values(),
                 "is_supervisor": employee.is_supervisor}
+
         if employee.is_supervisor:
-            data["hw"] = HW_PRODUCTS
-            data["hw_tasks"] = HW_TASKS
-            data["sw"] = SW_PRODUCTS
-            data["sw_tasks"] = SW_TASKS
-            data["processes"] = PROCESSES
-            data["certificate_category"] = CERTIFICATE_CATEGORIES
-            data["certificate_subcategory"] = CERTIFICATE_SUBCATEGORIES
-            data["hw_max"] = HW_MAX_SCORE
-            data["sw_msx"] = SW_MAX_SCORE
-            data["levels"] = LEVELS_VAL.keys()
+            products_data = get_products_data()
+            cert_data = get_certificate_data()
+            levels = get_levels_values()
+
+            data.update({
+                "hw": products_data['hw_products'],
+                "hw_tasks": products_data['hw_tasks'],
+                "sw": products_data['sw_products'],
+                "sw_tasks": products_data['sw_tasks'],
+                "processes": products_data['processes'],
+                "certificate_category": cert_data['categories'],
+                "certificate_subcategory": cert_data['subcategories'],
+                "hw_max": HW_MAX_SCORE,
+                "sw_max": SW_MAX_SCORE,
+                "levels": levels.keys()
+            })
 
         return render(request, "employee_evaluation.html", data)
 
     return HttpResponse(status=http.HTTPStatus.METHOD_NOT_ALLOWED)
-
 
 @login_required
 def about(request):
@@ -231,30 +246,38 @@ def subordinates_apply_filters(request):
     subordinates = list(Employees.objects.filter(id__in=data["subordinates"]).values())
     sub_to_remove = []
     data_for_table = {key: [] for key in data["subordinates"]}
+    levels_val = get_levels_values()
+
     for _id in filters:
         _filter = filters[_id]
         if _filter["block"] in ["hw", "sw"]:
             if _filter["task"] != "Total":
                 for index, subordinate in enumerate(subordinates):
-                    if _filter["block"] == "hw":
-                        obj = SkillsHW
-                    else:
-                        obj = SkillsSW
+                    try:
+                        model = SkillsHW if _filter["block"] == "hw" else SkillsSW
+                        obj = model.objects.get(
+                            employee_id=subordinate["id"],
+                            product=_filter["product"],
+                            task=_filter["task"]
+                        )
 
-                    obj = obj.objects.filter(employee_id=subordinate["id"],
-                                             product=_filter["product"],
-                                             task=_filter["task"]).get()
+                        if compare_to_filter(
+                            _filter["sign"],
+                            levels_val[obj.level_id],
+                            levels_val[_filter["value"]]
+                        ):
+                            data_for_table[subordinate["id"]].append(obj.level_id)
+                            continue
 
-                    if compare_to_filter(_filter["sign"], LEVELS_VAL[obj.level_id], LEVELS_VAL[_filter["value"]]):
-                        data_for_table[subordinate["id"]].append(obj.level_id)
-                        continue
+                    except model.DoesNotExist:
+                        pass
 
                     sub_to_remove.append(index)
 
             elif _filter["task"] == "Total":
                 for index, subordinate in enumerate(subordinates):
-                    score = get_product_score(SkillsHW if _filter["block"] == "hw" else SkillsSW,
-                                              subordinate["id"], _filter["product"])
+                    model = SkillsHW if _filter["block"] == "hw" else SkillsSW
+                    score = get_product_score(model, subordinate["id"], _filter["product"])
 
                     if compare_to_filter(_filter["sign"], score, int(_filter["value"])):
                         data_for_table[subordinate["id"]].append(score)
@@ -263,38 +286,51 @@ def subordinates_apply_filters(request):
 
         elif _filter["block"] == "pr":
             for index, subordinate in enumerate(subordinates):
-                obj = SkillsPR.objects.filter(process=_filter["process"], employee_id=subordinate["id"]).get()
-                if compare_to_filter(_filter["sign"], LEVELS_VAL[obj.level_id], LEVELS_VAL[_filter["value"]]):
-                    data_for_table[subordinate["id"]].append(obj.level_id)
-                    continue
+                try:
+                    obj = SkillsPR.objects.get(
+                        process=_filter["process"],
+                        employee_id=subordinate["id"]
+                    )
+                    if compare_to_filter(
+                        _filter["sign"],
+                        levels_val[obj.level_id],
+                        levels_val[_filter["value"]]
+                    ):
+                        data_for_table[subordinate["id"]].append(obj.level_id)
+                        continue
+
+                except SkillsPR.DoesNotExist:
+                    pass
 
                 sub_to_remove.append(index)
 
         elif _filter["block"] == "cr":
-            obj = Certificate.objects.filter(category=_filter["category"])
+            certificates = Certificate.objects.filter(category=_filter["category"])
             if _filter["subcategory"] != "any":
-                obj = obj.filter(sub_category=_filter["subcategory"])
+                certificates = certificates.filter(sub_category=_filter["subcategory"])
 
             for index, subordinate in enumerate(subordinates):
-                if obj.filter(employee=subordinate["id"]):
-                    data_for_table[subordinate["id"]].append(f"{obj.sub_category}")
+                if certificates.filter(employee_id=subordinate["id"]).exists():
+                    subcategory = certificates.filter(employee_id=subordinate["id"]).first().sub_category
+                    data_for_table[subordinate["id"]].append(str(subcategory) if subcategory else "N/A")
                     continue
 
                 sub_to_remove.append(index)
 
-        if len(sub_to_remove) != 0:
+        if sub_to_remove:
             subordinates = [subordinates[i] for i, _ in enumerate(subordinates) if i not in sub_to_remove]
             sub_to_remove.clear()
 
-        if len(subordinates) == 0:
+        if not subordinates:
             return HttpResponse(status=http.HTTPStatus.NOT_FOUND, content=_id)
 
-    data = []
-    for subordinate in subordinates:
-        data.append(subordinate["id"])
-    return JsonResponse(status=http.HTTPStatus.OK, data={"employees_id": data,
-                                                         "data_for_table": data_for_table})
-
+    return JsonResponse(
+        status=http.HTTPStatus.OK,
+        data={
+            "employees_id": [subordinate["id"] for subordinate in subordinates],
+            "data_for_table": data_for_table
+        }
+    )
 
 # Вынести все вспомогательные функции в отдельный файл
 def get_products(employee: Employees, key="all"):
@@ -366,21 +402,17 @@ def get_products_scores(db_object: type[SkillsHW | SkillsSW | SkillsPR], employe
 
 def get_product_score(db_object: type[SkillsHW | SkillsSW | SkillsPR], employee_id, product):
     """
-    Считает суммарное значение, представляющее общие знания о дисциплине(по сумме уровней знаний подзадач)
-    :param db_object: Объект БД, представляющий таблицу с компетенциями сотрудников по блоку
-    :param employee_id: id сотрудника для поиска его уровней компетенций
-    :param product: продукт, для которого нужно сосчитать оценку
-    :return: суммарное значение уровня знания продукта
+    Считает суммарное значение, представляющее общие знания о дисциплине
     """
     data = (db_object.
             objects.
             filter(employee_id=employee_id, product_id=product).
             values_list("level_id", flat=True))
+    levels_val = get_levels_values()
     score = 0
     for i in data:
-        score += LEVELS_VAL[i]
+        score += levels_val[i]
     return score
-
 
 # Разбить на два?
 def get_products_tasks_levels(db_object, employee, product_list, is_long=True):
