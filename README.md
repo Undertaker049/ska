@@ -40,6 +40,14 @@ WSL 2 and Hyper-V is required
   	docker compose exec web python manage.py migrate
   	```
 
+4. Connect to:
+
+   	<http://127.0.0.1:8000/>
+   
+   or
+
+   	<http://127.0.0.1:8000/admin>
+
 ### Linux
 
 1. Launch docker services if you haven't already done so:
@@ -63,6 +71,14 @@ WSL 2 and Hyper-V is required
   
   	docker compose exec web python manage.py migrate
   	```
+
+5. Connect to:
+
+   	<http://127.0.0.1:8000/>
+   
+   or
+
+   	<http://127.0.0.1:8000/admin>
 
 ### Common usage
 
@@ -125,6 +141,7 @@ WSL 2 and Hyper-V is required
 ## Troubleshooting
 
 ### Common Issues
+
 - If Docker service fails to start:
   
 	```
@@ -217,19 +234,16 @@ WSL 2 and Hyper-V is required
    
 	```
 	sudo apt update
+ 	
 	sudo apt upgrade -y
+
+ 	sudo mkdir -p /etc/apt/keyrings
 	```
 
 3. Install Prerequisites:
    
 	```
-	sudo apt install -y \
- 		apt-transport-https \
- 		ca-certificates \
-		curl \
-		gnupg \
-		lsb-release \
-		software-properties-common
+	sudo apt install -y apt-transport-https ca-certificates curl gnupg lsb-release software-properties-common
 	```
 
 5. Add Docker's official GPG key and Docker Repository:
@@ -237,12 +251,30 @@ WSL 2 and Hyper-V is required
    	```
 	curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
     	
-	echo \
-	  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-	  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+	echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list
 	
 	sudo apt update
 	```
+
+	- If you have these errors:
+
+		**Malformed entry 1 in list file /etc/apt/sources.list.d/docker.list**
+   
+		**The list of sources could not be read**
+
+		Use:
+
+   		```
+		sudo rm -f /etc/apt/keyrings/docker.gpg
+    	
+		sudo rm -f /etc/apt/sources.list.d/docker.list
+	
+		curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+ 
+		echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu jammy stable" | sudo tee /etc/apt/sources.list.d/docker.list
+ 
+		sudo apt update
+		```
 
 7. Install Docker:
    
