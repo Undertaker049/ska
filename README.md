@@ -131,12 +131,12 @@ WSL 2 and Hyper-V is required
 2. Install Prerequisites:
 	```
 	sudo apt install -y \
-   		 apt-transport-https \
-    		ca-certificates \
-    		curl \
-    		gnupg \
-    		lsb-release \
-    		software-properties-common
+ 		apt-transport-https \
+ 		ca-certificates \
+		curl \
+		gnupg \
+		lsb-release \
+		software-properties-common
 	```
 
 3. Add Docker Repository:
