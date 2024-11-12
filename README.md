@@ -1,10 +1,5 @@
 
 # Skills and Knowledge Assessment
-<<<<<<< Updated upstream
-TODO
-=======
-
----
 
 ## System Requirements
 
@@ -86,8 +81,6 @@ WSL 2 and Hyper-V is required
         ```
 
 # Docker Installation
-
----
 
 ## Windows
 
