@@ -228,4 +228,3 @@ WSL 2 and Hyper-V is required
 	```
 
 	If the installation went well, see Usage
->>>>>>> Stashed changes
