@@ -32,6 +32,14 @@ WSL 2 and Hyper-V is required
 	docker compose up --build
 	```
 
+3. Perform the necessary migrations:
+   
+  	```
+  	docker compose exec web python manage.py makemigrations
+  
+  	docker compose exec web python manage.py migrate
+  	```
+
 ### Linux
 
 1. Launch docker services if you haven't already done so:
@@ -47,6 +55,14 @@ WSL 2 and Hyper-V is required
 	```
 	docker compose up --build
 	```
+
+4. Perform the necessary migrations:
+   
+  	```
+  	docker compose exec web python manage.py makemigrations
+  
+  	docker compose exec web python manage.py migrate
+  	```
 
 ### Common usage
 
@@ -105,6 +121,43 @@ WSL 2 and Hyper-V is required
  	```
   	docker compose logs
   	```
+
+## Troubleshooting
+
+### Common Issues
+- If Docker service fails to start:
+  
+	```
+	sudo systemctl status docker
+ 
+	sudo journalctl -xu docker
+	```
+
+- If permission denied:
+
+  	Execute the command on behalf of the superuser or add the user to the docker group natively:
+
+  	- Run:
+  	  
+		```
+ 		ls -l /var/run/docker.sock
+  	
+ 		groups
+ 		```
+
+   	- If the docker group is not in the list, run:
+   	  
+		```
+		sudo usermod -aG docker $USER
+
+		newgrp docker
+ 		```
+      	
+- If ports are already in use:
+  
+	```
+ 	sudo lsof -i :8000
+ 	```
 
 # Docker Installation
 
