@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
+{% load employee_evaluation_filters %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -13,12 +14,26 @@
 {% csrf_token %}
 {%  include "snackbar.html" %}
 <div id="content">
-{%  include "sidebar.html" %}
+    <div id="nav-menu">
+    <button id="nav-menu--resize">Ссылки</button>
+        <ul>
+            {% if long %}
+                {% for pr in data %}
+                    <li><span><a href="#{{ pr.product|remove_specials }}">{{ pr.product }}</a></span></li>
+                {% endfor %}
+            {% else %}
+                {% for pr in data %}
+                    <li><a href="#{{ pr.process|remove_specials }}">{{ pr.process }}</a></li>
+                {% endfor %}
+            {% endif %}
+        </ul>
+    </div>
+    {%  include "sidebar.html" %}
     <div id="data">
     <button id="back">Назад</button>
         {% if long %}
         {% for pr in data %}
-            <div class="product">
+            <div id="{{ pr.product|remove_specials }}" class="product">
                 <h2>{{ pr.product }}</h2>
                 <button class="add-comment">Добавить комментарий</button>
                 <div class="product-cell">
@@ -30,7 +45,7 @@
         {% endfor %}
     {% else %}
         {% for pr in data %}
-            <div class="product">
+            <div id="{{ pr.process|remove_specials }}" class="product">
                     <h2>{{ pr.process }}</h2>
                     <button class="add-comment">Добавить комментарий</button>
                     <br/>

@@ -28,7 +28,7 @@ $hw_page_button.addEventListener('click', function (){
 $sw_page_button.addEventListener('click', function () {
     hide_form_elements();
     document.getElementById('SW').style.display = 'block';
-})
+});
 
 $pr_page_button.addEventListener('click', function (){
     hide_form_elements();
@@ -37,17 +37,19 @@ $pr_page_button.addEventListener('click', function (){
 
 $back_button.addEventListener('click', function () {
     window.scrollTo(0,0)
-})
+});
 
 $finish_button.addEventListener("click", function() {
-    if (hw_page_object._count === hw_page_object._total && sw_page_object._count === sw_page_object._total && pr_page_object._count === pr_page_object._total) {
+    if (hw_page_object._count === hw_page_object._total &&
+        sw_page_object._count === sw_page_object._total &&
+        pr_page_object._count === pr_page_object._total) {
         let data = {
             "HW": form_data(document.getElementById('HW')),
             "SW": form_data(document.getElementById('SW')),
             "Processes": form_data(document.getElementById('Processes')),
         };
 
-        fetch('self-assessment/upload', {
+        fetch('/self-assessment/upload', {
             method: "POST",
             headers: {
                 'Accept': 'application/text',
@@ -61,6 +63,10 @@ $finish_button.addEventListener("click", function() {
         .then(response => {
             if (!response.ok) {
                 return response.json().then(err => { showSnackbar(err.message || "Unknown error") });
+            }
+            else {
+                showSnackbar("Результаты записаны!")
+                $finish_button.disabled = true
             }
             return response.json();
         })

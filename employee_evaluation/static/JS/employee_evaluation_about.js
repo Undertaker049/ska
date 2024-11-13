@@ -10,6 +10,9 @@ $back_button.addEventListener("click", ()=>{
     location.href = "/employee-evaluation"
 });
 
+/**
+ * Переход к конкретному блоку дисциплин
+ */
 $expand_hw_button.addEventListener("click", ()=>{
     fetch_block("hw");
 });
@@ -20,7 +23,10 @@ $expand_pr_button.addEventListener("click", ()=>{
     fetch_block("pr");
 });
 
-
+/**
+ * Переход на страницу с информацией о конкретном блоке дисциплин сотрудника
+ * @param block_name
+ */
 function fetch_block(block_name){
     sessionStorage.setItem("ee_block", block_name);
     location.href = "/employee-evaluation/about-block?"+ new URLSearchParams({'block': block_name, 'id': id});

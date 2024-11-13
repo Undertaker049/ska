@@ -4,6 +4,8 @@ from django.db import models
 # Create your models here.
 class Employees(models.Model):
     name = models.CharField(max_length=100, unique=True)
+    subordinate_of = models.ForeignKey('self', on_delete=models.DO_NOTHING, to_field="id", null=True, default=None)
+    is_supervisor = models.BooleanField(default=False)
 
 
 class Levels(models.Model):

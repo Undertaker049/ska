@@ -20,14 +20,17 @@
             <i><img alt="EE" src="{% static 'Images/evaluation.svg' %}"></i>
             <span class="menu-item">Сводка</span>
         </li>
-        <li id="profile">
-            <i><img alt="PR" src="{% static 'Images/profile.svg' %}"></i>
-            <span class="menu-item">Профиль</span>
-        </li>
-        <li id="logout" onclick="location.href = '/auth/logout'">
-            <i><img alt="LgO" src="{% static 'Images/logout.svg' %}"></i>
-            <span class="menu-item" >Выход</span>
-        </li>
+        {% if request.user.is_authenticated %}
+            <li id="logout" onclick="location.href = '/auth/logout'">
+                <i><img alt="LgO" src="{% static 'Images/logout.svg' %}"></i>
+                <span class="menu-item" >Выход</span>
+            </li>
+        {% else %}
+            <li id="login" onclick="location.href = '/auth/'">
+                <i><img alt="LgI" src="{% static 'Images/login.svg' %}"></i>
+                <span class="menu-item" >Вход</span>
+            </li>
+        {% endif %}
     </ul>
     <div id="theme">
             <div id="light-theme-icon"><img class="theme-icon" src="{% static "Images/light.svg" %}" alt="light"></div>

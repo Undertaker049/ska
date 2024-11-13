@@ -6,6 +6,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
+from self_assessment.models import Employees
 
 
 def main(request):
@@ -19,7 +20,6 @@ def main(request):
         user = authenticate(username=request.POST["login"], password=request.POST["password"])
         if user:
             login(request, user)
-            print("redirecting...")
             return redirect("/")
         return HttpResponse(status=http.HTTPStatus.NOT_FOUND,
                             content="Пользователь с таким логином/паролем не найден!")
@@ -43,6 +43,8 @@ def registration(request):
                                         first_name=data["first-name"],
                                         last_name=data["last-name"])
         user.save()
+        employee = Employees.objects.create(name=f"{data['first-name']} {data['last-name']}")
+        employee.save()
         return redirect("/auth")
     if request.method == "GET":
         return render(request, "registration.html")

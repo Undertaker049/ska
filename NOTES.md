@@ -61,7 +61,6 @@
 <li>box-shadow
 </ul>
 
-
 `Прочее (Other)`
 <ul>
 <li>opacity

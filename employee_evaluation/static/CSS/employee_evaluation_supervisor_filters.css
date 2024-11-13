@@ -1,0 +1,50 @@
+.filter {
+    width: fit-content;
+
+    margin-right: 5px;
+    display: flex;
+    flex-direction: row;
+    vertical-align: middle;
+    align-items: center;
+
+    color: black;
+    background-color: lightgray;
+
+    border-radius: 10px;
+}
+
+.filter--data {
+  padding: 5px;
+}
+
+.delete-filter {
+    background-color: salmon;
+    width: 20px;
+    border-radius: 0 10px 10px 0;
+    border: none;
+    height: 100%;
+    padding: 7px 0;
+}
+
+.filters {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: row;
+}
+
+.delete-filter:hover {
+    background-color: red;
+}
+
+.failing-filter {
+    animation-name: warning-glowing;
+    animation-duration: 3s;
+    animation-iteration-count: infinite;
+    /*animation: warning-glowing 3s infinite;*/
+}
+
+@keyframes warning-glowing {
+    0% {background-color: lightgray;}
+    50% {background-color: red}
+    100% {background-color: lightgray}
+}

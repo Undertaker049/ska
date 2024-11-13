@@ -125,5 +125,5 @@ body.light-mode{
     background-color: #ffffff;
     color: black;
     /* Переход к светлой медленнее чтобы в темноте не резало по глазам  */
-    transition: 3s;
+    /*transition: 3s;*/
 }
