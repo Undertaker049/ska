@@ -4,6 +4,12 @@
         <button class="toggle-btn" id="toggleBtn">☰</button>
     </div>
     <ul class="menu">
+        {% if request.user.is_authenticated %}
+            <li id="profile" onclick="location.href = '/profile'">
+                <i><img alt="PR" src="{% static 'Images/profile.svg' %}"></i>
+                <span class="menu-item">Профиль</span>
+            </li>
+        {% endif %}
         <li id="self-assessment" onclick="location.href = '/self-assessment'">
             <i><img alt="SA" src="{% static 'Images/assessment.svg' %}"></i>
             <span class="menu-item">Квалификации</span>

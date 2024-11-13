@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     'selection',
     'self_assessment',
     'authentication',
-
+    'profile',
 ]
 
 MIDDLEWARE = [
