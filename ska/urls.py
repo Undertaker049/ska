@@ -30,6 +30,7 @@ urlpatterns = [
     path('employee-evaluation/', include('employee_evaluation.urls')),
     path('auth/', include('authentication.urls')),
     path('selection', selection_views.main),
+    path('profile/', include('profile.urls')),
 ]
 
 # TODO выяснить как работать с файлами в проде
