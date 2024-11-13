@@ -24,22 +24,29 @@
             </p>
             <p>
                 <label for="first-name">Имя:</label><br>
-                <input  id="first-name" name="first-name" type="text" required>
-            </p>
-                <p>
-                <label for="last-name">Фамилия:</label><br>
-                <input  id="last-name" name="last-name" type="text" required>
+                <input id="first-name" name="first-name" type="text" required>
             </p>
             <p>
-
+                <label for="last-name">Фамилия:</label><br>
+                <input id="last-name" name="last-name" type="text" required>
+            </p>
+            <p>
+                <label for="department">Отдел:</label><br>
+                <select id="department" name="department" required>
+                    <option value="" disabled selected>Выберите отдел</option>
+                    <option value="integration">Отдел системной интеграции</option>
+                    <option value="service">Сервисный центр</option>
+                    <option value="project">Проектный отдел</option>
+                    <option value="sales">Отдел продаж</option>
+                </select>
             </p>
             <p>
                 <label for="password">Пароль:</label><br>
                 <input id="password" name="password" type="password" placeholder="Password" required><br>
                 <label for="re-password">Повторите Пароль:</label><br>
-                <input id="re-password" name="password" type="password" placeholder="Password" required>
+                <input id="re-password" name="re-password" type="password" placeholder="Password" required>
             </p>
-            <input type="submit" class="navigation-button">
+            <input type="submit" value="Зарегистрироваться" class="navigation-button">
         </form>
     </div>
 </div>

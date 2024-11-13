@@ -3,29 +3,42 @@ import http
 import json
 import operator
 from array import array
+from typing import Dict, List, Union, Optional
 
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q
+from django.db.models import Q, QuerySet
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 
 from certificate.models import Certificate, CertificateCategory, CertificateSubCategory
-from self_assessment.models import (Employees, Hardware, Software, Processes, TaskHW, SkillsHW,
-                                    TaskSW, SkillsSW, SkillsPR, Levels)
+from self_assessment.models import (
+    Employees, Hardware, Software, Processes,
+    TaskHW, SkillsHW, TaskSW, SkillsSW, SkillsPR, Levels
+)
 from .models import Reviews
 
 HW_MAX_SCORE = 48
 SW_MAX_SCORE = 20
 
+
+def calculate_percentage(score: int, max_score: int) -> float:
+    return (score / max_score * 100) if max_score > 0 else 0
+
+
+def get_levels_values() -> Dict[str, int]:
+    return {level["level"]: level["weight"] for level in Levels.objects.values()}
+
+
 def get_levels_values():
-    """Получает словарь уровней и их весов"""
     levels_val = {}
+
     for o in Levels.objects.values():
         levels_val[o["level"]] = o["weight"]
+
     return levels_val
 
-def get_products_data():
-    """Получает данные о продуктах, задачах и процессах"""
+
+def get_products_data() -> Dict[str, QuerySet]:
     return {
         'hw_products': Hardware.objects.values_list('product', flat=True),
         'hw_tasks': TaskHW.objects.values_list('task', flat=True),
@@ -33,6 +46,7 @@ def get_products_data():
         'sw_tasks': TaskSW.objects.values_list('task', flat=True),
         'processes': Processes.objects.values_list('process', flat=True)
     }
+
 
 def get_certificate_data():
     """Получает данные о категориях сертификатов"""
@@ -44,14 +58,15 @@ def get_certificate_data():
 
 @login_required
 def main(request):
-    """
-    Выводит список сотрудников в виде таблицы, если пользователь - руководитель -
-     дополнительно подгружает данные для интерфейса фильтрации подчиненных
-    """
     if request.method == "GET":
         employee = Employees.objects.get(name=f"{request.user.first_name} {request.user.last_name}")
-        data = {"employees": Employees.objects.values(),
-                "is_supervisor": employee.is_supervisor}
+
+        data = {
+            "employees": Employees.objects.select_related('department').values(
+                'id', 'name', 'is_supervisor', 'department__name'
+            ),
+            "is_supervisor": employee.is_supervisor
+        }
 
         if employee.is_supervisor:
             products_data = get_products_data()
@@ -73,85 +88,86 @@ def main(request):
 
         return render(request, "employee_evaluation.html", data)
 
-    return HttpResponse(status=http.HTTPStatus.METHOD_NOT_ALLOWED)
 
 @login_required
-def about(request):
-    """
-    Выводит информацию о навыках сотрудника на основе данных формы из self assessment
+def about(request) -> HttpResponse:
 
-    :param request: Объект запроса
-    :return: GET - Загружает страницу с навыками сотрудника
-    """
-    if request.method == "GET":
-        employee = Employees.objects.get(id=request.GET.get("id"))
+    if request.method != "GET":
+        return HttpResponse(status=http.HTTPStatus.METHOD_NOT_ALLOWED)
 
-        hw, sw, pr = get_products(employee)
+    employee = Employees.objects.select_related('department').get(id=request.GET.get("id"))
+    hw, sw, pr = get_products(employee)
+    hw_data = get_products_scores(SkillsHW, employee, hw)
+    sw_data = get_products_scores(SkillsSW, employee, sw)
+    pr_data = get_products_scores(SkillsPR, employee, pr, False)
 
-        hw_data = get_products_scores(SkillsHW, employee, hw)
-        sw_data = get_products_scores(SkillsSW, employee, sw)
-        pr_data = get_products_scores(SkillsPR, employee, pr, False)
+    for item in hw_data:
+        item['percentage'] = calculate_percentage(item['score'], HW_MAX_SCORE)
 
-        data = {"hw_data": hw_data,
-                "hw_max_score": HW_MAX_SCORE,
-                "sw_data": sw_data,
-                "sw_max_score": SW_MAX_SCORE,
-                "pr_data": pr_data}
-        return render(request, "employee_evaluation_about.html", data)
+    for item in sw_data:
+        item['percentage'] = calculate_percentage(item['score'], SW_MAX_SCORE)
 
-    return HttpResponse(status=http.HTTPStatus.METHOD_NOT_ALLOWED)
+    data = {
+        "employee": {
+            "name": employee.name,
+            "department": employee.department.name if employee.department else "Не указан",
+            "is_supervisor": employee.is_supervisor,
+            "subordinate_of": employee.subordinate_of.name if employee.subordinate_of else None
+        },
+        "hw_data": hw_data,
+        "hw_max_score": HW_MAX_SCORE,
+        "sw_data": sw_data,
+        "sw_max_score": SW_MAX_SCORE,
+        "pr_data": pr_data
+    }
+
+    return render(request, "employee_evaluation_about.html", data)
 
 
 @login_required
-def about_block(request):
-    """
-    Выводит подробную информацию об уровнях компетенций определенного блока
+def about_block(request) -> HttpResponse:
 
-    :param request: Объект запроса
-    :return: GET - Загружает страницу с информацией об уровнях компетенций
-    """
-    if request.method == "GET":
-        employee = Employees.objects.get(id=request.GET.get("id"))
+    if request.method != "GET":
+        return HttpResponse(status=http.HTTPStatus.METHOD_NOT_ALLOWED)
 
-        data = {}
-        match request.GET.get("block"):
-            case "hw":
-                hw_data = get_products_tasks_levels(SkillsHW,
-                                                    employee,
-                                                    get_products(employee, "hw"))
-                data = {"data": hw_data, "long": True}
-            case "sw":
-                sw_data = get_products_tasks_levels(SkillsSW,
-                                                    employee,
-                                                    get_products(employee, "sw"))
-                data = {"data": sw_data, "long": True}
-            case "pr":
-                pr_data = get_products_tasks_levels(SkillsPR,
-                                                    employee,
-                                                    get_products(employee, "pr"), False)
-                data = {"data": pr_data, "long": False}
-        return render(request, "employee_evaluation_about_block.html", data)
+    employee = Employees.objects.select_related('department').get(id=request.GET.get("id"))
+    block = request.GET.get("block")
+    data = {}
 
-    return HttpResponse(status=http.HTTPStatus.METHOD_NOT_ALLOWED)
+    match block:
 
+        case "hw":
+            hw_data = get_products_tasks_levels(SkillsHW, employee, get_products(employee, "hw"))
+            data = {"data": hw_data, "long": True, "max_score": HW_MAX_SCORE}
+
+        case "sw":
+            sw_data = get_products_tasks_levels(SkillsSW, employee, get_products(employee, "sw"))
+            data = {"data": sw_data, "long": True, "max_score": SW_MAX_SCORE}
+
+        case "pr":
+            pr_data = get_products_tasks_levels(SkillsPR, employee, get_products(employee, "pr"), False)
+            data = {"data": pr_data, "long": False}
+
+    data["employee"] = {
+        "name": employee.name,
+        "department": employee.department.name if employee.department else None,
+        "is_supervisor": employee.is_supervisor
+    }
+
+    return render(request, "employee_evaluation_about_block.html", data)
 
 @login_required
 def reviews(request):
-    """
-    Выводит список полученных и отправленных ревью
 
-    :param request: Объект запроса
-    :return: Рендер страницы с ревью | method_not_allowed если запрос не GET
-    """
     if request.method == "GET":
-        employee = (Employees.
-                    objects.
-                    filter(name=f'{request.user.first_name} {request.user.last_name}').
-                    values().
-                    first())
+        reviews_data = Reviews.objects.select_related(
+            'reviewer',
+            'reviewer__department',
+            'reviewed',
+            'reviewed__department'
+        ).all()
 
-        revs = Reviews.objects.filter(Q(reviewer_id=employee["id"]) | Q(reviewed_id=employee["id"])).values()
-        return render(request, "employee_evaluation_reviews.html", {"revs": revs})
+        return render(request, "employee_evaluation_reviews.html", {"revs": reviews_data})
 
     return HttpResponse(status=http.HTTPStatus.METHOD_NOT_ALLOWED)
 
@@ -332,7 +348,7 @@ def subordinates_apply_filters(request):
         }
     )
 
-# Вынести все вспомогательные функции в отдельный файл
+
 def get_products(employee: Employees, key="all"):
     """
     Возвращает список продуктов или процессов из базы данных
@@ -414,7 +430,7 @@ def get_product_score(db_object: type[SkillsHW | SkillsSW | SkillsPR], employee_
         score += levels_val[i]
     return score
 
-# Разбить на два?
+
 def get_products_tasks_levels(db_object, employee, product_list, is_long=True):
     """
     Возвращает массив словарей, где 1 словарь - 1 продукт,

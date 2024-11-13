@@ -3,51 +3,41 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Evaluation</title>
+    <title>Employee Evaluation</title>
     <link rel="stylesheet" href="{% static "GlobalCSS/sidebar-sticky.css" %}" />
     <link rel="stylesheet" href="{% static "GlobalCSS/snackbar.css" %}" />
     <link rel="stylesheet" href="{% static "CSS/employee_evaluation.css" %}" />
-    <link rel="stylesheet" href="{% static "CSS/employee_evaluation_supervisor_filters.css" %}" />
     <link rel="shortcut icon" href="https://cdn-icons-png.freepik.com/512/709/709612.png" />
 </head>
 <body>
-{%  include "snackbar.html" %}
+{% csrf_token %}
+{% include "snackbar.html" %}
 <div id="content">
-{%  include "sidebar.html" %}
-    <div id="employees">
-    <button onclick="location.href='/employee-evaluation/reviews'">Оценки</button>
-        {% if is_supervisor %}
-            {% csrf_token %}
-            {% include "employee_evaluation_supervisor_filters.html" %}
-        {% endif %}
-        <div>
-            <label for="table-search">Search:</label><br/>
-            <input type="search" id="table-search" name="ts" placeholder="id,name"/>
-            <button id="search">Найти</button>
-        </div>
-        <table id="employees-table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>ФИО</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for employee in employees %}
-                    <tr class="employee">
-                        <td>{{ employee.id }}</td>
-                        <td>{{ employee.name }}</td>
+    {% include "sidebar.html" %}
+    <div id="data">
+        <div class="table-container">
+            <table id="employees-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>ФИО</th>
+                        <th>Подразделение</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {% for employee in employees %}
+                        <tr class="employee" onclick="location.href='about?id={{ employee.id }}'">
+                            <td>{{ employee.id }}</td>
+                            <td>{{ employee.name }}</td>
+                            <td>{{ employee.department__name|default:"Не указан" }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 <script src="{% static "GlobalJS/sidebar.js" %}"></script>
 <script src="{% static "GlobalJS/snackbar.js" %}"></script>
-<script src="{% static "JS/employee_evaluation.js" %}"></script>
-{% if is_supervisor %}
-    <script src="{% static "JS/employee_evaluation_supervisor.js" %}"></script>
-{% endif %}
 </body>
 </html>
