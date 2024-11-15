@@ -74,3 +74,4 @@ function validatePasswords() {
     $password.style.borderColor = borderColor;
     $rePassword.style.borderColor = borderColor;
 }
+
