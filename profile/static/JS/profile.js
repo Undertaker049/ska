@@ -39,7 +39,7 @@ $personalForm.addEventListener('submit', (evt) => {
         }
     })
     .catch(error => {
-        console.error('Error:', error);
+//        console.error('Error:', error);
         showSnackbar('Произошла ошибка при отправке данных');
     });
 });
@@ -78,7 +78,7 @@ $passwordForm.addEventListener('submit', (evt) => {
         }
     })
     .catch(error => {
-        console.error('Error:', error);
+//        console.error('Error:', error);
         showSnackbar('Произошла ошибка при отправке данных');
     });
 });

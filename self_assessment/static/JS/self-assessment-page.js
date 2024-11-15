@@ -71,7 +71,7 @@ $finish_button.addEventListener("click", function() {
             return response.json();
         })
         .catch(err => {
-            console.log(err.text);
+//            console.log(err.text);
         });
     } else {
         showSnackbar("Сначала заполните форму!");
