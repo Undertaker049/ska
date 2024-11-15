@@ -49,7 +49,7 @@ $form.addEventListener("submit", (evt) => {
         }
     })
     .catch(error => {
-        console.error('Error:', error);
+//        console.error('Error:', error);
         showSnackbar("Произошла ошибка при отправке данных");
     });
 });
@@ -74,3 +74,4 @@ function validatePasswords() {
     $password.style.borderColor = borderColor;
     $rePassword.style.borderColor = borderColor;
 }
+

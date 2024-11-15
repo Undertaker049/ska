@@ -54,7 +54,7 @@ $modal_accept.addEventListener("click", ()=>{
         if (data.selections.size === 0) {
             return;
         }
-        console.log(data.selections)
+//        console.log(data.selections)
          for (let i = 0; i < q.length; i++) {
              let button = q[i];
              let name = button.name.replaceAll("_", " ");

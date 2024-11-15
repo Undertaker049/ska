@@ -8,7 +8,7 @@ const $cancel_delete_button = document.getElementById("cancel-delete");
  * Функция для удаления сертификата
  */
 $delete_button.addEventListener("click", ()=>{
-    console.log("clicked");
+//    console.log("clicked");
     $delete_confirmation_modal.showModal();
 });
 
