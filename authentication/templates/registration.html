@@ -1,57 +1,72 @@
-<!DOCTYPE html>
+{% extends 'base.html' %}
 {% load static %}
-<html lang="en-US">
-<head>
-    <meta charset="UTF-8">
-    <title>Registration</title>
-    <link rel="stylesheet" href="{% static "CSS/auth.css" %}"/>
-    <link rel="stylesheet" href="{% static "GlobalCSS/snackbar.css" %}"/>
-    <link rel="shortcut icon" href="https://cdn-icons-png.freepik.com/512/709/709612.png" />
-</head>
-<body>
-<div id="outer-wrapper">
-    <div id="inner-wrapper">
-        {% include "snackbar.html" %}
-        <form id="reg" method="post" action="/auth/registration">
-            {% csrf_token %}
-            <p>
-                <label for="username">Имя пользователя:</label><br>
-                <input id="username" name="username" type="text" required>
-            </p>
-            <p>
-                <label for="email">Почта:</label><br>
-                <input id="email" name="email" type="email" required>
-            </p>
-            <p>
-                <label for="first-name">Имя:</label><br>
-                <input id="first-name" name="first-name" type="text" required>
-            </p>
-            <p>
-                <label for="last-name">Фамилия:</label><br>
-                <input id="last-name" name="last-name" type="text" required>
-            </p>
-            <p>
-                <label for="department">Отдел:</label><br>
-                <select id="department" name="department" required>
-                    <option value="" disabled selected>Выберите отдел</option>
-                    <option value="integration">Отдел системной интеграции</option>
-                    <option value="service">Сервисный центр</option>
-                    <option value="project">Проектный отдел</option>
-                    <option value="sales">Отдел продаж</option>
-                </select>
-            </p>
-            <p>
-                <label for="password">Пароль:</label><br>
-                <input id="password" name="password" type="password" placeholder="Password" required><br>
-                <label for="re-password">Повторите Пароль:</label><br>
-                <input id="re-password" name="re-password" type="password" placeholder="Password" required>
-            </p>
-            <input type="submit" value="Зарегистрироваться" class="navigation-button">
-        </form>
+
+{% block title %}Регистрация{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card {% if request.session.theme == 'dark' %}bg-dark text-light border-light{% endif %}">
+            <div class="card-body">
+                <h3 class="card-title text-center mb-4">Регистрация</h3>
+                <form id="reg" method="post" action="{% url 'registration' %}">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="username" class="form-label">Имя пользователя</label>
+                            <input type="text" class="form-control {% if request.session.theme == 'dark' %}bg-dark text-light border-secondary{% endif %}"
+                                   id="username" name="username" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control {% if request.session.theme == 'dark' %}bg-dark text-light border-secondary{% endif %}"
+                                   id="email" name="email" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="first-name" class="form-label">Имя</label>
+                            <input type="text" class="form-control {% if request.session.theme == 'dark' %}bg-dark text-light border-secondary{% endif %}"
+                                   id="first-name" name="first-name" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="last-name" class="form-label">Фамилия</label>
+                            <input type="text" class="form-control {% if request.session.theme == 'dark' %}bg-dark text-light border-secondary{% endif %}"
+                                   id="last-name" name="last-name" required>
+                        </div>
+                        <div class="col-12">
+                            <label for="department" class="form-label">Отдел</label>
+                            <select class="form-select {% if request.session.theme == 'dark' %}bg-dark text-light border-secondary{% endif %}"
+                                    id="department" name="department" required>
+                                <option value="" disabled selected>Выберите отдел</option>
+                                <option value="integration">Отдел системной интеграции</option>
+                                <option value="service">Сервисный центр</option>
+                                <option value="project">Проектный отдел</option>
+                                <option value="sales">Отдел продаж</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="password" class="form-label">Пароль</label>
+                            <input type="password" class="form-control {% if request.session.theme == 'dark' %}bg-dark text-light border-secondary{% endif %}"
+                                   id="password" name="password" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="re-password" class="form-label">Повторите пароль</label>
+                            <input type="password" class="form-control {% if request.session.theme == 'dark' %}bg-dark text-light border-secondary{% endif %}"
+                                   id="re-password" name="re-password" required>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary w-100">Зарегистрироваться</button>
+                        </div>
+                        <div class="col-12 text-center">
+                            <a href="/auth" class="text-decoration-none">Уже есть аккаунт? Войти</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
+{% endblock %}
 
-<script src="{% static "GlobalJS/snackbar.js" %}"></script>
-<script src="{% static "JS/registration.js" %}"></script>
-</body>
-</html>
+{% block extra_js %}
+<script src="{% static 'js/registration.js' %}"></script>
+{% endblock %}

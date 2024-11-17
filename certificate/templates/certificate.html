@@ -1,101 +1,108 @@
-<!DOCTYPE html>
+{% extends 'base.html' %}
 {% load static %}
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Certificate</title>
-{#    <link rel="stylesheet" href="{% static "GlobalCSS/Header.css" %}" />#}
-    <link rel="stylesheet" href="{% static "GlobalCSS/sidebar-sticky.css" %}" />
-    <link rel="stylesheet" href="{% static "CSS/certificate.css" %}" />
-    <link rel="shortcut icon" href="https://cdn-icons-png.freepik.com/512/709/709612.png" />
-</head>
-<body>
-<div id="content">
-{%  include "sidebar.html" %}
-    <div id="data">
-        {# безымянный div чтобы кнопка была в длину таблицы #}
-        <div>
-        <button id="upload-certificate">Загрузить сертификат</button>
-        <table id="certificates">
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>Название</th>
-                <th>Тип</th>
-                <th>Дата получения</th>
-            </tr>
-            </thead>
-            <tbody>
-                {% for certificate in certificates %}
-                    <tr>
-                        <td>{{ certificate.id }}</td>
-                        <td>{{ certificate.training_name }}</td>
-                        <td>{{ certificate.training_type }}</td>
-                        <td>{{ certificate.date }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+
+{% block title %}Сертификаты{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/certificate.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3 class="card-title mb-0">Сертификаты</h3>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#certificateModal">
+                            <i class="bi bi-plus-lg"></i> Добавить
+                        </button>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Название тренинга</th>
+                                    <th>Дата получения</th>
+                                    <th>Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for certificate in certificates %}
+                                <tr>
+                                    <td>{{ certificate.training_name }}</td>
+                                    <td>{{ certificate.date|date:"d.m.Y" }}</td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="{{ certificate.file.url }}" class="btn btn-sm btn-outline-primary" target="_blank">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <button class="btn btn-sm btn-outline-danger" onclick="deleteCertificate({{ certificate.id }})">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-
-<dialog id="form-modal">
-<div id="wrapper">
-{#    TODO: Заменить кнопку "закрыть" на svg #}
-    <button id="close-modal">X</button>
-    <form id="certificate-form" method="post" action="/certificate/" enctype="multipart/form-data">
-        {% csrf_token %}
-        <p>
-            <label for="training_name">Название тренинга</label><br>
-            <input type="text" id="training_name" name="training_name" required />
-        </p>
-
-        <p>
-            <label for="type">Сертификат</label><br>
-            <select name="training_type" id="type" required >
-                <option name="DEF" value="Placeholder" disabled selected>— Выберите —</option>
-                <option name="CER" value="certification"> о вендорской сертификации</option>
-                <option name="TR" value="training">о прохождении тренинга</option>
-                <option name="EX" value="exam">о сдаче экзамена</option>
-            </select>
-        </p>
-
-        <p>
-            <label for="date">Дата получения</label><br>
-            <input type="date" id="date" name="date" required />
-        </p>
-
-        <p>
-            <label for="category">Категория</label><br>
-            <select id="category" name="category" required >
-                <option value="DEF" disabled selected>— Выберите —</option>
-                <option value="BURA">BURA</option>
-                <option value="Compute">Compute</option>
-                <option value="Generic">Generic</option>
-                <option value="Hybrid IT">Hybrid IT</option>
-                <option value="ITIL">ITIL</option>
-                <option value="Networking">Networking</option>
-                <option value="Operating System">Operating System</option>
-                <option value="Software">Software</option>
-                <option value="Storage">Storage</option>
-                <option value="Support">Support</option>
-            </select>
-        </p>
-
-        <p id="for-sub-cat"></p>
-
-        <p id="file-block">
-            <label for="file">Сертификат в формате .jpg, .png, .pdf</label><br>
-            <input type="file" id="file" name="certificate" accept=".jpg,.png,.pdf" required />
-        </p>
-        <p>
-            <input id="send-certificate" type="submit" value="Загрузить">
-        </p>
-    </form>
 </div>
-</dialog>
+
+<div class="modal fade" id="certificateModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Загрузка сертификата</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="certificate-form" method="post" action="/certificate/" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="training_name" class="form-label">Название тренинга</label>
+                        <input type="text" class="form-control" id="training_name" name="training_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="certificate_file" class="form-label">Файл сертификата</label>
+                        <input type="file" class="form-control" id="certificate_file" name="certificate_file"
+                               accept=".pdf,.jpg,.jpeg,.png" required>
+                    </div>
+                    <div class="modal-footer px-0 pb-0">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                        <button type="submit" class="btn btn-primary">Загрузить</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
-<script src="{% static "GlobalJS/sidebar.js" %}"></script>
-<script src="{% static "JS/certificate.js" %}"></script>
-</body>
-</html>
+
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Подтверждение удаления</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Вы действительно хотите удалить этот сертификат?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-danger" id="confirmDelete">Удалить</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/certificate.js' %}"></script>
+{% endblock %}

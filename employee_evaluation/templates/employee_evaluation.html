@@ -1,32 +1,30 @@
-<!DOCTYPE html>
-{% load static %}
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Employee Evaluation</title>
-    <link rel="stylesheet" href="{% static "GlobalCSS/sidebar-sticky.css" %}" />
-    <link rel="stylesheet" href="{% static "GlobalCSS/snackbar.css" %}" />
-    <link rel="stylesheet" href="{% static "CSS/employee_evaluation.css" %}" />
-    <link rel="shortcut icon" href="https://cdn-icons-png.freepik.com/512/709/709612.png" />
-</head>
-<body>
-{% csrf_token %}
-{% include "snackbar.html" %}
-<div id="content">
-    {% include "sidebar.html" %}
-    <div id="data">
-        <div class="table-container">
-            <table id="employees-table">
+{% extends 'base.html' %}
+
+{% block title %}Сотрудники{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="card-title mb-0">Список сотрудников</h3>
+            <div class="d-flex gap-2">
+                <input type="text" class="form-control"
+                       placeholder="Поиск..." id="table-search">
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>ФИО</th>
-                        <th>Подразделение</th>
+                        <th scope="col">ID</th>
+                        <th scope="col">ФИО</th>
+                        <th scope="col">Подразделение</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for employee in employees %}
-                        <tr class="employee" onclick="location.href='about?id={{ employee.id }}'">
+                        <tr style="cursor: pointer" onclick="location.href='about?id={{ employee.id }}'">
                             <td>{{ employee.id }}</td>
                             <td>{{ employee.name }}</td>
                             <td>{{ employee.department__name|default:"Не указан" }}</td>
@@ -37,7 +35,4 @@
         </div>
     </div>
 </div>
-<script src="{% static "GlobalJS/sidebar.js" %}"></script>
-<script src="{% static "GlobalJS/snackbar.js" %}"></script>
-</body>
-</html>
+{% endblock %}

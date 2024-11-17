@@ -1,0 +1,77 @@
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="snackbar" class="toast align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body"></div>
+            <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    window.showSnackbar = function(message, duration = 3000) {
+        const toast = document.getElementById('snackbar');
+        const toastBody = toast.querySelector('.toast-body');
+
+        toastBody.textContent = message;
+
+        const bsToast = new bootstrap.Toast(toast, {
+            animation: true,
+            autohide: true,
+            delay: duration
+        });
+
+        toast.classList.remove('bg-success', 'bg-danger', 'bg-warning', 'bg-info', 'text-white');
+
+        if (message.toLowerCase().includes('ошибка') || message.toLowerCase().includes('error')) {
+            toast.classList.add('bg-danger', 'text-white');
+        } else if (message.toLowerCase().includes('успешно') || message.toLowerCase().includes('success')) {
+            toast.classList.add('bg-success', 'text-white');
+        } else if (message.toLowerCase().includes('внимание') || message.toLowerCase().includes('warning')) {
+            toast.classList.add('bg-warning');
+        } else {
+            toast.classList.add('bg-info', 'text-white');
+        }
+
+        if (document.body.classList.contains('bg-dark')) {
+            toast.classList.add('dark-theme');
+        }
+
+        bsToast.show();
+    };
+});
+</script>
+
+<style>
+.toast-container {
+    z-index: 1056;
+}
+
+.toast {
+    transition: all 0.3s ease-in-out;
+}
+
+.toast.showing {
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.toast.hide {
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.toast.dark-theme {
+    background-color: #2b3035 !important;
+    color: #fff !important;
+}
+
+.toast.dark-theme .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+</style>

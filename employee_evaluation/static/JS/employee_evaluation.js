@@ -2,9 +2,6 @@ const $search_field = document.getElementById("table-search");
 const $search_button = document.getElementById("search");
 const $table_rows = document.querySelectorAll("table > tbody > tr");
 
-/**
- * Функция для поиска конкретного сотрудника в списке
- */
 $search_button.addEventListener("click", ()=>{
     if ($search_field.value !== "") {
         find_rows($search_field.value.split(", "));
@@ -15,19 +12,12 @@ $search_button.addEventListener("click", ()=>{
     }
 });
 
-/**
- * Функция для перехода на страницу с информацией о конкретном сотруднике
- */
 $table_rows.forEach(function (el) {
     el.addEventListener("click", function (ev) {
         location.href = `/employee-evaluation/about?id=${ev.target.parentElement.querySelector('td').textContent}`;
     });
 });
 
-/**
- * Функция для мягкого поиска строк в таблице. Значения не обязательно должны совпадать полностью.
- * @param {Array[]}q массив строк-параметров запроса
- */
 function find_rows(q) {
     if (q.length === 1) {
        q = q[0];

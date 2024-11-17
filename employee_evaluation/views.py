@@ -2,20 +2,28 @@
 import http
 import json
 import operator
+
 from array import array
+from .models import Reviews
 from typing import Dict, List, Union, Optional
 
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q, QuerySet
+from django.db.models import Q, QuerySet, Max
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
-
 from certificate.models import Certificate, CertificateCategory, CertificateSubCategory
+
 from self_assessment.models import (
-    Employees, Hardware, Software, Processes,
-    TaskHW, SkillsHW, TaskSW, SkillsSW, SkillsPR, Levels
+    Department,
+    Employees,
+    Levels,
+    Hardware,
+    Software,
+    Processes,
+    SkillsHW,
+    SkillsSW,
+    SkillsPR
 )
-from .models import Reviews
 
 HW_MAX_SCORE = 48
 SW_MAX_SCORE = 20
@@ -90,38 +98,73 @@ def main(request):
 
 
 @login_required
-def about(request) -> HttpResponse:
+def about(request):
+    employee_id = request.GET.get('id')
+    employee = Employees.objects.select_related('department').get(id=employee_id)
+    hw_data = []
 
-    if request.method != "GET":
-        return HttpResponse(status=http.HTTPStatus.METHOD_NOT_ALLOWED)
+    for product in Hardware.objects.all():
+        latest_skill = (SkillsHW.objects
+                        .filter(employee=employee, product=product)
+                        .select_related('level')
+                        .order_by('-time')
+                        .first())
+        if latest_skill:
+            hw_data.append({
+                'product': str(product),
+                'score': latest_skill.get_score()
+            })
 
-    employee = Employees.objects.select_related('department').get(id=request.GET.get("id"))
-    hw, sw, pr = get_products(employee)
-    hw_data = get_products_scores(SkillsHW, employee, hw)
-    sw_data = get_products_scores(SkillsSW, employee, sw)
-    pr_data = get_products_scores(SkillsPR, employee, pr, False)
+    sw_data = []
 
-    for item in hw_data:
-        item['percentage'] = calculate_percentage(item['score'], HW_MAX_SCORE)
+    for product in Software.objects.all():
+        latest_skill = (SkillsSW.objects
+                        .filter(employee=employee, product=product)
+                        .select_related('level')
+                        .order_by('-time')
+                        .first())
+        if latest_skill:
+            sw_data.append({
+                'product': str(product),
+                'score': latest_skill.get_score()
+            })
 
-    for item in sw_data:
-        item['percentage'] = calculate_percentage(item['score'], SW_MAX_SCORE)
+    pr_data = []
 
-    data = {
-        "employee": {
-            "name": employee.name,
-            "department": employee.department.name if employee.department else "Не указан",
-            "is_supervisor": employee.is_supervisor,
-            "subordinate_of": employee.subordinate_of.name if employee.subordinate_of else None
-        },
-        "hw_data": hw_data,
-        "hw_max_score": HW_MAX_SCORE,
-        "sw_data": sw_data,
-        "sw_max_score": SW_MAX_SCORE,
-        "pr_data": pr_data
+    for process in Processes.objects.all():
+        latest_skill = (SkillsPR.objects
+                        .filter(employee=employee, process=process)
+                        .select_related('level')
+                        .order_by('-time')
+                        .first())
+        if latest_skill:
+            pr_data.append({
+                'product': str(process),
+                'score': latest_skill.level.weight
+            })
+
+    sections = {
+        'Hardware': hw_data,
+        'Software': sw_data,
+        'Processes': pr_data
     }
 
-    return render(request, "employee_evaluation_about.html", data)
+    max_weight = Levels.objects.aggregate(Max('weight'))['weight__max']
+
+    section_max_scores = {
+        'Hardware': max_weight,
+        'Software': max_weight,
+        'Processes': max_weight
+    }
+
+    context = {
+        'employee': employee,
+        'sections': sections,
+        'section_max_scores': section_max_scores,
+        'employee_id': employee_id
+    }
+
+    return render(request, 'employee_evaluation_about.html', context)
 
 
 @login_required

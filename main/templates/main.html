@@ -1,20 +1,23 @@
-<!DOCTYPE html>
+{% extends 'base.html' %}
 {% load static %}
-<html lang="en-US">
-<head>
-    <meta charset="UTF-8">
-    <title>Hub</title>
-    <link rel="stylesheet" href="{% static "GlobalCSS/snackbar.css" %}" />
-    <link rel="stylesheet" href="{% static "GlobalCSS/sidebar-sticky.css" %}" />
-    <link rel="stylesheet" href="{% static "CSS/main.css" %}" />
-{#    <link rel="stylesheet" href="{% static "GlobalCSS/Header.css" %}" />#}
-    <link rel="shortcut icon" href="https://i.pinimg.com/474x/67/bf/21/67bf2179ae48b0513c7a067200e006c5.jpg" />
 
-</head>
-<body>
-{%  include "sidebar.html" %}
-<div id="success-msg-box" class="msg-box">{{ success }}</div>
-<div id="warning-msg-box" class="msg-box">{{ warning }}</div>
-<script src="{% static "GlobalJS/sidebar.js" %}"></script>
-</body>
-</html>
+{% block title %}Hub{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            {% if success %}
+                <div class="alert alert-success" role="alert">
+                    {{ success }}
+                </div>
+            {% endif %}
+            {% if warning %}
+                <div class="alert alert-warning" role="alert">
+                    {{ warning }}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

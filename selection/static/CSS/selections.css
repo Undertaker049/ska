@@ -1,28 +1,10 @@
-:root{
-    --system-ui: system-ui, "Helvetica Neue", Arial, sans-serif;
+body.dark-mode .form-select option {
+    background-color: #343a40;
+    color: #fff;
 }
 
-html, body {
-    height: 100%;
-    width: 100%;
-}
-body {
-    margin: 0;
-    padding: 0;
-
-    font-family: var(--system-ui), serif;
-}
-
-#content {
-    display: flex;
-    width: 100%;
-    height: fit-content;
-}
-
-#data {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    width: 100%;
+@media (max-width: 768px) {
+    .row > div {
+        margin-bottom: 1rem;
+    }
 }

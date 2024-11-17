@@ -1,0 +1,53 @@
+<nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                {% if request.user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if '/profile/' in request.path or request.path == '/profile' %}active{% endif %}" href="/profile">
+                            <i class="bi bi-person-circle"></i> Профиль
+                        </a>
+                    </li>
+                {% endif %}
+                <li class="nav-item">
+                    <a class="nav-link {% if '/self-assessment' in request.path %}active{% endif %}" href="/self-assessment">
+                        <i class="bi bi-clipboard-check"></i> Квалификации
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if '/certificate' in request.path %}active{% endif %}" href="/certificate">
+                        <i class="bi bi-award"></i> Сертификаты
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if '/selection' in request.path %}active{% endif %}" href="/selection">
+                        <i class="bi bi-search"></i> Выборка
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if '/employee-evaluation' in request.path %}active{% endif %}" href="/employee-evaluation">
+                        <i class="bi bi-graph-up"></i> Сводка
+                    </a>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                {% if request.user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if '/auth/logout' in request.path %}active{% endif %}" href="/auth/logout">
+                            <i class="bi bi-box-arrow-right"></i> Выход
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if '/auth/' in request.path and not '/auth/logout' in request.path %}active{% endif %}" href="/auth/">
+                            <i class="bi bi-box-arrow-in-right"></i> Вход
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>

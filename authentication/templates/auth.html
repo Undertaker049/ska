@@ -1,34 +1,37 @@
-<!DOCTYPE html>
+{% extends 'base.html' %}
 {% load static %}
-<html lang="en-US">
-<head>
-    <meta charset="UTF-8">
-    <title>Log in</title>
-    <link rel="stylesheet" href="{% static "GlobalCSS/snackbar.css" %}" />
-    <link rel="stylesheet" href="{% static "CSS/auth.css" %}" />
-    <link rel="shortcut icon" href="https://cdn-icons-png.freepik.com/512/709/709612.png" />
-</head>
-<body>
-{% include "snackbar.html" %}
-<div id="outer-wrapper">
-    <div id="inner-wrapper">
-        <div id="auth">
-            {% csrf_token %}
-            <p>
-                <label for="login">Имя пользователя:</label><br>
-                <input id="login" name="login" type="text" placeholder="username" required>
-            </p>
-            <p>
-                <label for="password">Пароль:</label><br>
-                <input id="password" name="password" type="password" placeholder="Password" required>
-            </p>
-            <button id="submit" class="navigation-button">Войти</button>
-            <a href="/auth/registration">Регистрация</a>
+
+{% block title %}Авторизация{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+        <div class="card {% if request.session.theme == 'dark' %}bg-dark text-light border-light{% endif %}">
+            <div class="card-body">
+                <h3 class="card-title text-center mb-4">Вход в систему</h3>
+                <form id="auth-form">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="login" class="form-label">Имя пользователя</label>
+                        <input type="text" class="form-control {% if request.session.theme == 'dark' %}bg-dark text-light border-secondary{% endif %}"
+                               id="login" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Пароль</label>
+                        <input type="password" class="form-control {% if request.session.theme == 'dark' %}bg-dark text-light border-secondary{% endif %}"
+                               id="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Войти</button>
+                </form>
+                <div class="text-center mt-3">
+                    <a href="/auth/registration" class="text-decoration-none">Регистрация</a>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+{% endblock %}
 
-<script src="{% static "JS/login.js" %}"></script>
-<script src="{% static "GlobalJS/snackbar.js" %}"></script>
-</body>
-</html>
+{% block extra_js %}
+<script src="{% static 'js/login.js' %}"></script>
+{% endblock %}
