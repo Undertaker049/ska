@@ -1,5 +1,6 @@
 *.sqlite3
 local_stuff/
 files/
+staticfiles/
 *.pyc
 db.json
