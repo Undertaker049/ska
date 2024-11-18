@@ -11,27 +11,27 @@
                             <i class="bi bi-person-circle"></i> Профиль
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if '/self-assessment' in request.path %}active{% endif %}" href="/self-assessment">
+                            <i class="bi bi-clipboard-check"></i> Квалификации
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if '/certificate' in request.path %}active{% endif %}" href="/certificate">
+                            <i class="bi bi-award"></i> Сертификаты
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if '/selection' in request.path %}active{% endif %}" href="/selection">
+                            <i class="bi bi-search"></i> Выборка
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if '/employee-evaluation' in request.path %}active{% endif %}" href="/employee-evaluation">
+                            <i class="bi bi-graph-up"></i> Сводка
+                        </a>
+                    </li>
                 {% endif %}
-                <li class="nav-item">
-                    <a class="nav-link {% if '/self-assessment' in request.path %}active{% endif %}" href="/self-assessment">
-                        <i class="bi bi-clipboard-check"></i> Квалификации
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {% if '/certificate' in request.path %}active{% endif %}" href="/certificate">
-                        <i class="bi bi-award"></i> Сертификаты
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {% if '/selection' in request.path %}active{% endif %}" href="/selection">
-                        <i class="bi bi-search"></i> Выборка
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {% if '/employee-evaluation' in request.path %}active{% endif %}" href="/employee-evaluation">
-                        <i class="bi bi-graph-up"></i> Сводка
-                    </a>
-                </li>
             </ul>
             <ul class="navbar-nav">
                 {% if request.user.is_authenticated %}
@@ -42,8 +42,13 @@
                     </li>
                 {% else %}
                     <li class="nav-item">
-                        <a class="nav-link {% if '/auth/' in request.path and not '/auth/logout' in request.path %}active{% endif %}" href="/auth/">
+                        <a class="nav-link {% if '/auth/' in request.path and not '/auth/registration' in request.path and not '/auth/logout' in request.path %}active{% endif %}" href="/auth/">
                             <i class="bi bi-box-arrow-in-right"></i> Вход
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if '/auth/registration' in request.path %}active{% endif %}" href="/auth/registration">
+                            <i class="bi bi-person-plus"></i> Регистрация
                         </a>
                     </li>
                 {% endif %}

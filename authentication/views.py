@@ -11,7 +11,6 @@ from self_assessment.models import Employees, Department
 
 
 def main(request):
-
     if request.method == "POST":
         user = authenticate(username=request.POST["login"], password=request.POST["password"])
 
@@ -20,7 +19,7 @@ def main(request):
             return redirect("/")
 
         return HttpResponse(status=http.HTTPStatus.NOT_FOUND,
-                            content="Пользователь с таким логином/паролем не найден")
+                          content="Пользователь с таким логином/паролем не найден")
 
     if request.method == "GET":
         return render(request, "auth.html")
@@ -29,9 +28,14 @@ def main(request):
 
 
 def registration(request):
+    departments = [
+        {'id': 'integration', 'name': 'Отдел системной интеграции', 'icon': 'bi-building'},
+        {'id': 'service', 'name': 'Сервисный центр', 'icon': 'bi-tools'},
+        {'id': 'project', 'name': 'Проектный отдел', 'icon': 'bi-kanban'},
+        {'id': 'sales', 'name': 'Отдел продаж', 'icon': 'bi-cart'}
+    ]
 
     if request.method == "POST":
-
         try:
             data = request.POST
 
@@ -75,13 +79,12 @@ def registration(request):
             )
 
     if request.method == "GET":
-        return render(request, "registration.html")
+        return render(request, "registration.html", {'departments': departments})
 
     return HttpResponse(status=http.HTTPStatus.METHOD_NOT_ALLOWED)
 
 
 def get_department_name(department_code):
-
     departments = {
         'integration': 'Отдел системной интеграции',
         'service': 'Сервисный центр',
@@ -90,6 +93,7 @@ def get_department_name(department_code):
     }
 
     return departments.get(department_code)
+
 
 @login_required
 def user_logout(request):
