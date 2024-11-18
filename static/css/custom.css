@@ -254,27 +254,61 @@ main.container-fluid {
     text-shadow: 0 0 10px var(--dominant-color, rgba(255, 255, 255, 0.3));
 }
 
-.btn-primary,
-.btn-success {
-    background: rgba(255, 255, 255, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    transition: all 0.3s ease;
-    color: rgba(255, 255, 255, 0.9);
+.btn.btn-custom {
+    background: rgba(0, 0, 0, 0.3) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--dominant-color, rgba(255, 255, 255, 0.1)) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 0 0 15px var(--dominant-color, rgba(255, 255, 255, 0.1));
 }
 
-.btn-primary:hover,
-.btn-success:hover {
-    background: rgba(255, 255, 255, 0.2);
-    color: #ffffff;
+.btn.btn-custom:hover {
+    background: rgba(0, 0, 0, 0.5) !important;
+    border-color: var(--dominant-color, rgba(255, 255, 255, 0.5)) !important;
+    box-shadow:
+        0 0 20px var(--dominant-color, rgba(255, 255, 255, 0.3)),
+        0 0 35px var(--dominant-color, rgba(255, 255, 255, 0.2));
+    color: var(--dominant-color, #fff) !important;
     transform: translateY(-2px);
+    text-shadow: 0 0 10px var(--dominant-color, rgba(255, 255, 255, 0.5));
 }
 
-.btn-primary:hover {
-    box-shadow: 0 0 20px var(--dominant-color, rgba(255, 255, 255, 0.3));
+.btn.btn-custom:active {
+    transform: translateY(0) !important;
+    background: rgba(0, 0, 0, 0.6) !important;
+    box-shadow:
+        0 0 10px var(--dominant-color, rgba(255, 255, 255, 0.2)),
+        0 0 20px var(--dominant-color, rgba(255, 255, 255, 0.1));
 }
 
-.btn-success:hover {
-    box-shadow: 0 0 20px var(--secondary-color, rgba(255, 255, 255, 0.3));
+.btn.btn-custom.btn-custom-primary {
+    --button-intensity: 1;
+}
+
+.btn.btn-custom.btn-custom-secondary {
+    --button-intensity: 0.7;
+}
+
+.btn.btn-custom.btn-custom-danger {
+    --button-intensity: 0.9;
+    --dominant-color: rgba(220, 53, 69, 0.8);
+}
+
+.btn.btn-custom.btn-custom-success {
+    --button-intensity: 0.8;
+}
+
+.btn.btn-custom.btn-custom-warning {
+    --button-intensity: 0.6;
+}
+
+.btn.btn-custom.btn-custom-info {
+    --button-intensity: 0.5;
+}
+
+.modal-footer .btn.btn-custom {
+    margin: 0.25rem;
 }
 
 .form-control {
@@ -313,6 +347,203 @@ hr {
 .card:hover hr {
     border-color: var(--secondary-color, rgba(255, 255, 255, 0.2));
     box-shadow: 0 0 10px var(--secondary-color, rgba(255, 255, 255, 0.1));
+}
+
+.modal-content {
+    background: rgba(0, 0, 0, 0.7) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--dominant-color, rgba(255, 255, 255, 0.1));
+    box-shadow:
+        0 0 30px var(--dominant-color, rgba(255, 255, 255, 0.2)),
+        inset 0 0 20px var(--dominant-color, rgba(255, 255, 255, 0.1));
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.modal-header {
+    border-bottom: 1px solid var(--dominant-color, rgba(255, 255, 255, 0.1));
+    padding: 1.5rem;
+}
+
+.modal-title {
+    color: var(--dominant-color, rgba(255, 255, 255, 0.9));
+    text-shadow: 0 0 10px var(--dominant-color, rgba(255, 255, 255, 0.3));
+    font-size: 1.5rem;
+    font-weight: 500;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-footer {
+    border-top: 1px solid var(--dominant-color, rgba(255, 255, 255, 0.1));
+    padding: 1.5rem;
+}
+
+.modal .form-control,
+.modal .form-select {
+    background: rgba(0, 0, 0, 0.3) !important;
+    border: 1px solid var(--dominant-color, rgba(255, 255, 255, 0.1)) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(5px);
+}
+
+.modal .form-control:focus,
+.modal .form-select:focus {
+    background: rgba(0, 0, 0, 0.4) !important;
+    border-color: var(--dominant-color, rgba(255, 255, 255, 0.3)) !important;
+    box-shadow:
+        0 0 15px var(--dominant-color, rgba(255, 255, 255, 0.2)),
+        inset 0 0 10px var(--dominant-color, rgba(255, 255, 255, 0.1)) !important;
+}
+
+.modal .form-label {
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 0.5rem;
+    text-shadow: 0 0 5px var(--dominant-color, rgba(255, 255, 255, 0.2));
+}
+
+.modal.fade .modal-dialog {
+    transform: scale(0.95);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modal.show .modal-dialog {
+    transform: scale(1);
+    opacity: 1;
+}
+
+.radio-cards {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.radio-card {
+    flex: 1;
+    cursor: pointer;
+}
+
+.radio-card input[type="radio"],
+.chip input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.radio-card-content {
+    background-color: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--dominant-color, rgba(255, 255, 255, 0.1));
+    border-radius: 4px;
+    padding: 1rem;
+    text-align: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(12px);
+    position: relative;
+}
+
+.radio-card-content i {
+    display: block;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: rgba(255, 255, 255, 0.7);
+    transition: all 0.3s ease;
+}
+
+.radio-card-content span {
+    transition: all 0.3s ease;
+}
+
+.radio-card:hover .radio-card-content {
+    background-color: rgba(0, 0, 0, 0.5);
+    border-color: var(--dominant-color, rgba(255, 255, 255, 0.2));
+    box-shadow:
+        0 0 15px var(--dominant-color, rgba(255, 255, 255, 0.2)),
+        0 0 30px var(--dominant-color, rgba(255, 255, 255, 0.1));
+}
+
+.radio-card input[type="radio"]:checked + .radio-card-content {
+    background-color: rgba(0, 0, 0, 0.6);
+    border-color: var(--dominant-color, rgba(255, 255, 255, 0.3));
+    box-shadow:
+        0 0 20px var(--dominant-color, rgba(255, 255, 255, 0.3)),
+        0 0 40px var(--dominant-color, rgba(255, 255, 255, 0.2)),
+        inset 0 0 15px var(--dominant-color, rgba(255, 255, 255, 0.1));
+}
+
+.radio-card input[type="radio"]:checked + .radio-card-content i,
+.radio-card input[type="radio"]:checked + .radio-card-content span {
+    color: var(--dominant-color, #ffffff);
+    text-shadow:
+        0 0 10px var(--dominant-color, rgba(255, 255, 255, 0.5)),
+        0 0 20px var(--dominant-color, rgba(255, 255, 255, 0.3));
+}
+
+.chips-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.chip {
+    cursor: pointer;
+    position: relative;
+}
+
+.chip-content {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background-color: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--dominant-color, rgba(255, 255, 255, 0.1));
+    border-radius: 20px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(12px);
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.chip:hover .chip-content {
+    background-color: rgba(0, 0, 0, 0.5);
+    border-color: var(--dominant-color, rgba(255, 255, 255, 0.2));
+    box-shadow:
+        0 0 15px var(--dominant-color, rgba(255, 255, 255, 0.2)),
+        0 0 30px var(--dominant-color, rgba(255, 255, 255, 0.1));
+    transform: translateY(-1px);
+}
+
+.chip input[type="radio"]:checked + .chip-content {
+    background-color: rgba(0, 0, 0, 0.6);
+    border-color: var(--dominant-color, rgba(255, 255, 255, 0.3));
+    color: var(--dominant-color, #ffffff);
+    box-shadow:
+        0 0 20px var(--dominant-color, rgba(255, 255, 255, 0.3)),
+        0 0 40px var(--dominant-color, rgba(255, 255, 255, 0.2)),
+        inset 0 0 15px var(--dominant-color, rgba(255, 255, 255, 0.1));
+    text-shadow:
+        0 0 10px var(--dominant-color, rgba(255, 255, 255, 0.5)),
+        0 0 20px var(--dominant-color, rgba(255, 255, 255, 0.3));
+}
+
+.subcategory-chip {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+    display: none;
+}
+
+.subcategory-chip.visible {
+    opacity: 1;
+    transform: translateY(0);
+    display: inline-block;
+}
+
+.radio-cards.is-invalid,
+.chips-container.is-invalid {
+    border-radius: 4px;
+    box-shadow: 0 0 15px rgba(220, 53, 69, 0.5);
 }
 
 .cursor-pointer {

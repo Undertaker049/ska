@@ -1,81 +1,96 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const tabElements = document.querySelectorAll('[data-bs-toggle="tab"]');
-    tabElements.forEach(tabElement => {
-        const tab = new bootstrap.Tab(tabElement);
+    // Инициализация компонентов
+    const navItems = document.querySelectorAll('input[name="profile-section"]');
+    const sections = document.querySelectorAll('.profile-section');
+    const toast = new bootstrap.Toast(document.getElementById('notification-toast'));
 
-        tabElement.addEventListener('click', event => {
-            event.preventDefault();
-            tab.show();
-            tabElements.forEach(el => el.classList.remove('active'));
-            event.currentTarget.classList.add('active');
+    /**
+     * Показывает уведомление
+     * @param {string} message - текст уведомления
+     * @param {string} type - тип уведомления (success/error)
+     */
+    function showNotification(message, type = 'success') {
+        const toastEl = document.getElementById('notification-toast');
+        toastEl.querySelector('.toast-body').textContent = message;
+        toastEl.className = `toast ${type === 'success' ? 'bg-success' : 'bg-danger'} text-white`;
+        toast.show();
+    }
+
+    /**
+     * Показывает выбранную секцию
+     * @param {string} sectionId - идентификатор секции
+     */
+    function showSection(sectionId) {
+        sections.forEach(section => {
+            section.style.display = 'none';
+            section.classList.remove('active');
+        });
+
+        const selectedSection = document.getElementById(`${sectionId}-section`);
+        if (selectedSection) {
+            selectedSection.style.display = 'block';
+            setTimeout(() => {
+                selectedSection.classList.add('active');
+            }, 50);
+        }
+    }
+
+    // Обработчики событий для навигации
+    navItems.forEach(item => {
+        item.addEventListener('change', function() {
+            showSection(this.value);
         });
     });
 
-    const $personalForm = document.getElementById('personal-form');
-    if ($personalForm) {
-        $personalForm.addEventListener('submit', (evt) => {
-            evt.preventDefault();
+    /**
+     * Обработка формы личной информации
+     */
+    const personalForm = document.getElementById('personal-form');
+    if (personalForm) {
+        personalForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            try {
+                const response = await fetch('/profile/update-profile/', {
+                    method: 'POST',
+                    body: new FormData(this),
+                });
 
-            fetch('/profile/update-profile/', {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': document.querySelector('input[name="csrfmiddlewaretoken"]').value
-                },
-                body: new FormData($personalForm)
-            })
-            .then(response => {
                 if (response.ok) {
-                    showSnackbar('Профиль успешно обновлен');
+                    showNotification('Профиль успешно обновлен');
+                    setTimeout(() => location.reload(), 1500);
                 } else {
-                    return response.text().then(text => {
-                        showSnackbar(text || 'Ошибка при обновлении профиля');
-                    });
+                    const error = await response.text();
+                    showNotification(error || 'Произошла ошибка при обновлении профиля', 'error');
                 }
-            })
-            .catch(error => {
-                showSnackbar('Произошла ошибка при отправке данных');
-            });
+            } catch (error) {
+                showNotification('Произошла ошибка при обновлении профиля', 'error');
+            }
         });
     }
 
-    const $passwordForm = document.getElementById('password-form');
-    if ($passwordForm) {
-        $passwordForm.addEventListener('submit', (evt) => {
-            evt.preventDefault();
+    /**
+     * Обработка формы безопасности
+     */
+    const securityForm = document.getElementById('security-form');
+    if (securityForm) {
+        securityForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            try {
+                const response = await fetch('/profile/update-password/', {
+                    method: 'POST',
+                    body: new FormData(this),
+                });
 
-            const newPassword = document.getElementById('new_password').value;
-            const confirmPassword = document.getElementById('confirm_password').value;
-
-            if (newPassword !== confirmPassword) {
-                showSnackbar('Пароли не совпадают');
-                return;
-            }
-
-            if (newPassword.length < 8) {
-                showSnackbar('Пароль должен содержать минимум 8 символов');
-                return;
-            }
-
-            fetch('/profile/update-password/', {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': document.querySelector('input[name="csrfmiddlewaretoken"]').value
-                },
-                body: new FormData($passwordForm)
-            })
-            .then(response => {
                 if (response.ok) {
-                    showSnackbar('Пароль успешно изменен');
-                    $passwordForm.reset();
+                    showNotification('Пароль успешно изменен');
+                    this.reset();
                 } else {
-                    return response.text().then(text => {
-                        showSnackbar(text || 'Ошибка при изменении пароля');
-                    });
+                    const error = await response.text();
+                    showNotification(error || 'Произошла ошибка при изменении пароля', 'error');
                 }
-            })
-            .catch(error => {
-                showSnackbar('Произошла ошибка при отправке данных');
-            });
+            } catch (error) {
+                showNotification('Произошла ошибка при изменении пароля', 'error');
+            }
         });
     }
 });

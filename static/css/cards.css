@@ -202,6 +202,61 @@
     box-shadow: 0 0 10px var(--dominant-color, rgba(255, 255, 255, 0.3));
 }
 
+.accordion-item {
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 0.5rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.accordion-button {
+    background: rgba(0, 0, 0, 0.3);
+    color: white;
+    border: none;
+    box-shadow: none;
+}
+
+.accordion-button:not(.collapsed) {
+    background: rgba(0, 0, 0, 0.4);
+    color: white;
+    box-shadow: 0 0 20px var(--dominant-color, rgba(255, 255, 255, 0.3));
+}
+
+.accordion-button::after {
+    filter: invert(1);
+}
+
+.accordion-button:focus {
+    box-shadow: 0 0 20px var(--dominant-color, rgba(255, 255, 255, 0.3));
+    border-color: var(--dominant-color, rgba(255, 255, 255, 0.3));
+}
+
+.accordion-body {
+    background: rgba(0, 0, 0, 0.2);
+    color: white;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.accordion-item:hover {
+    border-color: var(--dominant-color, rgba(255, 255, 255, 0.3));
+    box-shadow: 0 0 20px var(--dominant-color, rgba(255, 255, 255, 0.3));
+}
+
+.accordion .form-check-input {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.accordion .form-check-input:checked {
+    background-color: var(--dominant-color, rgba(255, 255, 255, 0.3));
+    border-color: var(--dominant-color, rgba(255, 255, 255, 0.3));
+}
+
+.accordion .form-check-label {
+    color: rgba(255, 255, 255, 0.8);
+}
+
 @media (max-width: 1200px) {
     .cards-container {
         grid-template-columns: 1fr;
