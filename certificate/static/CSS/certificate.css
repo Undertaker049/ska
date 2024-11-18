@@ -1,8 +1,0 @@
-.table td {
-    vertical-align: middle;
-}
-
-body.dark-mode .table {
-    color: #fff;
-    background-color: #343a40;
-}

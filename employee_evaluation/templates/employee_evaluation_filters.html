@@ -1,0 +1,91 @@
+<div class="filters-sidebar">
+    {% if is_supervisor %}
+    <div class="filter-group">
+        <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="supervisor-switch">
+            <label class="form-check-label" for="supervisor-switch">
+                Только подчиненные
+            </label>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="filter-group">
+        <h4>Отдел</h4>
+        <div class="filter-chips">
+            {% for department in departments %}
+            <label class="chip">
+                <input type="checkbox" name="department" value="{{ department.id }}">
+                <span>{{ department.name }}</span>
+            </label>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="filter-group">
+        <h4>Навыки</h4>
+        <div class="accordion" id="skillsAccordion">
+            <div class="accordion-item">
+                <h5 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#hardwareCollapse">
+                        Hardware
+                    </button>
+                </h5>
+                <div id="hardwareCollapse" class="accordion-collapse collapse">
+                    <div class="accordion-body">
+                        {% for product in skill_categories.hardware %}
+                        <label class="chip">
+                            <input type="checkbox" name="hw_skill" value="{{ product }}">
+                            <span>{{ product }}</span>
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <h5 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#softwareCollapse">
+                        Software
+                    </button>
+                </h5>
+                <div id="softwareCollapse" class="accordion-collapse collapse">
+                    <div class="accordion-body">
+                        {% for product in skill_categories.software %}
+                        <label class="chip">
+                            <input type="checkbox" name="sw_skill" value="{{ product }}">
+                            <span>{{ product }}</span>
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <h5 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#processesCollapse">
+                        Processes
+                    </button>
+                </h5>
+                <div id="processesCollapse" class="accordion-collapse collapse">
+                    <div class="accordion-body">
+                        {% for process in skill_categories.processes %}
+                        <label class="chip">
+                            <input type="checkbox" name="process" value="{{ process }}">
+                            <span>{{ process }}</span>
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="filter-actions">
+        <button class="btn btn-primary" onclick="applyFilters()">Применить фильтры</button>
+        <button class="btn btn-outline-secondary" onclick="resetFilters()">Сбросить</button>
+        {% if is_supervisor %}
+        <button class="btn btn-outline-primary" onclick="saveCSV()">Сохранить в CSV</button>
+        {% endif %}
+    </div>
+</div>
