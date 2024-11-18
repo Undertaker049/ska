@@ -17,6 +17,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 MEDIA_ROOT = BASE_DIR / 'files'
+
 MEDIA_URL = '/files/'
 
 LOGIN_URL = '/auth/'
@@ -62,8 +63,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # TODO проверить нужна ли эта штука будет в проде
-    'certificate.middleware.CertificateMiddleware'
+    'certificate.middleware.CertificateMiddleware',
+    'middleware.auth.AuthenticationMiddleware'
 ]
 
 ROOT_URLCONF = 'ska.urls'

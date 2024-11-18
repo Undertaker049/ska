@@ -128,7 +128,9 @@ if (forms.login) {
             });
 
             if (response.ok) {
-                window.location.href = "/";
+                const urlParams = new URLSearchParams(window.location.search);
+                const nextUrl = urlParams.get('next') || '/';
+                window.location.href = nextUrl;
             } else {
                 const text = await response.text();
                 showSnackbar(text || "Ошибка при входе");
