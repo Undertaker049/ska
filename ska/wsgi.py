@@ -1,5 +1,5 @@
 """
-WSGI config for ska project.
+WSGI images for ska project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
