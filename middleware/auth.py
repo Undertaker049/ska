@@ -13,9 +13,11 @@ class AuthenticationMiddleware:
 
         if not request.user.is_authenticated:
             public_urls = [
+                '/auth/',
                 '/auth/registration',
                 '/static/',
                 '/media/',
+                '/admin/',
                 '/favicon.ico'
             ]
 
