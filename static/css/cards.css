@@ -1,0 +1,274 @@
+.employee-evaluation-container {
+    display: flex;
+    flex-direction: row;
+    gap: 1.5rem;
+    padding: 1rem;
+    height: calc(100vh - 2rem);
+    overflow-x: auto;
+}
+
+.main-card {
+    flex: 1;
+    height: 100%;
+    min-width: 300px;
+}
+
+.filters-card,
+.employees-card {
+    flex: 1;
+    height: 100%;
+    min-width: 300px;
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 20px var(--dominant-color, rgba(255, 255, 255, 0.3));
+}
+
+.filters-card .card-body,
+.employees-card .card-body {
+    padding: 1.5rem;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.employee-card {
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1.5rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    box-shadow: 0 0 20px var(--dominant-color, rgba(255, 255, 255, 0.3));
+}
+
+.employee-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--dominant-color, rgba(255, 255, 255, 0.3));
+    box-shadow:
+        0 0 20px var(--dominant-color, rgba(255, 255, 255, 0.3)),
+        0 0 35px var(--secondary-color, rgba(255, 255, 255, 0.2));
+}
+
+.employee-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.avatar-placeholder {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--dominant-color, rgba(255, 255, 255, 0.3));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    color: white;
+    box-shadow: 0 0 10px var(--dominant-color, rgba(255, 255, 255, 0.3));
+}
+
+.text-content h4 {
+    color: white;
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.text-content .department {
+    color: rgba(255, 255, 255, 0.6);
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.skills-section,
+.certificates-section {
+    margin-top: 1.5rem;
+}
+
+.skills-section h5,
+.certificates-section h5 {
+    color: white;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+}
+
+.skill-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.badge {
+    padding: 0.5rem 0.75rem;
+    font-weight: 500;
+    font-size: 0.85rem;
+}
+
+.search-box {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    padding-right: 2.5rem;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.search-box input:focus {
+    outline: none;
+    border-color: var(--dominant-color, rgba(255, 255, 255, 0.3));
+    box-shadow: 0 0 10px var(--dominant-color, rgba(255, 255, 255, 0.2));
+}
+
+.search-box i {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+}
+
+.filter-group {
+    margin-bottom: 2rem;
+}
+
+.filter-group h4,
+.filter-group h5 {
+    color: white;
+    margin-bottom: 1rem;
+}
+
+.filter-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.chip:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.chip input {
+    display: none;
+}
+
+.chip input:checked + span {
+    color: var(--dominant-color, rgba(255, 255, 255, 0.9));
+}
+
+.cards-container::-webkit-scrollbar,
+.filters-card .card-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.cards-container::-webkit-scrollbar-track,
+.filters-card .card-body::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 3px;
+}
+
+.cards-container::-webkit-scrollbar-thumb,
+.filters-card .card-body::-webkit-scrollbar-thumb {
+    background: var(--dominant-color, rgba(255, 255, 255, 0.3));
+    border-radius: 3px;
+}
+
+.cards-container::-webkit-scrollbar-thumb:hover,
+.filters-card .card-body::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary-color, rgba(255, 255, 255, 0.4));
+    box-shadow: 0 0 10px var(--dominant-color, rgba(255, 255, 255, 0.3));
+}
+
+.accordion-item {
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 0.5rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.accordion-button {
+    background: rgba(0, 0, 0, 0.3);
+    color: white;
+    border: none;
+    box-shadow: none;
+}
+
+.accordion-button:not(.collapsed) {
+    background: rgba(0, 0, 0, 0.4);
+    color: white;
+    box-shadow: 0 0 20px var(--dominant-color, rgba(255, 255, 255, 0.3));
+}
+
+.accordion-button::after {
+    filter: invert(1);
+}
+
+.accordion-button:focus {
+    box-shadow: 0 0 20px var(--dominant-color, rgba(255, 255, 255, 0.3));
+    border-color: var(--dominant-color, rgba(255, 255, 255, 0.3));
+}
+
+.accordion-body {
+    background: rgba(0, 0, 0, 0.2);
+    color: white;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.accordion-item:hover {
+    border-color: var(--dominant-color, rgba(255, 255, 255, 0.3));
+    box-shadow: 0 0 20px var(--dominant-color, rgba(255, 255, 255, 0.3));
+}
+
+.accordion .form-check-input {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.accordion .form-check-input:checked {
+    background-color: var(--dominant-color, rgba(255, 255, 255, 0.3));
+    border-color: var(--dominant-color, rgba(255, 255, 255, 0.3));
+}
+
+.accordion .form-check-label {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+@media (max-width: 1200px) {
+    .cards-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .employee-evaluation-container {
+        grid-template-columns: 1fr;
+    }
+
+    .filters-card {
+        height: auto;
+    }
+}

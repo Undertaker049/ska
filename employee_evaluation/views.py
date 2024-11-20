@@ -2,20 +2,27 @@
 import http
 import json
 import operator
+
 from array import array
 from typing import Dict, List, Union, Optional
 
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q, QuerySet
+from django.db.models import Q, QuerySet, Max, Avg
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
-
 from certificate.models import Certificate, CertificateCategory, CertificateSubCategory
+
 from self_assessment.models import (
-    Employees, Hardware, Software, Processes,
-    TaskHW, SkillsHW, TaskSW, SkillsSW, SkillsPR, Levels
+    Department,
+    Employees,
+    Levels,
+    Hardware,
+    Software,
+    Processes,
+    SkillsHW,
+    SkillsSW,
+    SkillsPR
 )
-from .models import Reviews
 
 HW_MAX_SCORE = 48
 SW_MAX_SCORE = 20
@@ -58,14 +65,65 @@ def get_certificate_data():
 
 @login_required
 def main(request):
+
     if request.method == "GET":
         employee = Employees.objects.get(name=f"{request.user.first_name} {request.user.last_name}")
+        employees_data = []
+        employees = Employees.objects.select_related('department')
+
+        for emp in employees:
+            hw_skills = list(SkillsHW.objects.filter(employee=emp))
+            hw_skills.sort(key=lambda x: x.get_score(), reverse=True)
+            hw_skills = hw_skills[:3]
+
+            sw_skills = list(SkillsSW.objects.filter(employee=emp))
+            sw_skills.sort(key=lambda x: x.get_score(), reverse=True)
+            sw_skills = sw_skills[:3]
+
+            pr_skills = list(SkillsPR.objects.filter(employee=emp))
+            pr_skills.sort(key=lambda x: x.get_score(), reverse=True)
+            pr_skills = pr_skills[:3]
+
+            certificates = Certificate.objects.filter(employee=emp).order_by('-date')[:2]
+
+            employee_data = {
+                'id': emp.id,
+                'name': emp.name,
+                'department': emp.department.name if emp.department else "Не указан",
+                'is_supervisor': emp.is_supervisor,
+                'top_skills': {
+                    'hardware': [{'name': skill.product.product, 'score': skill.get_score()} for skill in hw_skills],
+                    'software': [{'name': skill.product.product, 'score': skill.get_score()} for skill in sw_skills],
+                    'processes': [{'name': skill.process.process, 'score': skill.get_score()} for skill in pr_skills]
+                },
+                'certificates': [
+                    {
+                        'name': cert.training_name,
+                        'date': cert.date,
+                        'category': cert.category.category
+                    } for cert in certificates
+                ],
+                'total_certificates': Certificate.objects.filter(employee=emp).count(),
+                'average_scores': {
+                    'hardware': SkillsHW.objects.filter(employee=emp).aggregate(Avg('level__weight'))[
+                                    'level__weight__avg'] or 0,
+                    'software': SkillsSW.objects.filter(employee=emp).aggregate(Avg('level__weight'))[
+                                    'level__weight__avg'] or 0,
+                    'processes': SkillsPR.objects.filter(employee=emp).aggregate(Avg('level__weight'))[
+                                     'level__weight__avg'] or 0
+                }
+            }
+            employees_data.append(employee_data)
 
         data = {
-            "employees": Employees.objects.select_related('department').values(
-                'id', 'name', 'is_supervisor', 'department__name'
-            ),
-            "is_supervisor": employee.is_supervisor
+            "employees": employees_data,
+            "is_supervisor": employee.is_supervisor,
+            "departments": Department.objects.all(),
+            "skill_categories": {
+                "hardware": Hardware.objects.values_list('product', flat=True),
+                "software": Software.objects.values_list('product', flat=True),
+                "processes": Processes.objects.values_list('process', flat=True)
+            }
         }
 
         if employee.is_supervisor:
@@ -74,54 +132,99 @@ def main(request):
             levels = get_levels_values()
 
             data.update({
-                "hw": products_data['hw_products'],
-                "hw_tasks": products_data['hw_tasks'],
-                "sw": products_data['sw_products'],
-                "sw_tasks": products_data['sw_tasks'],
-                "processes": products_data['processes'],
-                "certificate_category": cert_data['categories'],
-                "certificate_subcategory": cert_data['subcategories'],
-                "hw_max": HW_MAX_SCORE,
-                "sw_max": SW_MAX_SCORE,
-                "levels": levels.keys()
+                "filters": {
+                    "hw": {
+                        "products": products_data['hw_products'],
+                        "tasks": products_data['hw_tasks']
+                    },
+                    "sw": {
+                        "products": products_data['sw_products'],
+                        "tasks": products_data['sw_tasks']
+                    },
+                    "processes": products_data['processes'],
+                    "certificates": {
+                        "categories": cert_data['categories'],
+                        "subcategories": cert_data['subcategories']
+                    },
+                    "levels": levels.keys()
+                },
+                "max_scores": {
+                    "hw": HW_MAX_SCORE,
+                    "sw": SW_MAX_SCORE
+                }
             })
 
         return render(request, "employee_evaluation.html", data)
 
 
 @login_required
-def about(request) -> HttpResponse:
+def about(request):
+    employee_id = request.GET.get('id')
+    employee = Employees.objects.select_related('department').get(id=employee_id)
+    hw_data = []
 
-    if request.method != "GET":
-        return HttpResponse(status=http.HTTPStatus.METHOD_NOT_ALLOWED)
+    for product in Hardware.objects.all():
+        latest_skill = (SkillsHW.objects
+                        .filter(employee=employee, product=product)
+                        .select_related('level')
+                        .order_by('-time')
+                        .first())
+        if latest_skill:
+            hw_data.append({
+                'product': str(product),
+                'score': latest_skill.get_score()
+            })
 
-    employee = Employees.objects.select_related('department').get(id=request.GET.get("id"))
-    hw, sw, pr = get_products(employee)
-    hw_data = get_products_scores(SkillsHW, employee, hw)
-    sw_data = get_products_scores(SkillsSW, employee, sw)
-    pr_data = get_products_scores(SkillsPR, employee, pr, False)
+    sw_data = []
 
-    for item in hw_data:
-        item['percentage'] = calculate_percentage(item['score'], HW_MAX_SCORE)
+    for product in Software.objects.all():
+        latest_skill = (SkillsSW.objects
+                        .filter(employee=employee, product=product)
+                        .select_related('level')
+                        .order_by('-time')
+                        .first())
+        if latest_skill:
+            sw_data.append({
+                'product': str(product),
+                'score': latest_skill.get_score()
+            })
 
-    for item in sw_data:
-        item['percentage'] = calculate_percentage(item['score'], SW_MAX_SCORE)
+    pr_data = []
 
-    data = {
-        "employee": {
-            "name": employee.name,
-            "department": employee.department.name if employee.department else "Не указан",
-            "is_supervisor": employee.is_supervisor,
-            "subordinate_of": employee.subordinate_of.name if employee.subordinate_of else None
-        },
-        "hw_data": hw_data,
-        "hw_max_score": HW_MAX_SCORE,
-        "sw_data": sw_data,
-        "sw_max_score": SW_MAX_SCORE,
-        "pr_data": pr_data
+    for process in Processes.objects.all():
+        latest_skill = (SkillsPR.objects
+                        .filter(employee=employee, process=process)
+                        .select_related('level')
+                        .order_by('-time')
+                        .first())
+        if latest_skill:
+            pr_data.append({
+                'product': str(process),
+                'score': latest_skill.level.weight
+            })
+
+    sections = {
+        'Hardware': hw_data,
+        'Software': sw_data,
+        'Processes': pr_data
     }
 
-    return render(request, "employee_evaluation_about.html", data)
+    max_weight = Levels.objects.aggregate(Max('weight'))['weight__max']
+
+    section_max_scores = {
+        'Hardware': max_weight,
+        'Software': max_weight,
+        'Processes': max_weight
+    }
+
+    context = {
+        'employee': employee,
+        'sections': sections,
+        'section_max_scores': section_max_scores,
+        'employee_id': employee_id
+    }
+
+    return render(request, 'employee_evaluation_about.html', context)
 
 
 @login_required

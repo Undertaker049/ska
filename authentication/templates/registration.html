@@ -1,57 +1,91 @@
-<!DOCTYPE html>
+{% extends 'base.html' %}
 {% load static %}
-<html lang="en-US">
-<head>
-    <meta charset="UTF-8">
-    <title>Registration</title>
-    <link rel="stylesheet" href="{% static "CSS/auth.css" %}"/>
-    <link rel="stylesheet" href="{% static "GlobalCSS/snackbar.css" %}"/>
-    <link rel="shortcut icon" href="https://cdn-icons-png.freepik.com/512/709/709612.png" />
-</head>
-<body>
-<div id="outer-wrapper">
-    <div id="inner-wrapper">
-        {% include "snackbar.html" %}
-        <form id="reg" method="post" action="/auth/registration">
+
+{% block title %}Регистрация{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/auth.css' %}" />
+<link rel="stylesheet" href="{% static 'css/cards.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <h3 class="auth-title">Регистрация</h3>
+        <form id="reg">
             {% csrf_token %}
-            <p>
-                <label for="username">Имя пользователя:</label><br>
-                <input id="username" name="username" type="text" required>
-            </p>
-            <p>
-                <label for="email">Почта:</label><br>
-                <input id="email" name="email" type="email" required>
-            </p>
-            <p>
-                <label for="first-name">Имя:</label><br>
-                <input id="first-name" name="first-name" type="text" required>
-            </p>
-            <p>
-                <label for="last-name">Фамилия:</label><br>
-                <input id="last-name" name="last-name" type="text" required>
-            </p>
-            <p>
-                <label for="department">Отдел:</label><br>
-                <select id="department" name="department" required>
-                    <option value="" disabled selected>Выберите отдел</option>
-                    <option value="integration">Отдел системной интеграции</option>
-                    <option value="service">Сервисный центр</option>
-                    <option value="project">Проектный отдел</option>
-                    <option value="sales">Отдел продаж</option>
-                </select>
-            </p>
-            <p>
-                <label for="password">Пароль:</label><br>
-                <input id="password" name="password" type="password" placeholder="Password" required><br>
-                <label for="re-password">Повторите Пароль:</label><br>
-                <input id="re-password" name="re-password" type="password" placeholder="Password" required>
-            </p>
-            <input type="submit" value="Зарегистрироваться" class="navigation-button">
+            <div class="form-group">
+                <label for="username" class="form-label">Имя пользователя</label>
+                <input type="text" class="form-control" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="first-name" class="form-label">Имя</label>
+                <input type="text" class="form-control" id="first-name" name="first-name" required>
+            </div>
+            <div class="form-group">
+                <label for="last-name" class="form-label">Фамилия</label>
+                <input type="text" class="form-control" id="last-name" name="last-name" required>
+            </div>
+            <div class="form-group">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Отдел</label>
+                <div class="accordion" id="departmentAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#departmentCollapse">
+                                Выберите отдел
+                            </button>
+                        </h2>
+                        <div id="departmentCollapse" class="accordion-collapse collapse show" data-bs-parent="#departmentAccordion">
+                            <div class="accordion-body">
+                                <div class="radio-cards radio-cards-compact">
+                                    {% for dept in departments %}
+                                    <label class="radio-card">
+                                        <input type="radio" name="department" value="{{ dept.id }}" {% if forloop.first %}checked{% endif %}>
+                                        <div class="card-content">
+                                            <i class="bi {{ dept.icon }}"></i>
+                                            <span class="card-title">{{ dept.name }}</span>
+                                        </div>
+                                    </label>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password" class="form-label">Пароль</label>
+                <div class="input-group">
+                    <input type="password" class="form-control" id="password" name="password" required>
+                    <button type="button" class="password-toggle" aria-label="Показать/скрыть пароль">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="re-password" class="form-label">Повторите пароль</label>
+                <div class="input-group">
+                    <input type="password" class="form-control" id="re-password" name="re-password" required>
+                    <button type="button" class="password-toggle" aria-label="Показать/скрыть пароль">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                </div>
+            </div>
+            <button type="submit" class="btn-auth btn-auth-primary">Зарегистрироваться</button>
+            <div class="auth-links">
+                <a href="/auth" class="auth-link">Уже есть аккаунт? Войти</a>
+            </div>
         </form>
     </div>
 </div>
+{% endblock %}
 
-<script src="{% static "GlobalJS/snackbar.js" %}"></script>
-<script src="{% static "JS/registration.js" %}"></script>
-</body>
-</html>
+{% block extra_js %}
+<script src="{% static 'js/auth.js' %}"></script>
+{% endblock %}

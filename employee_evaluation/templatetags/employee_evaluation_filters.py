@@ -1,17 +1,10 @@
-import re
-
 from django import template
-from django.template.defaultfilters import stringfilter
 
 register = template.Library()
 
-@register.filter
-def multiply(value, arg):
-    return float(value) * float(arg)
-
 
 @register.filter
-def divide(value, arg):
+def div(value, arg):
 
     try:
         return float(value) / float(arg)
@@ -21,6 +14,20 @@ def divide(value, arg):
 
 
 @register.filter
-@stringfilter
-def remove_specials(string: str):
-    return re.sub(r'\s|\W', '', string)
+def mul(value, arg):
+
+    try:
+        return float(value) * float(arg)
+
+    except ValueError:
+        return 0
+
+
+@register.filter
+def get(dictionary, key):
+    return dictionary.get(key)
+
+
+@register.filter
+def remove_specials(value):
+    return "".join(e for e in value if e.isalnum())

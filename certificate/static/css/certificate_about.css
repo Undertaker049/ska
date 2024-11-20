@@ -1,0 +1,97 @@
+:root{
+    --system-ui: system-ui, "Helvetica Neue", Arial, sans-serif;
+}
+
+html {
+    height: 100%;
+    width: 100%;
+
+    overflow: hidden
+}
+
+body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+
+    font-family: var(--system-ui), serif;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+#content {
+    display: flex;
+    width: 100%;
+    height: fit-content;
+}
+
+.row {
+    /*justify-content: center;*/
+    /*align-items: center;*/
+    /*flex-direction: column;*/
+    width: 100%;
+
+    display: flex;
+    padding-top: 10px;
+}
+
+.column {
+    float: left;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.left {
+    width: 30%;
+}
+
+.right {
+    width: 70%;
+}
+
+embed {
+    width: 100%;
+    min-height: 100%;
+}
+
+#info {
+    height: fit-content;
+
+    border: 1px solid #ccc;
+    border-radius: 5px;
+
+    font-size: clamp(15px, 5vw, 20px);
+
+    background-color: #f9f9f9;
+}
+
+body.dark-mode #info{
+    transition: 1s;
+    background-color: #404040;
+}
+
+body.light-mode #info{
+    transition: 3s;
+    background-color: white;
+}
+
+#info h2 {
+    margin-top: 0;
+}
+
+#info p {
+    margin: 5px 0;
+}
+
+#info strong {
+    width: 120px;
+
+    display: inline-block;
+}
+
+#delete-confirmation-modal {
+    user-select: none;
+}

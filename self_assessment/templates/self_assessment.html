@@ -1,108 +1,99 @@
-<!DOCTYPE html>
+{% extends 'base.html' %}
 {% load static %}
 {% load self_assessment_filters %}
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Self Assessment RE</title>
-    <link rel="stylesheet" href="{% static "GlobalCSS/snackbar.css" %}" />
-    <link rel="stylesheet" href="{% static "GlobalCSS/sidebar-sticky.css" %}" />
-    <link rel="stylesheet" href="{% static "CSS/self_assessment_new.css" %}" />
-    <link rel="stylesheet" href="{% static "CSS/self_assessment_modal.css" %}" />
-    <link rel="shortcut icon" href="https://cdn-icons-png.freepik.com/512/709/709612.png" />
-</head>
-<body>
-{% include "snackbar.html" %}
-<div id="content">
-    {% include "sidebar.html" %}
-    {% csrf_token %}
-    <div id="assessment">
-        <div id="assessment--navigation">
-            {% for key, block in data.blocks.items%}
-                <button id="{{ key }}_block" class="button nav-button">{{ block.name }}</button>
-            {% endfor %}
-            <button class="button nav-button button--finish">Завершить</button>
-        </div>
-        {% for key, block in data.blocks.items%}
-        	<div id="{{ key }}" class="block hidden">
-                <h1>{{ block.name }}</h1>
-                {% for p in block.products %}
-                	<div id="{{ p|replace_dj:" |_" }}" class="block__sub">
-                        <h2>{{ p }}</h2>
-                        {% if block.tasks %}
-                            <div class="block__sub__task__outer-wrapper">
-                            {% for task in block.tasks %}
-                                <div class="block__sub__task__inner-wrapper">
-                                    <h3>{{ task }}</h3>
-                                    <div class="block__sub__task">
-                                        {% for level in data.levels %}
-                                            <div class="block__sub__selection">
-                                                <span>
-                                                    {{ level }}
-                                                </span>
-                                                <span>
-                                                    <input type="radio" class="radio-button" value="{{ level }}" aria-label="radio select {{ level }}" name="{{ p|replace_dj:" |_" }}:{{ task|replace_dj:" |_" }}"/>
-                                                </span>
-                                            </div>
-                                        {% endfor %}
-                                    </div>
-                                </div>
-                            {% endfor %}
-                            </div>
-                        {% else %}
-                            <div class="block__sub__task__outer-wrapper">
-                                <div class="block__sub__task__inner-wrapper">
-                                    <div class="block__sub__task">
-                                        {% for level in data.levels %}
-                                            <div class="block__sub__selection">
-                                                <span>
-                                                    {{ level }}
-                                                </span>
-                                                <span>
-                                                    <input type="radio" class="radio-button" value="{{ level }}" aria-label="radio select {{ level }}" name="{{ p|replace_dj:" |_" }}{{ task|replace_dj:" |_" }}"/>
-                                                </span>
-                                            </div>
-                                        {% endfor %}
-                                    </div>
-                                </div>
-                            </div>
-                        {% endif %}
-                    </div>
-                {% endfor %}
-            </div>
-        {% endfor %}
-    </div>
-    <div class="links links--collapsed">
-        <button id="links__expand-button">Оглавление</button>
-        <div id="links__list-wrapper">
-            <ul id="links__list">
-                {% for key, block in data.blocks.items%}
-                    <div id="{{ key }}_links" class="hidden">
-                    {% for p in block.products %}
-                        <li class="{{ key }}"><a href="#{{ p|replace_dj:" |_" }}">{{ p }}</a></li>
-                	{% endfor %}
-                    </div>
-                {% endfor %}
 
-            </ul>
+{% block title %}Самооценка{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/self_assessment.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <form id="assessment-form">
+                        {% csrf_token %}
+
+                        <div class="btn-group mb-4" role="group">
+                            {% for key, block in data.blocks.items %}
+                                <button type="button" class="btn btn-outline-primary block-button" data-block="{{ key }}">
+                                    {{ block.name }}
+                                </button>
+                            {% endfor %}
+                            <button type="button" class="btn btn-success" id="finish-button">Завершить</button>
+                        </div>
+
+                        {% for key, block in data.blocks.items %}
+                            <div id="{{ key }}" class="assessment-block" style="display: none;">
+                                <h3 class="mb-4">{{ block.name }}</h3>
+                                {% for product, disciplines in block.items %}
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h4 class="mb-0">{{ product }}</h4>
+                                        </div>
+                                        <div class="card-body">
+                                            {% for discipline in disciplines %}
+                                                <div class="table-responsive mb-3">
+                                                    <h5>{{ discipline }}</h5>
+                                                    <table class="table">
+                                                        <thead>
+                                                            <tr>
+                                                                {% for level in levels %}
+                                                                    <th class="text-center">{{ level.1 }}</th>
+                                                                {% endfor %}
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                {% for level in levels %}
+                                                                    <td class="text-center">
+                                                                        <div class="form-check">
+                                                                            <input class="form-check-input" type="radio"
+                                                                                   name="{{ product|replace_dj:" |_" }}_{{ discipline|replace_dj:" |_" }}"
+                                                                                   value="{{ level.0 }}" required>
+                                                                        </div>
+                                                                    </td>
+                                                                {% endfor %}
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-<div id="modal" class="modal" style="color: black">
-        <div class="modal__content">
-{#            <button id="modal__close-button" class="button">X</button>#}
-            <p>
-                Есть локальное сохранение незавершенной формы. Восстановить?
-            </p>
-            <div>
-                <button id="modal__accept" class="button">Восстановить</button>
-                <button id="modal__decline" class="button">Очистить</button>
+
+<div class="modal fade" id="restoreModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Восстановление данных</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Найдена незавершенная форма. Хотите продолжить?</p>
+                <p class="text-muted">(В случае отказа данные будут стёрты)</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="modal-accept">Продолжить</button>
+                <button type="button" class="btn btn-secondary" id="modal-decline">Очистить</button>
             </div>
         </div>
+    </div>
 </div>
-<script src={% static "GlobalJS/snackbar.js" %}></script>
-<script src={% static "GlobalJS/sidebar.js" %}></script>
-<script src={% static "JS/self-assessment-page-new.js" %}></script>
-</body>
-</html>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/self-assessment.js' %}"></script>
+{% endblock %}

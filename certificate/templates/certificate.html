@@ -1,101 +1,208 @@
-<!DOCTYPE html>
+{% extends 'base.html' %}
 {% load static %}
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Certificate</title>
-{#    <link rel="stylesheet" href="{% static "GlobalCSS/Header.css" %}" />#}
-    <link rel="stylesheet" href="{% static "GlobalCSS/sidebar-sticky.css" %}" />
-    <link rel="stylesheet" href="{% static "CSS/certificate.css" %}" />
-    <link rel="shortcut icon" href="https://cdn-icons-png.freepik.com/512/709/709612.png" />
-</head>
-<body>
-<div id="content">
-{%  include "sidebar.html" %}
-    <div id="data">
-        {# безымянный div чтобы кнопка была в длину таблицы #}
-        <div>
-        <button id="upload-certificate">Загрузить сертификат</button>
-        <table id="certificates">
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>Название</th>
-                <th>Тип</th>
-                <th>Дата получения</th>
-            </tr>
-            </thead>
-            <tbody>
-                {% for certificate in certificates %}
-                    <tr>
-                        <td>{{ certificate.id }}</td>
-                        <td>{{ certificate.training_name }}</td>
-                        <td>{{ certificate.training_type }}</td>
-                        <td>{{ certificate.date }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+
+{% block title %}Сертификаты{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/cards.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div class="employee-evaluation-container">
+    <div class="main-card">
+        <div class="card filters-card">
+            <div class="card-body">
+                <h4 class="text-light mb-4">Фильтры</h4>
+
+                <div class="search-box mb-4">
+                    <input type="text" class="form-control" placeholder="Поиск..." id="certificate-search">
+                    <i class="bi bi-search"></i>
+                </div>
+
+                <div class="filter-group">
+                    <h5 class="text-light">Тип сертификата</h5>
+                    <div class="filter-chips">
+                        <label class="chip">
+                            <input type="checkbox" name="cert_type" value="CER">
+                            <span>Сертификация</span>
+                        </label>
+                        <label class="chip">
+                            <input type="checkbox" name="cert_type" value="TR">
+                            <span>Тренинг</span>
+                        </label>
+                        <label class="chip">
+                            <input type="checkbox" name="cert_type" value="EX">
+                            <span>Экзамен</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <h5 class="text-light">Категории</h5>
+                    <div class="accordion" id="categoriesAccordion">
+                        {% for category in categories %}
+                        <div class="accordion-item">
+                            <h6 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#collapse{{ forloop.counter }}">
+                                    {{ category.category }}
+                                </button>
+                            </h6>
+                            <div id="collapse{{ forloop.counter }}"
+                                 class="accordion-collapse collapse"
+                                 data-bs-parent="#categoriesAccordion">
+                                <div class="accordion-body">
+                                    {% for subcategory in category.subcategories %}
+                                    <div class="form-check">
+                                        <input class="form-check-input"
+                                               type="checkbox"
+                                               name="subcategory"
+                                               value="{{ subcategory.id }}">
+                                        <label class="form-check-label text-light">
+                                            {{ subcategory.subcategory }}
+                                        </label>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-<dialog id="form-modal">
-<div id="wrapper">
-{#    TODO: Заменить кнопку "закрыть" на svg #}
-    <button id="close-modal">X</button>
-    <form id="certificate-form" method="post" action="/certificate/" enctype="multipart/form-data">
-        {% csrf_token %}
-        <p>
-            <label for="training_name">Название тренинга</label><br>
-            <input type="text" id="training_name" name="training_name" required />
-        </p>
+    <div class="main-card">
+        <div class="card employees-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="text-light mb-0">Мои сертификаты</h4>
+                    <button type="button" class="btn btn-custom btn-custom-primary" id="upload-certificate">
+                        <i class="bi bi-plus-lg"></i> Добавить
+                    </button>
+                </div>
 
-        <p>
-            <label for="type">Сертификат</label><br>
-            <select name="training_type" id="type" required >
-                <option name="DEF" value="Placeholder" disabled selected>— Выберите —</option>
-                <option name="CER" value="certification"> о вендорской сертификации</option>
-                <option name="TR" value="training">о прохождении тренинга</option>
-                <option name="EX" value="exam">о сдаче экзамена</option>
-            </select>
-        </p>
+                <div class="cards-container">
+                    {% for certificate in certificates %}
+                    <div class="employee-card certificate-card" onclick="location.href='about?id={{ certificate.id }}'">
+                        <div class="certificate-info">
+                            <h4>{{ certificate.training_name }}</h4>
+                            <p class="text-muted">{{ certificate.date|date:"d.m.Y" }}</p>
+                            <div class="badge bg-primary">{{ certificate.get_training_type_display }}</div>
+                            <div class="badge bg-secondary">{{ certificate.category.category }}</div>
+                            {% if certificate.sub_category %}
+                            <div class="badge bg-info">{{ certificate.sub_category.subcategory }}</div>
+                            {% endif %}
+                        </div>
 
-        <p>
-            <label for="date">Дата получения</label><br>
-            <input type="date" id="date" name="date" required />
-        </p>
-
-        <p>
-            <label for="category">Категория</label><br>
-            <select id="category" name="category" required >
-                <option value="DEF" disabled selected>— Выберите —</option>
-                <option value="BURA">BURA</option>
-                <option value="Compute">Compute</option>
-                <option value="Generic">Generic</option>
-                <option value="Hybrid IT">Hybrid IT</option>
-                <option value="ITIL">ITIL</option>
-                <option value="Networking">Networking</option>
-                <option value="Operating System">Operating System</option>
-                <option value="Software">Software</option>
-                <option value="Storage">Storage</option>
-                <option value="Support">Support</option>
-            </select>
-        </p>
-
-        <p id="for-sub-cat"></p>
-
-        <p id="file-block">
-            <label for="file">Сертификат в формате .jpg, .png, .pdf</label><br>
-            <input type="file" id="file" name="certificate" accept=".jpg,.png,.pdf" required />
-        </p>
-        <p>
-            <input id="send-certificate" type="submit" value="Загрузить">
-        </p>
-    </form>
+                        <div class="certificate-preview mt-3">
+                            {% if certificate.is_pdf %}
+                            <i class="bi bi-file-pdf text-danger fs-1"></i>
+                            {% else %}
+                            <img src="{{ certificate.certificate_file.url }}"
+                                 alt="Preview"
+                                 class="img-thumbnail">
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-</dialog>
+
+<div class="modal fade" id="certificateModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Загрузка сертификата</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="certificate-form" method="post" action="/certificate/" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-4">
+                        <label for="training_name" class="form-label">Название тренинга</label>
+                        <input type="text" class="form-control" id="training_name" name="training_name" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Тип сертификата</label>
+                        <div class="radio-cards">
+                            <label class="radio-card">
+                                <input type="radio" name="training_type" value="CER" required>
+                                <div class="radio-card-content">
+                                    <i class="bi bi-award"></i>
+                                    <span>Сертификация</span>
+                                </div>
+                            </label>
+                            <label class="radio-card">
+                                <input type="radio" name="training_type" value="TR">
+                                <div class="radio-card-content">
+                                    <i class="bi bi-mortarboard"></i>
+                                    <span>Тренинг</span>
+                                </div>
+                            </label>
+                            <label class="radio-card">
+                                <input type="radio" name="training_type" value="EX">
+                                <div class="radio-card-content">
+                                    <i class="bi bi-pencil-square"></i>
+                                    <span>Экзамен</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="date" class="form-label">Дата получения</label>
+                        <input type="date" class="form-control" id="date" name="date" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Категория</label>
+                        <div class="chips-container" id="category-chips">
+                            {% for category in categories %}
+                            <label class="chip">
+                                <input type="radio" name="category" value="{{ category }}" required>
+                                <span class="chip-content">{{ category }}</span>
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Подкатегория</label>
+                        <div class="chips-container" id="subcategory-chips">
+                            {% for subcategory in subcategories %}
+                            <label class="chip subcategory-chip" data-category="{{ subcategory.1 }}">
+                                <input type="radio" name="sub_category" value="{{ subcategory.0 }}">
+                                <span class="chip-content">{{ subcategory.0 }}</span>
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="certificate_file" class="form-label">Файл сертификата</label>
+                        <input type="file" class="form-control" id="certificate_file"
+                               name="certificate_file" accept=".pdf,.jpg,.jpeg,.png" required>
+                    </div>
+
+                    <div class="modal-footer px-0 pb-0 mt-4">
+                        <button type="button" class="btn btn-custom btn-custom-secondary" data-bs-dismiss="modal">Отмена</button>
+                        <button type="submit" class="btn btn-custom btn-custom-primary">Загрузить</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
-<script src="{% static "GlobalJS/sidebar.js" %}"></script>
-<script src="{% static "JS/certificate.js" %}"></script>
-</body>
-</html>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/certificate.js' %}"></script>
+{% endblock %}

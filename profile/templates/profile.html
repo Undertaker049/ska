@@ -1,123 +1,198 @@
-<!DOCTYPE html>
+{% extends 'base.html' %}
 {% load static %}
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Профиль | {{ user.get_full_name }}</title>
-    <link rel="stylesheet" href="{% static 'GlobalCSS/sidebar-sticky.css' %}" />
-    <link rel="stylesheet" href="{% static 'GlobalCSS/snackbar.css' %}" />
-    <link rel="stylesheet" href="{% static 'CSS/profile.css' %}" />
-    <link rel="shortcut icon" href="https://cdn-icons-png.freepik.com/512/709/709612.png" />
-</head>
-<body>
-    {% include "snackbar.html" %}
-    <div id="content">
-        {% include "sidebar.html" %}
-        <div id="data">
-            <div id="profile-content">
-                <div id="navigation">
-                    <button class="nav-button active" data-target="main">Главная</button>
-                    <button class="nav-button" data-target="personal">Личная информация</button>
-                    <button class="nav-button" data-target="security">Безопасность</button>
+
+{% block title %}Профиль{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/cards.css' %}" />
+<link rel="stylesheet" href="{% static 'css/custom.css' %}" />
+<link rel="stylesheet" href="{% static 'css/profile.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div class="cards-container">
+    <!-- Навигационная панель -->
+    <div class="card nav-section">
+        <div class="radio-cards">
+            <label class="radio-card">
+                <input type="radio" name="profile-section" value="main" checked>
+                <div class="radio-card-content">
+                    <i class="bi bi-house-door"></i>
+                    <span class="card-title">Главная</span>
                 </div>
+            </label>
 
-                <div class="sections-container">
-                    <div id="main" class="section active">
-                        <h2>Основная информация</h2>
-                        <div class="info-block">
-                            <p><strong>Имя:</strong> {{ user.first_name }}</p>
-                            <p><strong>Фамилия:</strong> {{ user.last_name }}</p>
-                            <p><strong>Отдел:</strong> {{ department.name|default:"Не указан" }}</p>
-                        </div>
+            <label class="radio-card">
+                <input type="radio" name="profile-section" value="personal">
+                <div class="radio-card-content">
+                    <i class="bi bi-person"></i>
+                    <span class="card-title">Личная информация</span>
+                </div>
+            </label>
 
-                        <h3>Результаты тестирований</h3>
-                        <div class="assessment-results">
-                            {% if has_assessments %}
-                                <div class="result-block">
-                                    <h4>Hardware</h4>
-                                    {% for result in hw_results %}
-                                        <p>{{ result.product }}: {{ result.level }}</p>
-                                    {% endfor %}
-                                </div>
-                                <div class="result-block">
-                                    <h4>Software</h4>
-                                    {% for result in sw_results %}
-                                        <p>{{ result.product }}: {{ result.level }}</p>
-                                    {% endfor %}
-                                </div>
-                                <div class="result-block">
-                                    <h4>Processes</h4>
-                                    {% for result in pr_results %}
-                                        <p>{{ result.process }}: {{ result.level }}</p>
-                                    {% endfor %}
-                                </div>
-                            {% else %}
-                                <p>Нет пройденных тестирований</p>
-                            {% endif %}
+            <label class="radio-card">
+                <input type="radio" name="profile-section" value="security">
+                <div class="radio-card-content">
+                    <i class="bi bi-shield-lock"></i>
+                    <span class="card-title">Безопасность</span>
+                </div>
+            </label>
+        </div>
+    </div>
+
+    <!-- Основная панель -->
+    <div class="card content-section">
+        <div class="content-wrapper">
+            <!-- Заголовок профиля -->
+            <div class="profile-header">
+                <div class="avatar-section">
+                    <div class="avatar-placeholder">
+                        {{ request.user.first_name|first }}{{ request.user.last_name|first }}
+                    </div>
+                </div>
+                <div class="text-content">
+                    <h4>{{ request.user.get_full_name }}</h4>
+                    <p class="department">{{ department.name }}</p>
+                </div>
+            </div>
+
+            <!-- Главная -->
+            <div class="profile-section active" id="main-section">
+                <div class="info-card">
+                    <div class="card-content">
+                        <h4>Основная информация</h4>
+                        <div class="cards-grid">
+                            <div class="info-item">
+                                <span class="card-subtitle">Имя пользователя</span>
+                                <span class="card-title">{{ request.user.username }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="card-subtitle">Email</span>
+                                <span class="card-title">{{ request.user.email }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="card-subtitle">Отдел</span>
+                                <span class="card-title">{{ department.name }}</span>
+                            </div>
                         </div>
                     </div>
+                </div>
 
-                    <div id="personal" class="section">
-                        <h2>Личная информация</h2>
+                {% if has_assessments %}
+                <div class="info-card">
+                    <div class="card-content">
+                        <h4>Лучшие квалификации</h4>
+                        <div class="skill-badges">
+                            {% for skill in hw_results|slice:":3" %}
+                            <span class="badge">{{ skill.product.product }} ({{ skill.level.level }})</span>
+                            {% endfor %}
+                            {% for skill in sw_results|slice:":3" %}
+                            <span class="badge">{{ skill.product.product }} ({{ skill.level.level }})</span>
+                            {% endfor %}
+                            {% for skill in pr_results|slice:":3" %}
+                            <span class="badge">{{ skill.process.process }} ({{ skill.level.level }})</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if certificates %}
+                <div class="info-card">
+                    <div class="card-content">
+                        <h4>Последние сертификаты</h4>
+                        {% for cert in certificates %}
+                        <div class="certificate-item">
+                            <span>{{ cert.training_name }}</span>
+                            <small class="text-muted">{{ cert.date|date:"d.m.Y" }}</small>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Личная информация -->
+            <div class="profile-section" id="personal-section">
+                <div class="info-card">
+                    <div class="card-content">
+                        <h4>Редактирование профиля</h4>
                         <form id="personal-form">
                             {% csrf_token %}
-                            <div class="form-group">
-                                <label for="username">Имя пользователя:</label>
-                                <input type="text" id="username" name="username" value="{{ user.username }}" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="first_name">Имя:</label>
-                                <input type="text" id="first_name" name="first_name" value="{{ user.first_name }}" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="last_name">Фамилия:</label>
-                                <input type="text" id="last_name" name="last_name" value="{{ user.last_name }}" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="email">Email:</label>
-                                <input type="email" id="email" name="email" value="{{ user.email }}" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="department">Отдел:</label>
-                                <select id="department" name="department" required>
-                                    <option value="" disabled>Выберите отдел</option>
-                                    {% for dept in departments %}
+                            <div class="cards-grid">
+                                <div class="form-group">
+                                    <span class="card-subtitle">Имя пользователя</span>
+                                    <input type="text" name="username" value="{{ request.user.username }}" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <span class="card-subtitle">Имя</span>
+                                    <input type="text" name="first_name" value="{{ request.user.first_name }}" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <span class="card-subtitle">Фамилия</span>
+                                    <input type="text" name="last_name" value="{{ request.user.last_name }}" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <span class="card-subtitle">Email</span>
+                                    <input type="email" name="email" value="{{ request.user.email }}" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <span class="card-subtitle">Отдел</span>
+                                    <select name="department" class="form-select">
+                                        {% for dept in departments %}
                                         <option value="{{ dept.id }}" {% if dept.id == department.id %}selected{% endif %}>
                                             {{ dept.name }}
                                         </option>
-                                    {% endfor %}
-                                </select>
+                                        {% endfor %}
+                                    </select>
+                                </div>
                             </div>
-                            <button type="submit" class="save-button">Сохранить изменения</button>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-custom btn-custom-primary">Сохранить изменения</button>
+                            </div>
                         </form>
                     </div>
+                </div>
+            </div>
 
-                    <div id="security" class="section">
-                        <h2>Безопасность</h2>
-                        <form id="password-form">
+            <!-- Безопасность -->
+            <div class="profile-section" id="security-section">
+                <div class="info-card">
+                    <div class="card-content">
+                        <h4>Изменение пароля</h4>
+                        <form id="security-form">
                             {% csrf_token %}
                             <div class="form-group">
-                                <label for="current_password">Текущий пароль:</label>
-                                <input type="password" id="current_password" name="current_password" required>
+                                <label class="form-label">Текущий пароль</label>
+                                <input type="password" name="current_password" class="form-control" required>
                             </div>
                             <div class="form-group">
-                                <label for="new_password">Новый пароль:</label>
-                                <input type="password" id="new_password" name="new_password" required>
+                                <label class="form-label">Новый пароль</label>
+                                <input type="password" name="new_password" class="form-control" required>
                             </div>
-                            <div class="form-group">
-                                <label for="confirm_password">Подтвердите пароль:</label>
-                                <input type="password" id="confirm_password" name="confirm_password" required>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-custom btn-custom-primary">Изменить пароль</button>
                             </div>
-                            <button type="submit" class="save-button">Изменить пароль</button>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <script src="{% static 'GlobalJS/snackbar.js' %}"></script>
-    <script src="{% static 'GlobalJS/sidebar.js' %}"></script>
-    <script src="{% static 'JS/profile.js' %}"></script>
-</body>
-</html>
+<!-- Уведомления -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="notification-toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong class="me-auto">Уведомление</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Закрыть"></button>
+        </div>
+        <div class="toast-body"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/profile.js' %}"></script>
+{% endblock %}
