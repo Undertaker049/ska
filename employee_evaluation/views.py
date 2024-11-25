@@ -69,7 +69,7 @@ def main(request):
     if request.method == "GET":
         employee = Employees.objects.get(name=f"{request.user.first_name} {request.user.last_name}")
         employees_data = []
-        employees = Employees.objects.select_related('department')
+        employees = Employees.objects.select_related('department').exclude(role='admin')
 
         for emp in employees:
             hw_skills = list(SkillsHW.objects.filter(employee=emp))

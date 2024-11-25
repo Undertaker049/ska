@@ -5,15 +5,10 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
-                {% if request.user.is_authenticated %}
+                {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link {% if '/profile/' in request.path or request.path == '/profile' %}active{% endif %}" href="/profile">
-                            <i class="bi bi-person-circle"></i> Профиль
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if '/self-assessment' in request.path %}active{% endif %}" href="/self-assessment">
-                            <i class="bi bi-clipboard-check"></i> Квалификации
+                        <a class="nav-link {% if '/profile' in request.path %}active{% endif %}" href="/profile">
+                            <i class="bi bi-person"></i> Профиль
                         </a>
                     </li>
                     <li class="nav-item">
@@ -31,6 +26,13 @@
                             <i class="bi bi-graph-up"></i> Сводка
                         </a>
                     </li>
+                    {% if role == 'admin' %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if '/admin-panel' in request.path %}active{% endif %}" href="{% url 'admin:statistics' %}">
+                            <i class="bi bi-gear"></i> Управление
+                        </a>
+                    </li>
+                    {% endif %}
                 {% endif %}
             </ul>
             <ul class="navbar-nav">

@@ -1,4 +1,3 @@
-/* Основной контейнер */
 .cards-container {
     display: grid;
     grid-template-columns: 300px 1fr;
@@ -7,7 +6,20 @@
     height: calc(100vh - 2rem);
 }
 
-/* Навигационная секция */
+.card-subtitle {
+    display: block;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+}
+
+.card-title {
+    display: block;
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
 .nav-section {
     background: rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(10px);
@@ -38,7 +50,6 @@
     font-size: 1.25rem;
 }
 
-/* Секция контента */
 .content-section {
     background: rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(10px);
@@ -52,7 +63,6 @@
     overflow: hidden;
 }
 
-/* Профиль и секции */
 .profile-section {
     display: none;
     opacity: 0;
@@ -64,7 +74,6 @@
     opacity: 1;
 }
 
-/* Заголовок профиля */
 .profile-header {
     text-align: center;
     margin-bottom: 2rem;
@@ -100,7 +109,6 @@
     margin: 0.5rem 0 0;
 }
 
-/* Карточки информации */
 .info-card {
     margin-bottom: 1.5rem;
 }
@@ -126,23 +134,54 @@
     background: rgba(255, 255, 255, 0.05);
     border-radius: 8px;
     padding: 1rem;
+    position: relative;
+    overflow: hidden;
 }
 
-.card-subtitle {
+.info-item .card-subtitle {
     display: block;
     color: rgba(255, 255, 255, 0.6);
     font-size: 0.875rem;
     margin-bottom: 0.5rem;
+    position: relative;
+    z-index: 1;
 }
 
-.card-title {
+.info-item .card-title {
     display: block;
     color: white;
     font-size: 1.1rem;
     font-weight: 500;
+    position: relative;
+    z-index: 1;
 }
 
-/* Квалификации и сертификаты */
+.info-item:has(.card-subtitle:contains("Роль")) {
+    background: linear-gradient(
+        45deg,
+        rgba(var(--dominant-color-rgb), 0.1),
+        rgba(255, 255, 255, 0.05)
+    );
+}
+
+.info-item:has(.card-subtitle:contains("Роль")) .card-title {
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.info-item:has(.card-title:contains("Администратор")) {
+    border-left: 3px solid var(--dominant-color, rgba(255, 255, 255, 0.3));
+}
+
+.info-item:has(.card-title:contains("Руководитель")) {
+    border-left: 3px solid rgba(255, 193, 7, 0.5);
+}
+
+.info-item:has(.card-title:contains("Сотрудник")) {
+    border-left: 3px solid rgba(13, 110, 253, 0.5);
+}
+
 .skill-badges {
     display: flex;
     flex-wrap: wrap;
@@ -167,7 +206,6 @@
     color: white;
 }
 
-/* Формы */
 .form-group {
     margin-bottom: 1.5rem;
 }
@@ -198,7 +236,6 @@
     text-align: right;
 }
 
-/* Адаптивность */
 @media (max-width: 1200px) {
     .cards-grid {
         grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));

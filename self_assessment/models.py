@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.contrib.auth.models import User
 
 class Department(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -14,11 +14,19 @@ class Department(models.Model):
 
 
 class Employees(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='employee', null=True, verbose_name="Пользователь")
     name = models.CharField(max_length=100, unique=True, verbose_name="ФИО")
     department = models.ForeignKey(Department, on_delete=models.DO_NOTHING, null=True, verbose_name="Отдел")
-    subordinate_of = models.ForeignKey('self', on_delete=models.DO_NOTHING, to_field="id",
-                                     null=True, default=None, verbose_name="Руководитель")
+    subordinate_of = models.ForeignKey('self', on_delete=models.DO_NOTHING, to_field="id", null=True, default=None, verbose_name="Руководитель")
     is_supervisor = models.BooleanField(default=False, verbose_name="Является руководителем")
+    role = models.CharField(max_length=20,
+                          choices=[
+                              ('employee', 'Сотрудник'),
+                              ('supervisor', 'Руководитель'),
+                              ('admin', 'Администратор')
+                          ],
+                          default='employee',
+                          verbose_name="Роль")
 
     def __str__(self):
         return f"{self.name} ({self.department})" if self.department else self.name

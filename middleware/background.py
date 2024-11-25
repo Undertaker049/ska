@@ -29,7 +29,7 @@ class BackgroundMiddleware:
     def get_background(self, path):
 
         if path in self.page_backgrounds:
-            bg_path = f'/static/background/images/{self.page_backgrounds[path]}'  # Исправлено: добавлен '/static/'
+            bg_path = f'/static/background/images/{self.page_backgrounds[path]}'
             physical_path = os.path.join(settings.STATIC_ROOT, 'background', 'images', self.page_backgrounds[path])
 
             if os.path.exists(physical_path):

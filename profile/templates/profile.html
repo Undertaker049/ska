@@ -11,7 +11,7 @@
 
 {% block content %}
 <div class="cards-container">
-    <!-- Навигационная панель -->
+
     <div class="card nav-section">
         <div class="radio-cards">
             <label class="radio-card">
@@ -40,23 +40,32 @@
         </div>
     </div>
 
-    <!-- Основная панель -->
     <div class="card content-section">
         <div class="content-wrapper">
-            <!-- Заголовок профиля -->
             <div class="profile-header">
                 <div class="avatar-section">
                     <div class="avatar-placeholder">
-                        {{ request.user.first_name|first }}{{ request.user.last_name|first }}
+                        {% if request.user.first_name and request.user.last_name %}
+                            {{ request.user.first_name|first }}{{ request.user.last_name|first }}
+                        {% else %}
+                            {{ request.user.username|first|upper }}
+                        {% endif %}
                     </div>
                 </div>
                 <div class="text-content">
-                    <h4>{{ request.user.get_full_name }}</h4>
+                    <h4>
+                        {% if request.user.first_name and request.user.last_name %}
+                            {{ request.user.get_full_name }}
+                        {% else %}
+                            {{ request.user.username }}
+                        {% endif %}
+                    </h4>
+                    {% if request.user.employee.role != 'admin' %}
                     <p class="department">{{ department.name }}</p>
+                    {% endif %}
                 </div>
             </div>
 
-            <!-- Главная -->
             <div class="profile-section active" id="main-section">
                 <div class="info-card">
                     <div class="card-content">
@@ -71,9 +80,23 @@
                                 <span class="card-title">{{ request.user.email }}</span>
                             </div>
                             <div class="info-item">
+                                <span class="card-subtitle">Должность</span>
+                                <span class="card-title">
+                                    {% if role == 'admin' %}
+                                        Администратор
+                                    {% elif role == 'supervisor' %}
+                                        Руководитель
+                                    {% else %}
+                                        Сотрудник
+                                    {% endif %}
+                                </span>
+                            </div>
+                            {% if role != 'admin' %}
+                            <div class="info-item">
                                 <span class="card-subtitle">Отдел</span>
                                 <span class="card-title">{{ department.name }}</span>
                             </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -112,7 +135,6 @@
                 {% endif %}
             </div>
 
-            <!-- Личная информация -->
             <div class="profile-section" id="personal-section">
                 <div class="info-card">
                     <div class="card-content">
@@ -136,6 +158,7 @@
                                     <span class="card-subtitle">Email</span>
                                     <input type="email" name="email" value="{{ request.user.email }}" class="form-control">
                                 </div>
+                                {% if role != 'admin' %}
                                 <div class="form-group">
                                     <span class="card-subtitle">Отдел</span>
                                     <select name="department" class="form-select">
@@ -146,6 +169,7 @@
                                         {% endfor %}
                                     </select>
                                 </div>
+                                {% endif %}
                             </div>
                             <div class="form-actions">
                                 <button type="submit" class="btn btn-custom btn-custom-primary">Сохранить изменения</button>
@@ -155,7 +179,6 @@
                 </div>
             </div>
 
-            <!-- Безопасность -->
             <div class="profile-section" id="security-section">
                 <div class="info-card">
                     <div class="card-content">
@@ -181,7 +204,6 @@
     </div>
 </div>
 
-<!-- Уведомления -->
 <div class="toast-container position-fixed bottom-0 end-0 p-3">
     <div id="notification-toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
         <div class="toast-header">

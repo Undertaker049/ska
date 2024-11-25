@@ -39,7 +39,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
+    #'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -52,7 +52,8 @@ INSTALLED_APPS = [
     'self_assessment',
     'authentication',
     'profile',
-    'django_bootstrap5'
+    'django_bootstrap5',
+    'admin.apps.AdminConfig'
 ]
 
 MIDDLEWARE = [
@@ -83,6 +84,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'ska.context_processors.user_role'
             ],
         },
     },

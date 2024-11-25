@@ -23,7 +23,8 @@ from selection import views as selection_views
 from ska import settings
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    #path('admin/', admin.site.urls),
+    path('admin-panel/', include('admin.urls', namespace='admin')),
     path('', main_views.main, name='main'),
     path('self-assessment/', include('self_assessment.urls')),
     path('certificate/', include('certificate.urls')),

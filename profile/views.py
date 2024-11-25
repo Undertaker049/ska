@@ -18,7 +18,8 @@ def main(request):
             'user': request.user,
             'department': employee.department,
             'departments': Department.objects.all(),
-            'has_assessments': False
+            'has_assessments': False,
+            'role': employee.role
         }
 
         hw_results = SkillsHW.objects.filter(employee_id=employee.id)
@@ -50,10 +51,12 @@ def update_profile(request):
         user.save()
 
         employee = user.employee
-        department_id = request.POST.get('department')
-        if department_id:
-            employee.department_id = department_id
-            employee.save()
+
+        if employee.role != 'admin':
+            department_id = request.POST.get('department')
+            if department_id:
+                employee.department_id = department_id
+                employee.save()
 
         return HttpResponse(status=http.HTTPStatus.OK)
 

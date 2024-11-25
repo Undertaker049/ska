@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Статистика{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/cards.css' %}" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
+<link rel="stylesheet" href="{% static 'css/statistics.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div class="statistics-container">
+
+    <div class="info-cards">
+        <div class="card info-card">
+            <div class="card-body">
+                <div class="info-box">
+                    <span class="info-box-icon bg-info">
+                        <i class="bi bi-people"></i>
+                    </span>
+                    <div class="info-box-content">
+                        <span class="info-box-text">Всего пользователей</span>
+                        <span class="info-box-number">{{ total_users }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card info-card">
+            <div class="card-body">
+                <div class="info-box">
+                    <span class="info-box-icon bg-success">
+                        <i class="bi bi-building"></i>
+                    </span>
+                    <div class="info-box-content">
+                        <span class="info-box-text">Отделов</span>
+                        <span class="info-box-number">{{ total_departments }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card info-card">
+            <div class="card-body">
+                <div class="info-box">
+                    <span class="info-box-icon bg-warning">
+                        <i class="bi bi-award"></i>
+                    </span>
+                    <div class="info-box-content">
+                        <span class="info-box-text">Сертификатов</span>
+                        <span class="info-box-number">{{ total_certificates }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="charts-section">
+        <div class="row">
+
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Распределение по отделам</h3>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="departmentsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Активность пользователей</h3>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="activityChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Последние действия</h3>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Пользователь</th>
+                            <th>Действие</th>
+                            <th>Дата</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for action in recent_actions %}
+                        <tr>
+                            <td>{{ action.user }}</td>
+                            <td>{{ action.action }}</td>
+                            <td>{{ action.date|date:"d.m.Y H:i" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'js/statistics.js' %}"></script>
+{% endblock %}
