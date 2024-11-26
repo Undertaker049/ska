@@ -1,4 +1,6 @@
 from functools import wraps
+from django.shortcuts import redirect
+from django.contrib import messages
 from django.http import HttpResponseForbidden
 from self_assessment.models import Employees
 
@@ -17,7 +19,8 @@ def role_required(allowed_roles):
                 return view_func(request, *args, **kwargs)
 
             if employee.role not in allowed_roles:
-                return HttpResponseForbidden("Недостаточно прав для доступа")
+                messages.error(request, 'Ошибка: Недостаточно прав для доступа к функциям администратора')
+                return redirect('/')
 
             if employee.role == 'supervisor':
                 dept_id = request.GET.get('department_id')
@@ -26,7 +29,5 @@ def role_required(allowed_roles):
                     return HttpResponseForbidden("Доступ только к своему отделу")
 
             return view_func(request, *args, **kwargs)
-
         return wrapper
-
     return decorator

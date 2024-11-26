@@ -17,14 +17,15 @@ def admin_index(request):
 @login_required
 @role_required(['admin'])
 def statistics(request):
+
     try:
-        # Базовая статистика
+        employee_names = Employees.objects.exclude(role='admin').values_list('name', flat=True)
+        first_names = [name.split()[0] for name in employee_names]
+
         context = {
-            'total_users': User.objects.count(),
+            'total_users': User.objects.filter(first_name__in=first_names).count(),
             'total_departments': Department.objects.count(),
             'total_certificates': Certificate.objects.count(),
-
-            # Данные для графика отделов
             'departments_data': {
                 'labels': list(Department.objects.values_list('name', flat=True)),
                 'data': list(Department.objects.annotate(

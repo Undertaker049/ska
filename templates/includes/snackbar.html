@@ -1,27 +1,37 @@
-<div class="toast-container position-fixed bottom-0 end-0 p-3">
+<div class="toast-container position-fixed start-50 translate-middle-x p-3" style="top: 120px;">
     <div id="snackbar" class="toast align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true">
         <div class="d-flex">
             <div class="toast-body"></div>
-            <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            <button type="button" class="btn-close me-2 m-auto" aria-label="Close"></button>
         </div>
     </div>
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    window.showSnackbar = function(message, duration = 3000) {
-        const toast = document.getElementById('snackbar');
+    const toast = document.getElementById('snackbar');
+    const closeButton = toast.querySelector('.btn-close');
+    let hideTimeout;
+
+    function hideToast() {
+        toast.classList.remove('show');
+        toast.classList.add('hiding');
+
+        setTimeout(() => {
+            toast.classList.remove('hiding');
+        }, 500);
+    }
+
+    closeButton.addEventListener('click', () => {
+        clearTimeout(hideTimeout);
+        hideToast();
+    });
+
+    window.showSnackbar = function(message, duration = 4000) {
         const toastBody = toast.querySelector('.toast-body');
-
+        clearTimeout(hideTimeout);
         toastBody.textContent = message;
-
-        const bsToast = new bootstrap.Toast(toast, {
-            animation: true,
-            autohide: true,
-            delay: duration
-        });
-
-        toast.classList.remove('bg-success', 'bg-danger', 'bg-warning', 'bg-info', 'text-white');
+        toast.classList.remove('bg-success', 'bg-danger', 'bg-warning', 'bg-info', 'text-white', 'show', 'hiding');
 
         if (message.toLowerCase().includes('ошибка') || message.toLowerCase().includes('error')) {
             toast.classList.add('bg-danger', 'text-white');
@@ -33,11 +43,16 @@ document.addEventListener('DOMContentLoaded', function() {
             toast.classList.add('bg-info', 'text-white');
         }
 
-        if (document.body.classList.contains('bg-dark')) {
-            toast.classList.add('dark-theme');
-        }
+        toast.classList.add('showing');
 
-        bsToast.show();
+        setTimeout(() => {
+            toast.classList.remove('showing');
+            toast.classList.add('show');
+        }, 50);
+
+        hideTimeout = setTimeout(() => {
+            hideToast();
+        }, duration);
     };
 });
 </script>
@@ -48,30 +63,72 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 
 .toast {
-    transition: all 0.3s ease-in-out;
+    display: none;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    background: rgba(0, 0, 0, 0.75) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    transform-origin: top center;
 }
 
 .toast.showing {
+    display: block;
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(-30px) scale(0.9);
 }
 
 .toast.show {
+    display: block;
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
+}
+
+.toast.hiding {
+    display: block;
+    opacity: 0;
+    transform: translateY(-30px) scale(0.9);
 }
 
 .toast.hide {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(-30px) scale(0.9);
 }
 
-.toast.dark-theme {
-    background-color: #2b3035 !important;
-    color: #fff !important;
+.toast-body {
+    color: #fff;
+    font-size: 0.95rem;
+    padding: 12px 16px;
 }
 
-.toast.dark-theme .btn-close {
+.toast.bg-danger {
+    box-shadow: 0 0 20px rgba(220, 53, 69, 0.5) !important;
+    border-color: rgba(220, 53, 69, 0.5) !important;
+}
+
+.toast.bg-success {
+    box-shadow: 0 0 20px rgba(40, 167, 69, 0.5) !important;
+    border-color: rgba(40, 167, 69, 0.5) !important;
+}
+
+.toast.bg-warning {
+    box-shadow: 0 0 20px rgba(255, 193, 7, 0.5) !important;
+    border-color: rgba(255, 193, 7, 0.5) !important;
+}
+
+.toast.bg-info {
+    box-shadow: 0 0 20px rgba(23, 162, 184, 0.5) !important;
+    border-color: rgba(23, 162, 184, 0.5) !important;
+}
+
+.btn-close {
     filter: invert(1) grayscale(100%) brightness(200%);
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+}
+
+.btn-close:hover {
+    opacity: 1;
 }
 </style>

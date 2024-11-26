@@ -24,7 +24,7 @@ from ska import settings
 
 urlpatterns = [
     #path('admin/', admin.site.urls),
-    path('admin-panel/', include('admin.urls')),
+    path('admin/', include('admin.urls')),
     path('', main_views.main, name='main'),
     path('self-assessment/', include('self_assessment.urls')),
     path('certificate/', include('certificate.urls')),
