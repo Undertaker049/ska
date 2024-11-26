@@ -1,83 +1,55 @@
-.statistics-container {
-    padding: 1.5rem;
+.content-wrapper {
+    padding: 20px;
+    background-color: #f4f6f9;
 }
 
-.info-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-}
-
-.info-card {
-    background: rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.info-box {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.info-box-icon {
-    width: 70px;
-    height: 70px;
+.small-box {
     border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2rem;
-    color: white;
-}
-
-.info-box-content {
-    flex: 1;
-}
-
-.info-box-text {
+    position: relative;
     display: block;
-    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 20px;
+    box-shadow: 0 0 1px rgba(0,0,0,.125), 0 1px 3px rgba(0,0,0,.2);
+}
+
+.small-box > .inner {
+    padding: 20px;
+}
+
+.small-box h3 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin: 0;
+    white-space: nowrap;
+    color: #fff;
+}
+
+.small-box p {
+    color: #fff;
     font-size: 1rem;
 }
 
-.info-box-number {
-    display: block;
-    color: white;
-    font-size: 1.5rem;
-    font-weight: 600;
-}
-
-.charts-section {
-    margin-bottom: 2rem;
+.small-box .icon {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 70px;
+    color: rgba(255,255,255,0.2);
 }
 
 .card {
-    background: rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 0 1px rgba(0,0,0,.125), 0 1px 3px rgba(0,0,0,.2);
+    border-radius: 8px;
 }
 
 .card-header {
-    background: rgba(255, 255, 255, 0.05);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: transparent;
+    border-bottom: 1px solid rgba(0,0,0,.125);
+    padding: 0.75rem 1.25rem;
 }
 
 .card-title {
-    color: white;
     margin: 0;
-}
-
-.table {
-    color: white;
-}
-
-.table thead th {
-    border-bottom-color: rgba(255, 255, 255, 0.1);
-}
-
-.table td {
-    border-top-color: rgba(255, 255, 255, 0.1);
+    font-size: 1.1rem;
+    font-weight: 400;
 }

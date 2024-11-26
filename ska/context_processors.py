@@ -6,6 +6,9 @@ def user_role(request):
         return {'role': None}
 
     try:
-        return {'role': request.user.employee.role}
-    except:
+        employee = Employees.objects.get(
+            name=f"{request.user.first_name} {request.user.last_name}"
+        )
+        return {'role': employee.role}
+    except Employees.DoesNotExist:
         return {'role': None}
