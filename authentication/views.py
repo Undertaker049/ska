@@ -11,15 +11,20 @@ from self_assessment.models import Employees, Department
 
 
 def main(request):
+
+    if request.user.is_authenticated:
+        return redirect('/')
+
     if request.method == "POST":
         user = authenticate(username=request.POST["login"], password=request.POST["password"])
 
         if user:
             login(request, user)
-            return redirect("/")
+            next_url = request.GET.get('next', '/')
+            return JsonResponse({'next': next_url})
 
         return HttpResponse(status=http.HTTPStatus.NOT_FOUND,
-                          content="Пользователь с таким логином/паролем не найден")
+                            content="Пользователь с таким логином/паролем не найден")
 
     if request.method == "GET":
         return render(request, "auth.html")
