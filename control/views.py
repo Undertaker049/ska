@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 from ska.decorators import role_required
 from django.contrib.auth.models import User
-from django.http import HttpResponseForbidden
+from django.contrib import messages
 from self_assessment.models import Department, Employees
 from certificate.models import Certificate
 
@@ -11,7 +11,7 @@ from certificate.models import Certificate
 @login_required
 @role_required(['admin'])
 def admin_index(request):
-    return redirect('admin:statistics')
+    return redirect('control:statistics')
 
 
 @login_required
@@ -39,4 +39,4 @@ def statistics(request):
         print(f"Error in statistics view: {str(e)}")
         import traceback
         traceback.print_exc()
-        return HttpResponseForbidden("Произошла ошибка при загрузке статистики")
+        messages.error(request, 'Произошла ошибка при загрузке статистики')

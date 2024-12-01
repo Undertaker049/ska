@@ -39,7 +39,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    #'django.contrib.admin',
+    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -53,7 +53,7 @@ INSTALLED_APPS = [
     'authentication',
     'profile',
     'django_bootstrap5',
-    'admin.apps.AdminConfig'
+    'control.apps.ControlConfig'
 ]
 
 MIDDLEWARE = [

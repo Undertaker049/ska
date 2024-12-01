@@ -12,6 +12,11 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link {% if '/self-assessment' in request.path %}active{% endif %}" href="/self-assessment">
+                            <i class="bi bi-clipboard-check"></i> Квалификации
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link {% if '/certificate' in request.path %}active{% endif %}" href="/certificate">
                             <i class="bi bi-award"></i> Сертификаты
                         </a>
@@ -28,7 +33,7 @@
                     </li>
                     {% if role == 'admin' %}
                     <li class="nav-item">
-                        <a class="nav-link {% if '/admin-panel' in request.path %}active{% endif %}" href="{% url 'admin:statistics' %}">
+                        <a class="nav-link {% if '/control' in request.path %}active{% endif %}" href="{% url 'control:statistics' %}">
                             <i class="bi bi-gear"></i> Управление
                         </a>
                     </li>
