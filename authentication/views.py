@@ -23,8 +23,7 @@ def main(request):
             next_url = request.GET.get('next', '/')
             return JsonResponse({'next': next_url})
 
-        return HttpResponse(status=http.HTTPStatus.NOT_FOUND,
-                            content="Пользователь с таким логином/паролем не найден")
+        return HttpResponse(status=http.HTTPStatus.NOT_FOUND, content="Пользователь с таким логином/паролем не найден")
 
     if request.method == "GET":
         return render(request, "auth.html")
@@ -41,6 +40,7 @@ def registration(request):
     ]
 
     if request.method == "POST":
+
         try:
             data = request.POST
 
@@ -57,27 +57,35 @@ def registration(request):
                 first_name=data["first-name"],
                 last_name=data["last-name"]
             )
-            user.save()
 
             department = Department.objects.get_or_create(
                 name=get_department_name(data['department'])
             )[0]
 
             employee = Employees.objects.create(
+                user=user,
                 name=f"{data['first-name']} {data['last-name']}",
-                department=department
+                department=department,
+                role='employee'
             )
-            employee.save()
 
             return HttpResponse(status=http.HTTPStatus.OK)
 
         except IntegrityError as e:
+
+            if 'user' in locals():
+                user.delete()
+
             return HttpResponse(
                 status=http.HTTPStatus.BAD_REQUEST,
                 content="Ошибка при создании пользователя: возможно, такой пользователь уже существует"
             )
 
         except Exception as e:
+
+            if 'user' in locals():
+                user.delete()
+
             return HttpResponse(
                 status=http.HTTPStatus.INTERNAL_SERVER_ERROR,
                 content=f"Произошла ошибка при регистрации: {str(e)}"
