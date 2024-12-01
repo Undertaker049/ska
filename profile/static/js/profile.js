@@ -1,4 +1,7 @@
+import { initializePasswordValidation, initializePasswordToggles } from '/static/js/passwordValidation.js';
+
 document.addEventListener('DOMContentLoaded', function() {
+
     // Инициализация компонентов
     const navItems = document.querySelectorAll('input[name="profile-section"]');
     const sections = document.querySelectorAll('.profile-section');
@@ -22,12 +25,30 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Отображнение активной секции при загрузке
+    const checkedNav = document.querySelector('input[name="profile-section"]:checked');
+    if (checkedNav) {
+        showSection(checkedNav.value);
+    }
+
+    else {
+        // Отображение первой секции, если нет выбранной
+        const firstNav = navItems[0];
+
+        if (firstNav) {
+            firstNav.checked = true;
+            showSection(firstNav.value);
+        }
+    }
+
     // Обработчики событий для навигации
     navItems.forEach(item => {
         item.addEventListener('change', function() {
             showSection(this.value);
         });
     });
+
+    initializePasswordToggles();
 
     /**
      * Обработка формы личной информации
@@ -36,6 +57,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (personalForm) {
         personalForm.addEventListener('submit', async function(e) {
             e.preventDefault();
+
             try {
                 const response = await fetch('/profile/update/', {
                     method: 'POST',
@@ -48,11 +70,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (response.ok) {
                     showSnackbar('Профиль успешно обновлен');
                     setTimeout(() => location.reload(), 1500);
-                } else {
+                }
+
+                else {
                     const error = await response.text();
                     showSnackbar(error || 'Произошла ошибка при обновлении профиля', 'error');
                 }
-            } catch (error) {
+            }
+
+            catch (error) {
                 showSnackbar('Произошла ошибка при обновлении профиля', 'error');
             }
         });
@@ -63,8 +89,26 @@ document.addEventListener('DOMContentLoaded', function() {
      */
     const securityForm = document.getElementById('security-form');
     if (securityForm) {
+
+        // Инициализация валидации паролей
+        const newPassword = securityForm.querySelector('[name="new_password"]');
+        const confirmPassword = securityForm.querySelector('[name="confirm_password"]');
+
+        const validatePasswords = initializePasswordValidation({
+            passwordInput: newPassword,
+            confirmPasswordInput: confirmPassword,
+            minLength: 8,
+            onValidationError: (message) => showSnackbar(message, 'error')
+        });
+
         securityForm.addEventListener('submit', async function(e) {
             e.preventDefault();
+
+            // Проверка валидности паролей перед отправкой
+            if (!validatePasswords()) {
+                return;
+            }
+
             try {
                 const response = await fetch('/profile/update/', {
                     method: 'POST',
@@ -77,11 +121,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (response.ok) {
                     showSnackbar('Пароль успешно изменен');
                     this.reset();
-                } else {
+
+                    // Сброс стилей полей после успешного обновления
+                    newPassword.style.borderColor = "";
+                    confirmPassword.style.borderColor = "";
+                }
+
+                else {
                     const error = await response.text();
                     showSnackbar(error || 'Произошла ошибка при изменении пароля', 'error');
                 }
-            } catch (error) {
+            }
+
+            catch (error) {
                 showSnackbar('Произошла ошибка при изменении пароля', 'error');
             }
         });

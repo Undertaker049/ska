@@ -1,25 +1,12 @@
-const passwordToggles = document.querySelectorAll('.password-toggle');
+import { initializePasswordValidation, initializePasswordToggles } from '/static/js/passwordValidation.js';
+
 const forms = {
     login: document.getElementById("login-form"),
     registration: document.getElementById("reg")
 };
 
-passwordToggles.forEach(toggle => {
-    toggle.addEventListener('click', function() {
-        const input = this.previousElementSibling;
-        const icon = this.querySelector('i');
-
-        if (input.type === 'password') {
-            input.type = 'text';
-            icon.classList.remove('bi-eye');
-            icon.classList.add('bi-eye-slash');
-        } else {
-            input.type = 'password';
-            icon.classList.remove('bi-eye-slash');
-            icon.classList.add('bi-eye');
-        }
-    });
-});
+// Инициализация переключателей видимости пароля
+initializePasswordToggles();
 
 async function autoLogin(username, password) {
     const formData = new FormData();
@@ -27,7 +14,7 @@ async function autoLogin(username, password) {
     formData.append('password', password);
 
     try {
-        const response = await fetch("/auth/", {
+        const response = await fetch("/auth", {
             method: "POST",
             headers: {
                 "X-CSRFToken": document.querySelector('input[name="csrfmiddlewaretoken"]').value
@@ -37,10 +24,14 @@ async function autoLogin(username, password) {
 
         if (response.ok) {
             window.location.href = "/";
-        } else {
+        }
+
+        else {
             showSnackbar("Ошибка автоматического входа");
         }
-    } catch (error) {
+    }
+
+    catch (error) {
         showSnackbar("Ошибка при попытке входа");
     }
 }
@@ -51,25 +42,30 @@ if (forms.registration) {
     const $username = document.getElementById("username");
     const $email = document.getElementById("email");
 
+    // Инициализация валидации паролей
+    const validatePasswords = initializePasswordValidation({
+        passwordInput: $password,
+        confirmPasswordInput: $rePassword,
+        minLength: 8,
+        onValidationError: showSnackbar
+    });
+
     forms.registration.addEventListener("submit", async (evt) => {
         evt.preventDefault();
 
-        if ($password.value !== $rePassword.value) {
-            showSnackbar("Пароли не совпадают!");
+        // Валидация паролей
+        if (!validatePasswords()) {
             return;
         }
 
-        if ($password.value.length < 8) {
-            showSnackbar("Пароль должен содержать минимум 8 символов");
-            return;
-        }
-
+        // Валидация email
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailPattern.test($email.value)) {
             showSnackbar("Введите корректный email адрес");
             return;
         }
 
+        // Валидация имени пользователя
         if ($username.value.length < 3) {
             showSnackbar("Имя пользователя должно содержать минимум 3 символа");
             return;
@@ -98,18 +94,9 @@ if (forms.registration) {
         }
     });
 
+    // Сброс стиля границы при вводе
     $username.addEventListener("input", () => {
         $username.style.borderColor = "";
-    });
-
-    $password.addEventListener("input", () => {
-        if ($rePassword.value) {
-            validatePasswords($password, $rePassword);
-        }
-    });
-
-    $rePassword.addEventListener("input", () => {
-        validatePasswords($password, $rePassword);
     });
 }
 
@@ -139,11 +126,4 @@ if (forms.login) {
             showSnackbar("Произошла ошибка при отправке данных");
         }
     });
-}
-
-function validatePasswords(password1, password2) {
-    const passwordsMatch = password1.value === password2.value;
-    const borderColor = passwordsMatch ? "" : "red";
-    password1.style.borderColor = borderColor;
-    password2.style.borderColor = borderColor;
 }
