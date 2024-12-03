@@ -13,7 +13,7 @@ class BackgroundMiddleware:
             '/': 'main_bg.jpg',
             '/profile/': 'profile_bg.jpg',
             '/auth/': 'auth_bg.jpg',
-            '/auth/registration': 'auth_bg.jpg',
+            '/auth/registration/': 'auth_bg.jpg',
             '/self-assessment/': 'self_assessment_bg.jpg',
             '/certificate/': 'certificate_bg.jpg',
             '/employee-evaluation/': 'employee_evaluation_bg.jpg',

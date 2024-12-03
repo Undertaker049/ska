@@ -13,17 +13,23 @@ from self_assessment.models import Employees, Department
 def main(request):
 
     if request.user.is_authenticated:
-        return redirect('/')
+        next_url = request.GET.get('next', '/')
+        return redirect(next_url)
 
     if request.method == "POST":
-        user = authenticate(username=request.POST["login"], password=request.POST["password"])
+        username = request.POST.get("login")
+        password = request.POST.get("password")
+        user = authenticate(username=username, password=password)
 
         if user:
             login(request, user)
             next_url = request.GET.get('next', '/')
             return redirect(next_url)
 
-        return HttpResponse(status=http.HTTPStatus.NOT_FOUND, content="Пользователь с таким логином/паролем не найден")
+        return HttpResponse(
+            status=http.HTTPStatus.NOT_FOUND,
+            content="Пользователь с таким логином/паролем не найден"
+        )
 
     return render(request, "auth.html")
 
@@ -80,7 +86,8 @@ def registration(request):
                 )
 
                 login(request, user)
-                return redirect('/')
+                next_url = request.GET.get('next', '/')
+                return redirect(next_url)
 
             except Department.DoesNotExist:
                 user.delete()
@@ -132,4 +139,4 @@ def user_logout(request):
     :return: редирект на страницу входа
     """
     logout(request)
-    return redirect('/auth')
+    return redirect('/auth/')

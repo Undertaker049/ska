@@ -80,7 +80,7 @@
             </div>
             <button type="submit" class="btn-auth btn-auth-primary">Зарегистрироваться</button>
             <div class="auth-links">
-                <a href="/auth" class="auth-link">Уже есть аккаунт? Войти</a>
+                <a href="/auth/?{% if request.GET.next %}next={{ request.GET.next }}{% endif %}" class="auth-link">Уже есть аккаунт? Войти</a>
             </div>
         </form>
     </div>

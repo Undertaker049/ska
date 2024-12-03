@@ -1,40 +1,45 @@
 import { initializePasswordValidation, initializePasswordToggles } from '/static/js/passwordValidation.js';
 
-const forms = {
-    login: document.getElementById("login-form"),
-    registration: document.getElementById("reg")
-};
+document.addEventListener('DOMContentLoaded', () => {
 
-// Инициализация переключателей видимости пароля
-initializePasswordToggles();
+    // Инициализация переключателей видимости пароля
+    initializePasswordToggles();
 
-async function autoLogin(username, password) {
-    const formData = new FormData();
-    formData.append('login', username);
-    formData.append('password', password);
+    const forms = {
+        login: document.getElementById("login-form"),
+        registration: document.getElementById("reg")
+    };
 
-    try {
-        const response = await fetch("/auth", {
-            method: "POST",
-            headers: {
-                "X-CSRFToken": document.querySelector('input[name="csrfmiddlewaretoken"]').value
-            },
-            body: formData
+    if (forms.login) {
+        forms.login.addEventListener("submit", async (evt) => {
+            evt.preventDefault();
+
+            try {
+                const response = await fetch("/auth/", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
+                    },
+                    body: new FormData(forms.login)
+                });
+
+                if (response.ok) {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    window.location.href = urlParams.get('next') || '/';
+                }
+
+                else {
+                    const text = await response.text();
+                    showSnackbar(text || "Ошибка при входе");
+                }
+            }
+
+            catch (error) {
+                showSnackbar("Произошла ошибка при попытке входа");
+            }
         });
-
-        if (response.ok) {
-            window.location.href = "/";
-        }
-
-        else {
-            showSnackbar("Ошибка автоматического входа");
-        }
     }
-
-    catch (error) {
-        showSnackbar("Ошибка при попытке входа");
-    }
-}
+});
 
 if (forms.registration) {
     const $password = document.getElementById("password");
@@ -82,13 +87,20 @@ if (forms.registration) {
 
             if (response.redirected) {
                 window.location.href = response.url;
-            } else if (response.ok) {
-                window.location.href = '/';
-            } else {
+            }
+
+            else if (response.ok) {
+                const urlParams = new URLSearchParams(window.location.search);
+                window.location.href = urlParams.get('next') || '/';
+            }
+
+            else {
                 const text = await response.text();
                 showSnackbar(text || "Ошибка при регистрации", 'error');
             }
-        } catch (error) {
+        }
+
+        catch (error) {
             console.error('Ошибка:', error);
             showSnackbar("Произошла ошибка при отправке данных", 'error');
         }
@@ -100,32 +112,32 @@ if (forms.registration) {
     });
 }
 
-if (forms.login) {
-    forms.login.addEventListener("submit", async (evt) => {
-        evt.preventDefault();
-
-        try {
-            const response = await fetch("/auth", {
-                method: "POST",
-                headers: {
-                    "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
-                },
-                body: new FormData(forms.login)
-            });
-
-            if (response.ok) {
-                const urlParams = new URLSearchParams(window.location.search);
-                window.location.href = urlParams.get('next') || '/';
-            }
-
-            else {
-                const text = await response.text();
-                showSnackbar(text || "Ошибка при входе");
-            }
-        }
-
-        catch (error) {
-            showSnackbar("Произошла ошибка при попытке входа");
-        }
-    });
-}
+//if (forms.login) {
+//    forms.login.addEventListener("submit", async (evt) => {
+//        evt.preventDefault();
+//
+//        try {
+//            const response = await fetch("/auth", {
+//                method: "POST",
+//                headers: {
+//                    "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
+//                },
+//                body: new FormData(forms.login)
+//            });
+//
+//            if (response.ok) {
+//                const urlParams = new URLSearchParams(window.location.search);
+//                window.location.href = urlParams.get('next') || '/';
+//            }
+//
+//            else {
+//                const text = await response.text();
+//                showSnackbar(text || "Ошибка при входе");
+//            }
+//        }
+//
+//        catch (error) {
+//            showSnackbar("Произошла ошибка при попытке входа");
+//        }
+//    });
+//}
