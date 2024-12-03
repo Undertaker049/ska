@@ -1,34 +1,54 @@
 document.addEventListener('DOMContentLoaded', function() {
     const roleSelect = document.getElementById('id_role');
-    const departmentField = document.getElementById('id_department').closest('.form-row');
-    const subordinateField = document.getElementById('id_subordinate_of').closest('.form-row');
+    const departmentField = document.getElementById('id_department');
+    const subordinateField = document.getElementById('id_subordinate_of');
 
-    // Валидация доступных для заполнения полей в зависимости от выбранной роли
     function updateFields() {
         const selectedRole = roleSelect.value;
+        const departmentRow = departmentField?.closest('.form-row');
+        const subordinateRow = subordinateField?.closest('.form-row');
 
-        if (selectedRole === 'admin') {
-            departmentField.style.display = 'none';
-            subordinateField.style.display = 'none';
-            document.getElementById('id_department').value = '';
-            document.getElementById('id_subordinate_of').value = '';
+        if (departmentRow) {
+
+            if (selectedRole === 'admin') {
+                departmentRow.style.display = 'none';
+                departmentField.value = '';
+                departmentField.required = false;
+            }
+
+            else {
+                departmentRow.style.display = '';
+                departmentField.required = true;
+
+                if (!departmentField.closest('form')) {
+                    departmentRow.appendChild(departmentField);
+                }
+            }
         }
 
-        else if (selectedRole === 'supervisor') {
-            departmentField.style.display = 'block';
-            subordinateField.style.display = 'none';
-            document.getElementById('id_subordinate_of').value = '';
-        }
+        if (subordinateRow) {
 
-        else {
-            departmentField.style.display = 'block';
-            subordinateField.style.display = 'block';
+            if (selectedRole === 'employee') {
+                subordinateRow.style.display = '';
+                subordinateField.required = true;
+
+                if (!subordinateField.closest('form')) {
+                    subordinateRow.appendChild(subordinateField);
+                }
+            }
+
+            else {
+                subordinateRow.style.display = 'none';
+                subordinateField.value = '';
+                subordinateField.required = false;
+            }
         }
     }
 
-    // Обработчик изменения значения поля role
-    roleSelect.addEventListener('change', updateFields);
+    if (roleSelect) {
+        roleSelect.addEventListener('change', updateFields);
 
-    // Вызов функции при загрузке страницы
-    updateFields();
+        // Вызываем функцию при загрузке страницы
+        updateFields();
+    }
 });
