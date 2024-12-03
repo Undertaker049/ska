@@ -29,7 +29,7 @@ urlpatterns = [
     path('self-assessment/', include('self_assessment.urls')),
     path('certificate/', include('certificate.urls')),
     path('employee-evaluation/', include('employee_evaluation.urls')),
-    path('auth/', include('authentication.urls')),
+    path('auth/', include('authentication.urls', namespace='auth')),
     path('selection', selection_views.main),
     path('profile/', include('profile.urls')),
 ]

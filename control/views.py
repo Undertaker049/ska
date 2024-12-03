@@ -19,11 +19,8 @@ def admin_index(request):
 def statistics(request):
 
     try:
-        employee_names = Employees.objects.exclude(role='admin').values_list('name', flat=True)
-        first_names = [name.split()[0] for name in employee_names]
-
         context = {
-            'total_users': User.objects.filter(first_name__in=first_names).count(),
+            'total_employees': Employees.objects.exclude(role='admin').count(),
             'total_departments': Department.objects.count(),
             'total_certificates': Certificate.objects.count(),
             'departments_data': {
@@ -40,3 +37,4 @@ def statistics(request):
         import traceback
         traceback.print_exc()
         messages.error(request, 'Произошла ошибка при загрузке статистики')
+        return redirect('main')

@@ -49,6 +49,7 @@ def update(request):
 
     try:
         user = request.user
+        employee = Employees.objects.get(user=user)
 
         if 'username' in request.POST:
             user.username = request.POST.get('username')
@@ -57,35 +58,32 @@ def update(request):
             user.email = request.POST.get('email')
             user.save()
 
-            try:
-                employee = Employees.objects.get(user=user)
-                employee.name = f'{user.first_name} {user.last_name}'
+            employee.name = f'{user.first_name} {user.last_name}'
 
-                if employee.role != 'admin':
-                    department_id = request.POST.get('department')
+            if employee.role != 'admin':
+                department_id = request.POST.get('department')
 
-                    if department_id:
-                        employee.department_id = department_id
-                employee.save()
+                if department_id:
+                    employee.department_id = department_id
 
-            except Employees.DoesNotExist:
-                messages.error(request, 'Сотрудник не найден.')
-                return redirect('profile:main')
-
-            messages.success(request, 'Профиль успешно обновлен.')
+            employee.save()
+            messages.success(request, 'Профиль успешно обновлен')
 
         if 'current_password' in request.POST:
             current_password = request.POST.get('current_password')
             new_password = request.POST.get('new_password')
 
             if not user.check_password(current_password):
-                messages.error(request, 'Неверный текущий пароль.')
-                return redirect('profile:main')
+                messages.error(request, 'Ошибка: неверный текущий пароль')
+                return HttpResponse(
+                    status=http.HTTPStatus.BAD_REQUEST,
+                    content="Неверный текущий пароль"
+                )
 
             user.set_password(new_password)
             user.save()
 
-            messages.success(request, 'Пароль успешно обновлен.')
+            messages.success(request, 'Пароль успешно обновлен')
 
         return redirect('profile:main')
 

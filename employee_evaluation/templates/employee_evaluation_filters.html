@@ -1,5 +1,5 @@
 <div class="filters-sidebar">
-    {% if is_supervisor %}
+    {% if user.employee.role == 'supervisor' or user.employee.role == 'admin' %}
     <div class="filter-group">
         <div class="form-check form-switch">
             <input class="form-check-input" type="checkbox" id="supervisor-switch">
@@ -84,7 +84,7 @@
     <div class="filter-actions">
         <button class="btn btn-primary" onclick="applyFilters()">Применить фильтры</button>
         <button class="btn btn-outline-secondary" onclick="resetFilters()">Сбросить</button>
-        {% if is_supervisor %}
+        {% if user.employee.role == 'supervisor' or user.employee.role == 'admin' %}
         <button class="btn btn-outline-primary" onclick="saveCSV()">Сохранить в CSV</button>
         {% endif %}
     </div>

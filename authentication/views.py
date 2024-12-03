@@ -21,14 +21,11 @@ def main(request):
         if user:
             login(request, user)
             next_url = request.GET.get('next', '/')
-            return JsonResponse({'next': next_url})
+            return redirect(next_url)
 
         return HttpResponse(status=http.HTTPStatus.NOT_FOUND, content="Пользователь с таким логином/паролем не найден")
 
-    if request.method == "GET":
-        return render(request, "auth.html")
-
-    return HttpResponse(status=http.HTTPStatus.METHOD_NOT_ALLOWED)
+    return render(request, "auth.html")
 
 
 def registration(request):
@@ -41,37 +38,59 @@ def registration(request):
 
     if request.method == "POST":
 
+        # Валидация данных
         try:
-            data = request.POST
-
-            if User.objects.filter(username=data["username"]).exists():
+            if len(request.POST['username']) < 3:
                 return HttpResponse(
                     status=http.HTTPStatus.BAD_REQUEST,
-                    content="Пользователь с таким именем уже существует!"
+                    content="Имя пользователя должно содержать минимум 3 символа"
                 )
 
+            if len(request.POST['password']) < 8:
+                return HttpResponse(
+                    status=http.HTTPStatus.BAD_REQUEST,
+                    content="Пароль должен содержать минимум 8 символов"
+                )
+
+            if request.POST['password'] != request.POST.get('re-password'):
+                return HttpResponse(
+                    status=http.HTTPStatus.BAD_REQUEST,
+                    content="Пароли не совпадают"
+                )
+
+            # Создание пользователя
             user = User.objects.create_user(
-                username=data["username"],
-                email=data["email"],
-                password=data["password"],
-                first_name=data["first-name"],
-                last_name=data["last-name"]
+                username=request.POST['username'],
+                password=request.POST['password'],
+                email=request.POST['email'],
+                first_name=request.POST['first-name'],
+                last_name=request.POST['last-name']
             )
 
-            department = Department.objects.get_or_create(
-                name=get_department_name(data['department'])
-            )[0]
+            try:
+                department = Department.objects.get_or_create(
+                    name=get_department_name(request.POST['department'])
+                )[0]
 
-            employee = Employees.objects.create(
-                user=user,
-                name=f"{data['first-name']} {data['last-name']}",
-                department=department,
-                role='employee'
-            )
+                employee = Employees.objects.create(
+                    user=user,
+                    name=f"{user.first_name} {user.last_name}",
+                    department=department,
+                    role='employee'
+                )
 
-            return HttpResponse(status=http.HTTPStatus.OK)
+                login(request, user)
+                return redirect('/')
 
-        except IntegrityError as e:
+            except Department.DoesNotExist:
+                user.delete()
+
+                return HttpResponse(
+                    status=http.HTTPStatus.BAD_REQUEST,
+                    content="Выбранный отдел не существует"
+                )
+
+        except IntegrityError:
 
             if 'user' in locals():
                 user.delete()
@@ -91,10 +110,7 @@ def registration(request):
                 content=f"Произошла ошибка при регистрации: {str(e)}"
             )
 
-    if request.method == "GET":
-        return render(request, "registration.html", {'departments': departments})
-
-    return HttpResponse(status=http.HTTPStatus.METHOD_NOT_ALLOWED)
+    return render(request, "registration.html", {'departments': departments})
 
 
 def get_department_name(department_code):

@@ -4,12 +4,46 @@ from .models import *
 
 @admin.register(Employees)
 class EmployeesAdmin(admin.ModelAdmin):
-    list_display = ('name', 'department', 'is_supervisor', 'subordinate_of')
-    list_filter = ('department', 'is_supervisor')
-    search_fields = ('name', 'department__name')
+    list_display = ('name', 'user', 'get_department', 'role', 'get_subordinate_of')
+    list_filter = ('role',)
+    search_fields = ('name', 'department__name', 'user__username')
     list_per_page = 20
     ordering = ('name',)
 
+    def get_department(self, obj):
+        return obj.department if obj.role != 'admin' else '-'
+
+    get_department.short_description = 'Отдел'
+
+    def get_subordinate_of(self, obj):
+
+        if obj.role == 'employee':
+            return obj.subordinate_of
+
+        return '-'
+
+    get_subordinate_of.short_description = 'Руководитель'
+
+    def get_fields(self, request, obj=None):
+        fields = ['user', 'name', 'role']
+
+        if not obj or obj.role != 'admin':
+            fields.insert(2, 'department')
+
+        if obj and obj.role == 'employee' or not obj:
+            fields.append('subordinate_of')
+
+        return fields
+
+    def get_readonly_fields(self, request, obj=None):
+
+        if obj and obj.role in ['supervisor', 'admin']:
+            return ['subordinate_of']
+
+        return []
+
+    class Media:
+        js = ('js/employees_admin.js',)
 
 @admin.register(Department)
 class DepartmentAdmin(admin.ModelAdmin):

@@ -41,56 +41,56 @@ if (forms.registration) {
     const $rePassword = document.getElementById("re-password");
     const $username = document.getElementById("username");
     const $email = document.getElementById("email");
+    const form = document.getElementById("reg");
 
     // Инициализация валидации паролей
     const validatePasswords = initializePasswordValidation({
         passwordInput: $password,
         confirmPasswordInput: $rePassword,
         minLength: 8,
-        onValidationError: showSnackbar
+        onValidationError: (message) => showSnackbar(message, 'error')
     });
 
-    forms.registration.addEventListener("submit", async (evt) => {
+    form.addEventListener("submit", async (evt) => {
         evt.preventDefault();
 
         // Валидация паролей
-        if (!validatePasswords()) {
-            return;
-        }
+        if (!validatePasswords()) return;
 
         // Валидация email
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailPattern.test($email.value)) {
-            showSnackbar("Введите корректный email адрес");
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test($email.value)) {
+            showSnackbar("Введите корректный email адрес", 'error');
             return;
         }
 
         // Валидация имени пользователя
         if ($username.value.length < 3) {
-            showSnackbar("Имя пользователя должно содержать минимум 3 символа");
+            showSnackbar("Имя пользователя должно содержать минимум 3 символа", 'error');
             return;
         }
+
+        const formData = new FormData(form);
 
         try {
             const response = await fetch("/auth/registration", {
                 method: "POST",
                 headers: {
-                    "X-CSRFToken": document.querySelector('input[name="csrfmiddlewaretoken"]').value
+                    "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
                 },
-                body: new FormData(forms.registration)
+                body: new FormData(form)
             });
 
-            if (response.ok) {
-                await autoLogin($username.value, $password.value);
+            if (response.redirected) {
+                window.location.href = response.url;
+            } else if (response.ok) {
+                window.location.href = '/';
             } else {
                 const text = await response.text();
-                showSnackbar(text || "Ошибка при регистрации");
-                if (text.includes("уже существует")) {
-                    $username.style.borderColor = "red";
-                }
+                showSnackbar(text || "Ошибка при регистрации", 'error');
             }
         } catch (error) {
-            showSnackbar("Произошла ошибка при отправке данных");
+            console.error('Ошибка:', error);
+            showSnackbar("Произошла ошибка при отправке данных", 'error');
         }
     });
 
@@ -103,27 +103,29 @@ if (forms.registration) {
 if (forms.login) {
     forms.login.addEventListener("submit", async (evt) => {
         evt.preventDefault();
-        const formData = new FormData(forms.login);
 
         try {
-            const response = await fetch("/auth/", {
+            const response = await fetch("/auth", {
                 method: "POST",
                 headers: {
-                    "X-CSRFToken": document.querySelector('input[name="csrfmiddlewaretoken"]').value
+                    "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
                 },
-                body: formData
+                body: new FormData(forms.login)
             });
 
             if (response.ok) {
                 const urlParams = new URLSearchParams(window.location.search);
-                const nextUrl = urlParams.get('next') || '/';
-                window.location.href = nextUrl;
-            } else {
+                window.location.href = urlParams.get('next') || '/';
+            }
+
+            else {
                 const text = await response.text();
                 showSnackbar(text || "Ошибка при входе");
             }
-        } catch (error) {
-            showSnackbar("Произошла ошибка при отправке данных");
+        }
+
+        catch (error) {
+            showSnackbar("Произошла ошибка при попытке входа");
         }
     });
 }

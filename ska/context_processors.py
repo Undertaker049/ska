@@ -1,14 +1,20 @@
 from self_assessment.models import Employees
+from django.contrib import messages
 
 
 def user_role(request):
-    if not request.user.is_authenticated:
-        return {'role': None}
 
+    # Исключение панели суперпользователя из зоны действия контекстного процессора
+    if request.path.startswith('/admin'):
+        return {}
+
+    if not request.user.is_authenticated:
+        return {}
+
+    # Получение объекта сотрудника, связанного с текущим пользователем
     try:
-        employee = Employees.objects.get(
-            name=f"{request.user.first_name} {request.user.last_name}"
-        )
+        employee = Employees.objects.get(user=request.user)
         return {'role': employee.role}
+
     except Employees.DoesNotExist:
-        return {'role': None}
+        return {}

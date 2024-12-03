@@ -13,7 +13,7 @@
 <div class="auth-container">
     <div class="auth-card">
         <h3 class="auth-title">Регистрация</h3>
-        <form id="reg">
+        <form id="reg" method="POST">
             {% csrf_token %}
             <div class="form-group">
                 <label for="username" class="form-label">Имя пользователя</label>

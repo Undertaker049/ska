@@ -22,6 +22,7 @@ MEDIA_URL = '/files/'
 
 LOGIN_URL = '/auth/'
 
+LOGIN_REDIRECT_URL = '/'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
