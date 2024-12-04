@@ -11,7 +11,7 @@
 <div class="auth-container">
     <div class="auth-card">
         <h3 class="auth-title">Вход в систему</h3>
-        <form id="login-form">
+        <form id="login-form" method="POST" action="/auth/">
             {% csrf_token %}
             <div class="form-group">
                 <label for="login" class="form-label">Имя пользователя</label>
@@ -29,12 +29,12 @@
             <button type="submit" class="btn-auth btn-auth-primary">Войти</button>
         </form>
         <div class="auth-links">
-            <a href="/auth/registration" class="auth-link">Регистрация</a>
+            <a href="/auth/registration/?{% if request.GET.next %}next={{ request.GET.next }}{% endif %}" class="auth-link">Регистрация</a>
         </div>
     </div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
-<script src="{% static 'js/auth.js' %}"></script>
+<script type="module" src="{% static 'js/auth.js' %}"></script>
 {% endblock %}

@@ -13,7 +13,7 @@ class BackgroundMiddleware:
             '/': 'main_bg.jpg',
             '/profile/': 'profile_bg.jpg',
             '/auth/': 'auth_bg.jpg',
-            '/auth/registration': 'auth_bg.jpg',
+            '/auth/registration/': 'auth_bg.jpg',
             '/self-assessment/': 'self_assessment_bg.jpg',
             '/certificate/': 'certificate_bg.jpg',
             '/employee-evaluation/': 'employee_evaluation_bg.jpg',
@@ -29,7 +29,7 @@ class BackgroundMiddleware:
     def get_background(self, path):
 
         if path in self.page_backgrounds:
-            bg_path = f'/static/background/images/{self.page_backgrounds[path]}'  # Исправлено: добавлен '/static/'
+            bg_path = f'/static/background/images/{self.page_backgrounds[path]}'
             physical_path = os.path.join(settings.STATIC_ROOT, 'background', 'images', self.page_backgrounds[path])
 
             if os.path.exists(physical_path):

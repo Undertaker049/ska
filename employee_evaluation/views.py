@@ -21,28 +21,17 @@ from self_assessment.models import (
     Processes,
     SkillsHW,
     SkillsSW,
-    SkillsPR
+    SkillsPR,
+    TaskHW,
+    TaskSW
 )
 
 HW_MAX_SCORE = 48
 SW_MAX_SCORE = 20
 
 
-def calculate_percentage(score: int, max_score: int) -> float:
-    return (score / max_score * 100) if max_score > 0 else 0
-
-
 def get_levels_values() -> Dict[str, int]:
     return {level["level"]: level["weight"] for level in Levels.objects.values()}
-
-
-def get_levels_values():
-    levels_val = {}
-
-    for o in Levels.objects.values():
-        levels_val[o["level"]] = o["weight"]
-
-    return levels_val
 
 
 def get_products_data() -> Dict[str, QuerySet]:
@@ -67,94 +56,112 @@ def get_certificate_data():
 def main(request):
 
     if request.method == "GET":
-        employee = Employees.objects.get(name=f"{request.user.first_name} {request.user.last_name}")
-        employees_data = []
-        employees = Employees.objects.select_related('department')
 
-        for emp in employees:
-            hw_skills = list(SkillsHW.objects.filter(employee=emp))
-            hw_skills.sort(key=lambda x: x.get_score(), reverse=True)
-            hw_skills = hw_skills[:3]
+        try:
+            employee = Employees.objects.get(user=request.user)
+            employees_data = []
 
-            sw_skills = list(SkillsSW.objects.filter(employee=emp))
-            sw_skills.sort(key=lambda x: x.get_score(), reverse=True)
-            sw_skills = sw_skills[:3]
+            if employee.role == 'admin':
+                employees = Employees.objects.select_related('department').exclude(role='admin')
 
-            pr_skills = list(SkillsPR.objects.filter(employee=emp))
-            pr_skills.sort(key=lambda x: x.get_score(), reverse=True)
-            pr_skills = pr_skills[:3]
+            else:
+                employees = Employees.objects.select_related('department').exclude(
+                    Q(role='admin') | Q(id=employee.id)
+                )
 
-            certificates = Certificate.objects.filter(employee=emp).order_by('-date')[:2]
+            for emp in employees:
+                hw_skills = list(SkillsHW.objects.filter(employee=emp))
+                hw_skills.sort(key=lambda x: x.get_score(), reverse=True)
+                hw_skills = hw_skills[:3]
 
-            employee_data = {
-                'id': emp.id,
-                'name': emp.name,
-                'department': emp.department.name if emp.department else "Не указан",
-                'is_supervisor': emp.is_supervisor,
-                'top_skills': {
-                    'hardware': [{'name': skill.product.product, 'score': skill.get_score()} for skill in hw_skills],
-                    'software': [{'name': skill.product.product, 'score': skill.get_score()} for skill in sw_skills],
-                    'processes': [{'name': skill.process.process, 'score': skill.get_score()} for skill in pr_skills]
-                },
-                'certificates': [
-                    {
-                        'name': cert.training_name,
-                        'date': cert.date,
-                        'category': cert.category.category
-                    } for cert in certificates
-                ],
-                'total_certificates': Certificate.objects.filter(employee=emp).count(),
-                'average_scores': {
-                    'hardware': SkillsHW.objects.filter(employee=emp).aggregate(Avg('level__weight'))[
-                                    'level__weight__avg'] or 0,
-                    'software': SkillsSW.objects.filter(employee=emp).aggregate(Avg('level__weight'))[
-                                    'level__weight__avg'] or 0,
-                    'processes': SkillsPR.objects.filter(employee=emp).aggregate(Avg('level__weight'))[
-                                     'level__weight__avg'] or 0
+                sw_skills = list(SkillsSW.objects.filter(employee=emp))
+                sw_skills.sort(key=lambda x: x.get_score(), reverse=True)
+                sw_skills = sw_skills[:3]
+
+                pr_skills = list(SkillsPR.objects.filter(employee=emp))
+                pr_skills.sort(key=lambda x: x.get_score(), reverse=True)
+                pr_skills = pr_skills[:3]
+
+                certificates = Certificate.objects.filter(employee=emp).order_by('-date')[:2]
+
+                employee_data = {
+                    'id': emp.id,
+                    'name': emp.name,
+                    'department': emp.department.name if emp.department else "Не указан",
+                    'role': emp.role, # Обработка роли для фильтрации на фронтенде
+                    'top_skills': {
+                        'hardware': [{'name': skill.product.product, 'score': skill.get_score()} for skill in
+                                     hw_skills],
+                        'software': [{'name': skill.product.product, 'score': skill.get_score()} for skill in
+                                     sw_skills],
+                        'processes': [{'name': skill.process.process, 'score': skill.get_score()} for skill in
+                                      pr_skills]
+                    },
+                    'certificates': [
+                        {
+                            'name': cert.training_name,
+                            'date': cert.date,
+                            'category': cert.category.category
+                        } for cert in certificates
+                    ],
+                    'total_certificates': Certificate.objects.filter(employee=emp).count(),
+                    'average_scores': {
+                        'hardware': SkillsHW.objects.filter(employee=emp).aggregate(Avg('level__weight'))[
+                                        'level__weight__avg'] or 0,
+                        'software': SkillsSW.objects.filter(employee=emp).aggregate(Avg('level__weight'))[
+                                        'level__weight__avg'] or 0,
+                        'processes': SkillsPR.objects.filter(employee=emp).aggregate(Avg('level__weight'))[
+                                         'level__weight__avg'] or 0
+                    }
+                }
+                employees_data.append(employee_data)
+
+            data = {
+                "employees": employees_data,
+                "departments": Department.objects.all(),
+                "is_admin": employee.role == 'admin',  # Флаг администратора для шаблона
+                "skill_categories": {
+                    "hardware": Hardware.objects.values_list('product', flat=True),
+                    "software": Software.objects.values_list('product', flat=True),
+                    "processes": Processes.objects.values_list('process', flat=True)
                 }
             }
-            employees_data.append(employee_data)
 
-        data = {
-            "employees": employees_data,
-            "is_supervisor": employee.is_supervisor,
-            "departments": Department.objects.all(),
-            "skill_categories": {
-                "hardware": Hardware.objects.values_list('product', flat=True),
-                "software": Software.objects.values_list('product', flat=True),
-                "processes": Processes.objects.values_list('process', flat=True)
-            }
-        }
+            if employee.role in ['supervisor', 'admin']:
+                products_data = get_products_data()
+                cert_data = get_certificate_data()
+                levels = get_levels_values()
 
-        if employee.is_supervisor:
-            products_data = get_products_data()
-            cert_data = get_certificate_data()
-            levels = get_levels_values()
-
-            data.update({
-                "filters": {
-                    "hw": {
-                        "products": products_data['hw_products'],
-                        "tasks": products_data['hw_tasks']
+                data.update({
+                    "filters": {
+                        "hw": {
+                            "products": products_data['hw_products'],
+                            "tasks": products_data['hw_tasks']
+                        },
+                        "sw": {
+                            "products": products_data['sw_products'],
+                            "tasks": products_data['sw_tasks']
+                        },
+                        "processes": products_data['processes'],
+                        "certificates": {
+                            "categories": cert_data['categories'],
+                            "subcategories": cert_data['subcategories']
+                        },
+                        "levels": levels.keys()
                     },
-                    "sw": {
-                        "products": products_data['sw_products'],
-                        "tasks": products_data['sw_tasks']
-                    },
-                    "processes": products_data['processes'],
-                    "certificates": {
-                        "categories": cert_data['categories'],
-                        "subcategories": cert_data['subcategories']
-                    },
-                    "levels": levels.keys()
-                },
-                "max_scores": {
-                    "hw": HW_MAX_SCORE,
-                    "sw": SW_MAX_SCORE
-                }
-            })
+                    "max_scores": {
+                        "hw": HW_MAX_SCORE,
+                        "sw": SW_MAX_SCORE
+                    }
+                })
 
-        return render(request, "employee_evaluation.html", data)
+            return render(request, "employee_evaluation.html", data)
+
+        except Employees.DoesNotExist:
+            messages.error(request, 'Ошибка: профиль сотрудника не найден')
+            return redirect('auth:logout')
+
+    return HttpResponse(status=http.HTTPStatus.METHOD_NOT_ALLOWED)
 
 
 @login_required

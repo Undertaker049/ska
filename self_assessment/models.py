@@ -1,5 +1,6 @@
 from django.db import models
-
+from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 
 class Department(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -14,11 +15,82 @@ class Department(models.Model):
 
 
 class Employees(models.Model):
-    name = models.CharField(max_length=100, unique=True, verbose_name="ФИО")
-    department = models.ForeignKey(Department, on_delete=models.DO_NOTHING, null=True, verbose_name="Отдел")
-    subordinate_of = models.ForeignKey('self', on_delete=models.DO_NOTHING, to_field="id",
-                                     null=True, default=None, verbose_name="Руководитель")
-    is_supervisor = models.BooleanField(default=False, verbose_name="Является руководителем")
+
+    # Связь с пользователем - обязательное поле
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name='employee',
+        verbose_name="Пользователь",
+        null=False,
+        blank=False
+    )
+
+    # ФИО сотрудника - обязательное поле
+    name = models.CharField(
+        max_length=100,
+        unique=True,
+        verbose_name="ФИО",
+        null=False,
+        blank=False
+    )
+
+    # Отдел сотрудника - может быть пустым только для администраторов
+    department = models.ForeignKey(
+        Department,
+        on_delete=models.DO_NOTHING,
+        null=True,
+        blank=True,
+        verbose_name="Отдел"
+    )
+
+    # Руководитель - может быть пустым для руководителей и администраторов
+    subordinate_of = models.ForeignKey(
+        'self',
+        on_delete=models.DO_NOTHING,
+        null=True,
+        blank=True,
+        default=None,
+        verbose_name="Руководитель"
+    )
+
+    # Роль - обязательное поле
+    role = models.CharField(
+        max_length=20,
+        choices=[
+            ('employee', 'Сотрудник'),
+            ('supervisor', 'Руководитель'),
+            ('admin', 'Администратор')
+        ],
+        default='employee',
+        verbose_name="Роль",
+        null=False,
+        blank=False
+    )
+
+    # Валидация данных модели
+    def clean(self):
+        super().clean()
+
+        if self.role in ['supervisor', 'admin'] and self.subordinate_of:
+            self.subordinate_of = None
+
+        if self.role == 'admin':
+            self.department = None
+
+        elif not self.department:
+            raise ValidationError({'department': 'This field is required.'})
+
+    # Переопределение метода сохранения для автоматической валидации данных
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
+
+        if self.name and ' ' in self.name:
+            first_name, last_name = self.name.split(' ', 1)
+            self.user.first_name = first_name
+            self.user.last_name = last_name
+            self.user.save()
 
     def __str__(self):
         return f"{self.name} ({self.department})" if self.department else self.name
@@ -26,7 +98,7 @@ class Employees(models.Model):
     class Meta:
         verbose_name = "Сотрудник"
         verbose_name_plural = "Сотрудники"
-        ordering = ['name']
+        ordering = ['name'] # Сортировка по умолчанию по ФИО
 
 
 class Levels(models.Model):

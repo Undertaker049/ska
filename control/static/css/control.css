@@ -1,0 +1,85 @@
+.employee-evaluation-container {
+    display: flex;
+    padding: 1rem;
+    height: calc(100vh - 2rem);
+}
+
+.card {
+    flex: 1;
+    min-width: 300px;
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 20px var(--dominant-color, rgba(255, 255, 255, 0.3));
+    display: flex;
+    flex-direction: column;
+}
+
+.card-body {
+    padding: 1.5rem;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.statistics-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.small-box {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    padding: 1.5rem;
+}
+
+.small-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.small-box .inner {
+    position: relative;
+    z-index: 2;
+}
+
+.small-box .inner h3,
+.small-box .inner p {
+    color: white;
+}
+
+.small-box .icon {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 3rem;
+    opacity: 0.3;
+    z-index: 1;
+    transition: all 0.3s ease;
+}
+
+.small-box:hover .icon {
+    opacity: 0.4;
+}
+
+.chart-container {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+
+.chart-title {
+    color: white;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+}
+
+h4.text-light {
+    margin-bottom: 1.5rem;
+}

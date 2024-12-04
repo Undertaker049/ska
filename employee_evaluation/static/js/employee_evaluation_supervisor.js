@@ -22,11 +22,15 @@ document.addEventListener("DOMContentLoaded", ()=>{
         if (resp.ok){
             resp.text().then(data=>{
                 subordinates = JSON.parse(data).data
-                    $employees.forEach(function (el) {
-                        if (subordinates.indexOf(Number(el.querySelector("td").textContent)) !== -1){
-                            el.classList.toggle("subordinate");
-                        }
-                    });
+                $employees.forEach(function (el) {
+
+                    // Проверяем роль сотрудника
+                    const role = el.dataset.role;
+                    
+                    if (role === 'employee' && subordinates.indexOf(Number(el.querySelector("td").textContent)) !== -1){
+                        el.classList.toggle("subordinate");
+                    }
+                });
             });
         }
     });

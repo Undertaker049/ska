@@ -4,6 +4,7 @@
 {% block title %}Регистрация{% endblock %}
 
 {% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/custom.css' %}" />
 <link rel="stylesheet" href="{% static 'css/auth.css' %}" />
 <link rel="stylesheet" href="{% static 'css/cards.css' %}" />
 {% endblock %}
@@ -12,7 +13,7 @@
 <div class="auth-container">
     <div class="auth-card">
         <h3 class="auth-title">Регистрация</h3>
-        <form id="reg">
+        <form id="reg" method="POST">
             {% csrf_token %}
             <div class="form-group">
                 <label for="username" class="form-label">Имя пользователя</label>
@@ -79,7 +80,7 @@
             </div>
             <button type="submit" class="btn-auth btn-auth-primary">Зарегистрироваться</button>
             <div class="auth-links">
-                <a href="/auth" class="auth-link">Уже есть аккаунт? Войти</a>
+                <a href="/auth/?{% if request.GET.next %}next={{ request.GET.next }}{% endif %}" class="auth-link">Уже есть аккаунт? Войти</a>
             </div>
         </form>
     </div>
@@ -87,5 +88,5 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="{% static 'js/auth.js' %}"></script>
+<script type="module" src="{% static 'js/auth.js' %}"></script>
 {% endblock %}

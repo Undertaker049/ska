@@ -24,11 +24,12 @@ from ska import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('control/', include('control.urls')),
     path('', main_views.main, name='main'),
     path('self-assessment/', include('self_assessment.urls')),
     path('certificate/', include('certificate.urls')),
     path('employee-evaluation/', include('employee_evaluation.urls')),
-    path('auth/', include('authentication.urls')),
+    path('auth/', include('authentication.urls', namespace='auth')),
     path('selection', selection_views.main),
     path('profile/', include('profile.urls')),
 ]

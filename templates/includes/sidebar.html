@@ -5,10 +5,10 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
-                {% if request.user.is_authenticated %}
+                {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link {% if '/profile/' in request.path or request.path == '/profile' %}active{% endif %}" href="/profile">
-                            <i class="bi bi-person-circle"></i> Профиль
+                        <a class="nav-link {% if '/profile' in request.path %}active{% endif %}" href="/profile">
+                            <i class="bi bi-person"></i> Профиль
                         </a>
                     </li>
                     <li class="nav-item">
@@ -31,23 +31,32 @@
                             <i class="bi bi-graph-up"></i> Сводка
                         </a>
                     </li>
+                    {% if role == 'admin' %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if '/control' in request.path %}active{% endif %}" href="{% url 'control:statistics' %}">
+                            <i class="bi bi-gear"></i> Управление
+                        </a>
+                    </li>
+                    {% endif %}
                 {% endif %}
             </ul>
             <ul class="navbar-nav">
                 {% if request.user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link {% if '/auth/logout' in request.path %}active{% endif %}" href="/auth/logout">
+                        <a class="nav-link {% if '/auth/logout' in request.path %}active{% endif %}" href="/auth/logout/">
                             <i class="bi bi-box-arrow-right"></i> Выход
                         </a>
                     </li>
                 {% else %}
                     <li class="nav-item">
-                        <a class="nav-link {% if '/auth/' in request.path and not '/auth/registration' in request.path and not '/auth/logout' in request.path %}active{% endif %}" href="/auth/">
+                        <a class="nav-link {% if '/auth/' in request.path and not '/auth/registration' in request.path and not '/auth/logout' in request.path %}active{% endif %}"
+                           href="/auth/{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}">
                             <i class="bi bi-box-arrow-in-right"></i> Вход
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if '/auth/registration' in request.path %}active{% endif %}" href="/auth/registration">
+                        <a class="nav-link {% if '/auth/registration' in request.path %}active{% endif %}"
+                           href="/auth/registration/{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}">
                             <i class="bi bi-person-plus"></i> Регистрация
                         </a>
                     </li>

@@ -22,6 +22,7 @@ MEDIA_URL = '/files/'
 
 LOGIN_URL = '/auth/'
 
+LOGIN_REDIRECT_URL = '/'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -52,7 +53,8 @@ INSTALLED_APPS = [
     'self_assessment',
     'authentication',
     'profile',
-    'django_bootstrap5'
+    'django_bootstrap5',
+    'control.apps.ControlConfig'
 ]
 
 MIDDLEWARE = [
@@ -65,7 +67,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'certificate.middleware.CertificateMiddleware',
     'middleware.auth.AuthenticationMiddleware',
-    'middleware.background.BackgroundMiddleware'
+    'middleware.background.BackgroundMiddleware',
 ]
 
 ROOT_URLCONF = 'ska.urls'
@@ -83,6 +85,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'ska.context_processors.user_role'
             ],
         },
     },

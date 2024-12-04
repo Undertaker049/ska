@@ -1,0 +1,55 @@
+.content-wrapper {
+    padding: 20px;
+    background-color: #f4f6f9;
+}
+
+.small-box {
+    border-radius: 8px;
+    position: relative;
+    display: block;
+    margin-bottom: 20px;
+    box-shadow: 0 0 1px rgba(0,0,0,.125), 0 1px 3px rgba(0,0,0,.2);
+}
+
+.small-box > .inner {
+    padding: 20px;
+}
+
+.small-box h3 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin: 0;
+    white-space: nowrap;
+    color: #fff;
+}
+
+.small-box p {
+    color: #fff;
+    font-size: 1rem;
+}
+
+.small-box .icon {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 70px;
+    color: rgba(255,255,255,0.2);
+}
+
+.card {
+    margin-bottom: 1rem;
+    box-shadow: 0 0 1px rgba(0,0,0,.125), 0 1px 3px rgba(0,0,0,.2);
+    border-radius: 8px;
+}
+
+.card-header {
+    background-color: transparent;
+    border-bottom: 1px solid rgba(0,0,0,.125);
+    padding: 0.75rem 1.25rem;
+}
+
+.card-title {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 400;
+}

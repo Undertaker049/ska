@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Панель управления{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/cards.css' %}">
+<link rel="stylesheet" href="{% static 'css/control.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="employee-evaluation-container">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="text-light mb-4">Статистика системы</h4>
+
+            <div class="statistics-content">
+
+                <div class="row">
+                    <div class="col-lg-4 col-6">
+                        <div class="small-box">
+                            <div class="inner">
+                                <h3>{{ total_employees }}</h3>
+                                <p>Сотрудников</p>
+                            </div>
+                            <div class="icon">
+                                <i class="bi bi-people"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 col-6">
+                        <div class="small-box">
+                            <div class="inner">
+                                <h3>{{ total_departments }}</h3>
+                                <p>Отделов</p>
+                            </div>
+                            <div class="icon">
+                                <i class="bi bi-building"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 col-6">
+                        <div class="small-box">
+                            <div class="inner">
+                                <h3>{{ total_certificates }}</h3>
+                                <p>Сертификатов</p>
+                            </div>
+                            <div class="icon">
+                                <i class="bi bi-award"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="chart-container">
+                            <h3 class="chart-title">Распределение сотрудников по отделам</h3>
+                            <canvas id="departmentsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const departmentsData = {{ departments_data|safe }};
+</script>
+<script src="{% static 'js/statistics.js' %}"></script>
+{% endblock %}

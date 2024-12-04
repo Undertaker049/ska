@@ -1,20 +1,10 @@
+import { initializePasswordValidation, initializePasswordToggles } from '/static/js/passwordValidation.js';
+
 document.addEventListener('DOMContentLoaded', function() {
+
     // Инициализация компонентов
     const navItems = document.querySelectorAll('input[name="profile-section"]');
     const sections = document.querySelectorAll('.profile-section');
-    const toast = new bootstrap.Toast(document.getElementById('notification-toast'));
-
-    /**
-     * Показывает уведомление
-     * @param {string} message - текст уведомления
-     * @param {string} type - тип уведомления (success/error)
-     */
-    function showNotification(message, type = 'success') {
-        const toastEl = document.getElementById('notification-toast');
-        toastEl.querySelector('.toast-body').textContent = message;
-        toastEl.className = `toast ${type === 'success' ? 'bg-success' : 'bg-danger'} text-white`;
-        toast.show();
-    }
 
     /**
      * Показывает выбранную секцию
@@ -35,12 +25,30 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Отображнение активной секции при загрузке
+    const checkedNav = document.querySelector('input[name="profile-section"]:checked');
+    if (checkedNav) {
+        showSection(checkedNav.value);
+    }
+
+    else {
+        // Отображение первой секции, если нет выбранной
+        const firstNav = navItems[0];
+
+        if (firstNav) {
+            firstNav.checked = true;
+            showSection(firstNav.value);
+        }
+    }
+
     // Обработчики событий для навигации
     navItems.forEach(item => {
         item.addEventListener('change', function() {
             showSection(this.value);
         });
     });
+
+    initializePasswordToggles();
 
     /**
      * Обработка формы личной информации
@@ -49,21 +57,29 @@ document.addEventListener('DOMContentLoaded', function() {
     if (personalForm) {
         personalForm.addEventListener('submit', async function(e) {
             e.preventDefault();
+
             try {
-                const response = await fetch('/profile/update-profile/', {
+                const response = await fetch('/profile/update/', {
                     method: 'POST',
+                    headers: {
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    },
                     body: new FormData(this),
                 });
 
                 if (response.ok) {
-                    showNotification('Профиль успешно обновлен');
+                    showSnackbar('Профиль успешно обновлен');
                     setTimeout(() => location.reload(), 1500);
-                } else {
-                    const error = await response.text();
-                    showNotification(error || 'Произошла ошибка при обновлении профиля', 'error');
                 }
-            } catch (error) {
-                showNotification('Произошла ошибка при обновлении профиля', 'error');
+
+                else {
+                    const error = await response.text();
+                    showSnackbar(error || 'Произошла ошибка при обновлении профиля', 'error');
+                }
+            }
+
+            catch (error) {
+                showSnackbar('Произошла ошибка при обновлении профиля', 'error');
             }
         });
     }
@@ -73,23 +89,52 @@ document.addEventListener('DOMContentLoaded', function() {
      */
     const securityForm = document.getElementById('security-form');
     if (securityForm) {
+
+        // Инициализация валидации паролей
+        const newPassword = securityForm.querySelector('[name="new_password"]');
+        const confirmPassword = securityForm.querySelector('[name="confirm_password"]');
+
+        const validatePasswords = initializePasswordValidation({
+            passwordInput: newPassword,
+            confirmPasswordInput: confirmPassword,
+            minLength: 8,
+            onValidationError: (message) => showSnackbar(message, 'error')
+        });
+
         securityForm.addEventListener('submit', async function(e) {
             e.preventDefault();
+
+            // Проверка валидности паролей перед отправкой
+            if (!validatePasswords()) {
+                return;
+            }
+
             try {
-                const response = await fetch('/profile/update-password/', {
+                const response = await fetch('/profile/update/', {
                     method: 'POST',
+                    headers: {
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    },
                     body: new FormData(this),
                 });
 
                 if (response.ok) {
-                    showNotification('Пароль успешно изменен');
+                    showSnackbar('Пароль успешно изменен');
                     this.reset();
-                } else {
-                    const error = await response.text();
-                    showNotification(error || 'Произошла ошибка при изменении пароля', 'error');
+
+                    // Сброс стилей полей после успешного обновления
+                    newPassword.style.borderColor = "";
+                    confirmPassword.style.borderColor = "";
                 }
-            } catch (error) {
-                showNotification('Произошла ошибка при изменении пароля', 'error');
+
+                else {
+                    const error = await response.text();
+                    showSnackbar(error || 'Произошла ошибка при изменении пароля', 'error');
+                }
+            }
+
+            catch (error) {
+                showSnackbar('Произошла ошибка при изменении пароля', 'error');
             }
         });
     }
