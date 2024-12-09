@@ -6,7 +6,6 @@ from django.contrib import admin
 from django.urls import path, include
 
 from main import views as main_views
-from selection import views as selection_views
 from ska import settings
 
 urlpatterns = [
@@ -17,7 +16,7 @@ urlpatterns = [
     path('certificate/', include('certificate.urls')),
     path('employee-evaluation/', include('employee_evaluation.urls')),
     path('auth/', include('authentication.urls', namespace='auth')),
-    path('selection', selection_views.main),
+    path('selection/', include('selection.urls')),
     path('profile/', include('profile.urls')),
 ]
 

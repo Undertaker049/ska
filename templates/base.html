@@ -14,8 +14,27 @@
     {% block extra_css %}{% endblock %}
 
     <link rel="shortcut icon" href="https://cdn-icons-png.freepik.com/512/709/709612.png" />
-    <script>
+
+    <!-- Глобальные переменные -->
+    <script type="text/javascript">
+        // Фоновое изображение
         document.documentElement.dataset.backgroundImage = "{{ request.background_image }}";
+
+        // URL для AJAX-запросов
+        window.urls = {
+            profile_update: "{{ urls.profile_update }}",
+            self_assessment_upload: "{{ urls.self_assessment_upload }}",
+            selection_disciplines: "{{ urls.selection_disciplines }}",
+            selection_employees: "{{ urls.selection_employees }}",
+            employee_evaluation_subordinates: "{{ urls.employee_evaluation_subordinates }}",
+            employee_evaluation_subordinates_filter: "{{ urls.employee_evaluation_subordinates_filter }}",
+            employee_evaluation_about: "{{ urls.employee_evaluation_about }}",
+            employee_evaluation_about_block: "{{ urls.employee_evaluation_about_block }}",
+            certificate_delete: "{{ urls.certificate_delete }}",
+            certificate_main: "{{ urls.certificate_main }}",
+            auth_login: "{{ urls.auth_login }}",
+            auth_registration: "{{ urls.auth_registration }}"
+        };
     </script>
 </head>
 <body>

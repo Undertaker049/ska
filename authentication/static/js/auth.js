@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
             evt.preventDefault();
 
             try {
-                const response = await fetch("/auth/", {
+                const response = await fetch(window.urls.auth_login, {
                     method: "POST",
                     headers: {
                         "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
@@ -77,7 +77,7 @@ if (forms.registration) {
         const formData = new FormData(form);
 
         try {
-            const response = await fetch("/auth/registration", {
+            const response = await fetch(window.urls.auth_registration, {
                 method: "POST",
                 headers: {
                     "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value

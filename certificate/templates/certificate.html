@@ -122,7 +122,7 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form id="certificate-form" method="post" action="/certificate/" enctype="multipart/form-data">
+                <form id="certificate-form" method="post" action="{% url 'certificate_main' %}" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="mb-4">
                         <label for="training_name" class="form-label">Название тренинга</label>

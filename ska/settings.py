@@ -4,6 +4,7 @@ Django settings for ska project.
 
 import os
 from pathlib import Path
+from django.urls import reverse_lazy
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -12,7 +13,7 @@ MEDIA_ROOT = BASE_DIR / 'files'
 
 MEDIA_URL = '/files/'
 
-LOGIN_URL = '/auth/'
+LOGIN_URL = reverse_lazy('auth:login')
 
 LOGIN_REDIRECT_URL = '/'
 
@@ -34,7 +35,7 @@ INSTALLED_APPS = [
     'main',
     'certificate',
     'employee_evaluation',
-    'selection',
+    'selection.apps.SelectionConfig',
     'self_assessment',
     'authentication',
     'profile',
@@ -70,7 +71,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'ska.context_processors.user_role'
+                'ska.context_processors.user_role',
+                'ska.context_processors.urls_processor',
             ],
         },
     },
