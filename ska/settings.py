@@ -3,8 +3,14 @@ Django settings for ska project.
 """
 
 import os
+import sys
 from pathlib import Path
 from django.urls import reverse_lazy
+from dotenv import load_dotenv
+
+# Пропуск проверки .env для команд управления окружением
+ENVIRONMENT_MANAGEMENT_COMMANDS = ['keygen', 'setenv']
+is_env_command = any(cmd in sys.argv for cmd in ENVIRONMENT_MANAGEMENT_COMMANDS)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -17,12 +23,27 @@ LOGIN_URL = reverse_lazy('auth:login')
 
 LOGIN_REDIRECT_URL = '/'
 
-SECRET_KEY = 'django-insecure-wou43w@7k#(oay8=!9p&=fjotgv9odr##j3_tgj4kdx(35rf9z'
+# Получение SECRET_KEY из переменных окружения
+if is_env_command:
+    load_dotenv(override=True)
+    SECRET_KEY = 'temporary-key-for-env-setup-only'
 
-DEBUG = False
+else:
+    if not load_dotenv():
+        print("Warning: .env file not found", file=sys.stderr)
 
-ALLOWED_HOSTS = []
+    if not os.getenv('DJANGO_SECRET_KEY'):
+        raise ValueError(
+            "DJANGO_SECRET_KEY must be set in .env file. "
+            "Use 'python manage.py setenv' to initialize environment "
+            "or 'python manage.py keygen' to generate a new key."
+        )
+    SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
+# Debug mode
+DEBUG = os.getenv('DJANGO_DEBUG', 'False').lower() == 'true'
+
+ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '*').split(',')
 
 # Application definition
 INSTALLED_APPS = [
@@ -40,7 +61,8 @@ INSTALLED_APPS = [
     'authentication',
     'profile',
     'django_bootstrap5',
-    'control.apps.ControlConfig'
+    'control.apps.ControlConfig',
+    'ska'
 ]
 
 MIDDLEWARE = [
@@ -118,7 +140,7 @@ USE_TZ = True
 
 
 # Static files (css, JavaScript, Images)
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
@@ -128,6 +150,14 @@ if not os.path.exists(STATIC_ROOT):
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
+
+# Ensure static files are served in development
+if DEBUG:
+    STATICFILES_DIRS = [
+        BASE_DIR / 'static',
+    ]
+else:
+    STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

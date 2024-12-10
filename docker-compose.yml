@@ -8,14 +8,10 @@ services:
       - sqlite_data:/app/db
       - media_volume:/app/files
       - static_volume:/app/staticfiles
+    entrypoint: ["/app/entrypoint.sh"]
     environment:
-      - DEBUG=1
       - DJANGO_SETTINGS_MODULE=ska.settings
-      - SECRET_KEY=your-secret-key-here
-    command: >
-      sh -c "python manage.py collectstatic --noinput &&
-             python manage.py migrate &&
-             python manage.py runserver 0.0.0.0:8000"
+    command: ["tail", "-f", "/dev/null"]
 
 volumes:
   sqlite_data:
