@@ -40,7 +40,7 @@ start() {
 }
 
 monitor_env() {
-    echo "Starting .env file monitoring in background..."
+    echo "Starting .env file monitoring..."
     (
         while true; do
             if [ ! -f .env ]; then
@@ -55,9 +55,9 @@ monitor_env() {
                 if [ -f .env ]; then
                     if grep -q "SECRET_KEY" .env; then
                         echo "${YELLOW}WARNING: .env file was modified and may contain SECRET_KEY changes${RESET}"
-                        echo "${YELLOW}Please use 'docker-compose down && docker-compose up' to restart and apply these changes${RESET}"
+                        echo "${YELLOW}Please restart container to apply these changes${RESET}"
                     else
-                        echo "${YELLOW}WARNING: .env file was modified. Please restart the server to apply changes${RESET}"
+                        echo "${YELLOW}WARNING: .env file was modified. Please restart container to apply changes${RESET}"
                     fi
                 else
                     echo "${YELLOW}WARNING: .env file was deleted${RESET}"
@@ -67,9 +67,6 @@ monitor_env() {
     ) &
 }
 
-# Запуск мониторинга в фоне
-monitor_env
-
 # Первоначальная настройка и запуск
 if [ -f .env ]; then
     start
@@ -77,3 +74,7 @@ else
     echo "${YELLOW}WARNING: .env file does not exist${RESET}"
     echo "${YELLOW}Please create it by using the 'python manage.py setenv' command${RESET}"
 fi
+
+# Запуск мониторинга в фоне
+monitor_env &
+exec tail -f /dev/null

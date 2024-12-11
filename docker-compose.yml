@@ -7,6 +7,12 @@ services:
       - type: bind
         source: .
         target: /app
+        read_only: false
+        bind:
+          create_host_path: true
+        volume:
+          nocopy: false
+        consistency: cached
       - type: volume
         source: sqlite_data
         target: /app/db
@@ -16,10 +22,9 @@ services:
       - type: volume
         source: static_volume
         target: /app/staticfiles
-    entrypoint: ["/app/entrypoint.sh"]
+    entrypoint: ["sh", "-c", "chmod +x /app/entrypoint.sh && /app/entrypoint.sh"]
     environment:
       - DJANGO_SETTINGS_MODULE=ska.settings
-    command: ["tail", "-f", "/dev/null"]
 
 volumes:
   sqlite_data:
