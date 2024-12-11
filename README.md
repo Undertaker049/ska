@@ -91,7 +91,7 @@ A Docker-based assessment system
    - 🌐 [Main Interface](http://127.0.0.1:8000/)
    - ⚙️ [Admin Panel](http://127.0.0.1:8000/admin)
 
-> **Note**: First build may take several minutes depending on your internet connection and system performance.
+> **Note**: First build may take several minutes depending on your internet connection and system performance
 
 ## Common Commands
 
@@ -157,7 +157,7 @@ docker compose exec web python manage.py runserver
 
 ## Docker Installation
 
-Detailed Docker installation instructions for different operating systems can be found in [DOCKER_INSTALL.md](DOCKER_INSTALL.md)
+Docker installation instructions for different operating systems can be found in [DOCKER_INSTALL.md](DOCKER_INSTALL.md)
 
 ## Troubleshooting
 
