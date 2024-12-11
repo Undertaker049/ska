@@ -15,7 +15,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 MEDIA_ROOT = BASE_DIR / 'files'
 
-MEDIA_URL = '/files/'
+MEDIA_URL = 'files/'
+
+ADMIN_URL = 'admin/'
 
 LOGIN_URL = reverse_lazy('auth:login')
 
@@ -149,7 +151,7 @@ USE_TZ = True
 
 
 # Статические файлы (css, JavaScript, Images)
-STATIC_URL = '/static/'
+STATIC_URL = 'static/'
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
