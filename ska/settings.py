@@ -1,6 +1,4 @@
-"""
-Django settings for ska project.
-"""
+"""Настройки Django"""
 
 import os
 import sys
@@ -49,12 +47,12 @@ else:
     else:
         SECRET_KEY = django_key
 
-# Debug mode
+# Режим отладки
 DEBUG = os.getenv('DJANGO_DEBUG', 'False').lower() == 'true'
 
 ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '*').split(',')
 
-# Application definition
+# Инициализация приложений
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -74,6 +72,7 @@ INSTALLED_APPS = [
     'ska'
 ]
 
+# Middleware
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -89,6 +88,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'ska.urls'
 
+# Шаблоны
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -112,7 +112,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'ska.wsgi.application'
 
 
-# Database
+# Базы данных
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -121,7 +121,7 @@ DATABASES = {
 }
 
 
-# Password validation
+# Валидация паролей
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -138,7 +138,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-# Internationalization
+# Языковые настройки и локализация
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -148,7 +148,7 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (css, JavaScript, Images)
+# Статические файлы (css, JavaScript, Images)
 STATIC_URL = '/static/'
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
@@ -160,7 +160,7 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
-# Ensure static files are served in development
+# Обеспечение обработки статических файлов в режиме отладки
 if DEBUG:
     STATICFILES_DIRS = [
         BASE_DIR / 'static',
@@ -169,5 +169,5 @@ if DEBUG:
 else:
     STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# Default primary key field type
+# Тип поля первичного ключа по умолчанию
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

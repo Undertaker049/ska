@@ -1,54 +1,55 @@
-# Gunicorn configuration file for release mode
+"""Конфигурация Gunicorn для запуска в релиз-режиме"""
+
 import multiprocessing
 import os
 
-# Server socket
+# Сокет сервера
 bind = "0.0.0.0:8000"
 backlog = 2048
 
-# Worker processes
+# Рабочие процессы
 workers = multiprocessing.cpu_count() * 2 + 1
 threads = 2
 worker_class = 'gthread'
 worker_tmp_dir = '/dev/shm'
 
-# Timeouts
+# Таймауты
 timeout = 120
 keepalive = 5
 
-# Logging
+# Логирование
 errorlog = '-'
 accesslog = '-'
 loglevel = 'info'
 
-# Process naming
+# Именование процесса
 proc_name = 'ska_release'
 
-# Server mechanics
+# Механика сервера
 daemon = False
 pidfile = None
 umask = 0
 user = None
 group = None
 
-# Server hooks
+# Серверные хуки
 def on_starting(server):
-    """Log that the server is starting."""
+    """Логирование запуска сервера"""
     server.log.info("Starting release server...")
 
 def on_reload(server):
-    """Log that the server is reloading."""
+    """Логирование перезагрузки сервера"""
     server.log.info("Reloading release server...")
 
 def on_exit(server):
-    """Log that the server is shutting down."""
+    """Логирование остановки сервера"""
     server.log.info("Shutting down release server...")
 
-# Limits
+# Ограничения
 max_requests = 1000
 max_requests_jitter = 50
 
-# Security
+# Безопасность
 limit_request_line = 4096
 limit_request_fields = 100
 limit_request_field_size = 8190 

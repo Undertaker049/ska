@@ -1,6 +1,6 @@
 """
-WSGI images for ska project.
-It exposes the WSGI callable as a module-level variable named ``application``.
+Конфигурация WSGI.
+Предоставляет WSGI-приложение как переменную уровня модуля с именем ``application``.
 """
 
 import os

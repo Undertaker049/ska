@@ -1,3 +1,10 @@
+"""
+Команда Django для запуска приложения в релиз-режиме.
+
+Запускает Django-приложение с использованием сервера Gunicorn,
+применяя конфигурации из указанного файла настроек.
+"""
+
 from django.core.management.base import BaseCommand
 import os
 import sys
@@ -6,15 +13,27 @@ import gunicorn.app.base
 
 
 class StandaloneApplication(gunicorn.app.base.BaseApplication):
-    """Приложение Gunicorn для Django"""
+    """
+    Приложение Gunicorn для Django.
+
+    Обеспечивает запуск Django-приложения через Gunicorn
+    с поддержкой пользовательских конфигураций.
+    """
 
     def __init__(self, app, options=None):
+        """
+        Инициализация приложения.
+
+        Args:
+            app: WSGI-приложение Django
+            options: Словарь с настройками Gunicorn
+        """
         self.options = options or {}
         self.application = app
         super().__init__()
 
     def load_config(self):
-        """Загрузка конфигураций"""
+        """Загрузка конфигураций из словаря options в конфигурацию Gunicorn"""
         config = {
             key: value for key, value in self.options.items()
             if key in self.cfg.settings and value is not None
@@ -24,7 +43,7 @@ class StandaloneApplication(gunicorn.app.base.BaseApplication):
             self.cfg.set(key.lower(), value)
 
     def load(self):
-        """Загрузка приложения"""
+        """Загрузка WSGI-приложения"""
         return self.application
 
 
@@ -32,6 +51,12 @@ class Command(BaseCommand):
     help = 'Runs Django application in release mode using Gunicorn server'
 
     def add_arguments(self, parser):
+        """
+        Определение аргументов командной строки.
+
+        Args:
+            parser: Парсер аргументов командной строки
+        """
         parser.add_argument(
             '--config',
             help='Name of the config file in ska/management/release directory',
@@ -45,6 +70,17 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
+        """
+        Обработчик команды.
+
+        Выполняет:
+        1. Настройку путей и импорт конфигураций
+        2. Проверку наличия необходимых файлов
+        3. Запуск Gunicorn с указанными настройками
+
+        Args:
+            options: Опции командной строки
+        """
         from django.core.wsgi import get_wsgi_application
 
         # Получение пути к основной директории

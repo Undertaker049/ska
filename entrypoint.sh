@@ -47,7 +47,8 @@ monitor_env() {
                 echo "Waiting for .env file to be created..."
                 inotifywait -e create,moved_to -q /app
                 if [ -f .env ]; then
-                    echo "${YELLOW}WARNING: .env file was created. Please restart container to apply changes${RESET}"
+                    echo "${YELLOW}WARNING: .env file was created${RESET}"
+                    echo "${YELLOW}Please restart container to apply changes${RESET}"
                 fi
             else
                 echo "Watching .env file for changes..."

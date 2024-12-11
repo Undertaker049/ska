@@ -1,9 +1,23 @@
+"""Конфигурация контекстных процессоров проекта"""
+
 from self_assessment.models import Employees
 from django.contrib import messages
 from django.urls import reverse
 
 
 def user_role(request):
+    """
+    Контекстный процессор для определения роли пользователя.
+
+    Добавляет роль текущего пользователя в контекст шаблона.
+    Не применяется к панели администратора и неаутентифицированным пользователям.
+
+    Args:
+        request: Объект HTTP-запроса
+
+    Returns:
+        dict: Словарь с ролью пользователя или пустой словарь
+    """
 
     # Исключение панели суперпользователя из зоны действия контекстного процессора
     if request.path.startswith('/admin'):
@@ -23,7 +37,15 @@ def user_role(request):
 
 def urls_processor(request):
     """
-    Добавляет URLs для использования в JavaScript
+    Контекстный процессор для добавления URL-адресов.
+
+    Добавляет часто используемые URL-адреса в контекст шаблона для использования в JavaScript-коде.
+
+    Args:
+        request: Объект HTTP-запроса
+
+    Returns:
+        dict: Словарь с URL-адресами для различных функций приложения
     """
     return {
         'urls': {

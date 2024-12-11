@@ -1,4 +1,5 @@
 """Методы для отображения и работы с данными блока self_assessment"""
+
 import http
 import json
 

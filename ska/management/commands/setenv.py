@@ -1,3 +1,11 @@
+"""
+Команда Django для автоматической генерации переменных окружения.
+
+Создает файл .env на основе шаблона .env.example, позволяя настроить:
+- Очистку значения SECRET_KEY для последующей генерации
+- Установку режима отладки (DEBUG)
+"""
+
 from django.core.management.base import BaseCommand
 import os
 import shutil
@@ -9,6 +17,12 @@ class Command(BaseCommand):
     help = 'Creates .env file from .env.example template'
 
     def add_arguments(self, parser):
+        """
+        Определяет аргументы командной строки.
+
+        Args:
+            parser: Парсер аргументов командной строки
+        """
         parser.add_argument(
             '--debug',
             action='store_true',
@@ -16,6 +30,19 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
+        """
+        Обработчик команды.
+
+        Выполняет:
+        1. Проверку наличия файла шаблона
+        2. Запрос на перезапись существующего файла
+        3. Копирование и модификацию файла
+        4. Очистку значения SECRET_KEY
+        5. Настройку режима отладки
+
+        Args:
+            options: Опции командной строки
+        """
         example_path = '.env.example'
         env_path = '.env'
 
@@ -49,7 +76,6 @@ class Command(BaseCommand):
             if options['debug']:
                 content = content.replace('DJANGO_DEBUG=False', 'DJANGO_DEBUG=True')
                 debug_status = 'DEBUG=True'
-
             else:
                 debug_status = 'DEBUG=False'
 
@@ -64,4 +90,4 @@ class Command(BaseCommand):
             )
 
         except Exception as e:
-            self.stdout.write(self.style.ERROR(f'Error creating file: {str(e)}')) 
+            self.stdout.write(self.style.ERROR(f'Error creating file: {str(e)}'))

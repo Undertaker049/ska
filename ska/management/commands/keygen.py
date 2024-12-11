@@ -1,3 +1,10 @@
+"""
+Команда Django для генерации SECRET_KEY.
+
+Генерирует новый SECRET_KEY и обновляет его значение в файле .env.
+Позволяет принудительно перезаписать существующий ключ с помощью флага --force.
+"""
+
 from django.core.management.base import BaseCommand
 from django.core.management.utils import get_random_secret_key
 from django.conf import settings
@@ -9,6 +16,12 @@ class Command(BaseCommand):
     help = 'Generate new SECRET_KEY and update .env file'
 
     def add_arguments(self, parser):
+        """
+        Определение аргументов командной строки.
+
+        Args:
+            parser: Парсер аргументов командной строки
+        """
         parser.add_argument(
             '--force',
             action='store_true',
@@ -16,11 +29,22 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
+        """
+        Обработчик команды.
+
+        Выполняет:
+        1. Проверку наличия файла .env
+        2. Генерацию нового SECRET_KEY
+        3. Обновление или добавление ключа в файл .env
+
+        Args:
+            options: Опции командной строки
+        """
         if not os.path.exists('.env'):
             self.stderr.write(self.style.ERROR('.env file not found'))
             return
 
-        # Чтение текущего .env файл
+        # Чтение текущего .env файла
         with open('.env', 'r') as f:
             lines = f.readlines()
 
@@ -32,7 +56,6 @@ class Command(BaseCommand):
         key_found = False
 
         for i, line in enumerate(lines):
-
             if secret_key_pattern.match(line):
                 current_key = line.split('=')[1].strip().strip('"\'')
 
@@ -51,4 +74,4 @@ class Command(BaseCommand):
         with open('.env', 'w') as f:
             f.writelines(lines)
 
-        self.stdout.write(self.style.SUCCESS('SECRET_KEY generated'))
+        self.stdout.write(self.style.SUCCESS('SECRET_KEY generated successfully'))

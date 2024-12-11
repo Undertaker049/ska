@@ -1,6 +1,6 @@
 """
-ASGI images for ska project.
-It exposes the ASGI callable as a module-level variable named ``application``.
+Конфигурация ASGI.
+Предоставляет ASGI-приложение как переменную уровня модуля с именем ``application``.
 """
 
 import os
