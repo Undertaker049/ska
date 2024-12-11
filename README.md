@@ -5,18 +5,13 @@
 A Docker-based assessment system
 
 [![Docker][Docker-badge]][Docker-url]
+[![Docker-Install][Docker-Install-badge]][Docker-Install-url]
+[![Todo][Todo-badge]][Todo-url]
+[![Notes][Notes-badge]][Notes-url]
 [![License][License-badge]][License-url]
+[![Authors][Authors-badge]][Authors-url]
 
 </div>
-
-## Quick Links
-
-- [README](README.md)
-- [License](LICENSE)
-- [Authors](AUTHORS.md)
-- [Todo](TODO.md)
-- [Notes](NOTES.md)
-- [Docker Installation](DOCKER_INSTALL.md)
 
 ## System Requirements
 
@@ -163,10 +158,6 @@ docker compose exec web python manage.py runrelease --config custom.conf.py
 # Debug server
 docker compose exec web python manage.py runserver
 ```
-
-## Docker Installation
-
-Docker installation instructions for different operating systems can be found in [DOCKER_INSTALL.md](DOCKER_INSTALL.md)
 
 ## Troubleshooting
 
@@ -317,5 +308,18 @@ docker volume prune
 <!-- Badges -->
 [Docker-badge]: https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white
 [Docker-url]: https://www.docker.com/
+
+[Docker-Install-badge]: https://img.shields.io/badge/DOCKER-Installation-2496ED?style=for-the-badge
+[Docker-Install-url]: DOCKER_INSTALLATION
+
+[Todo-badge]: https://img.shields.io/badge/TODO-Roadmap-red?style=for-the-badge
+[Todo-url]: TODO
+
+[Notes-badge]: https://img.shields.io/badge/NOTES-Documentation-yellow?style=for-the-badge
+[Notes-url]: NOTES
+
 [License-badge]: https://img.shields.io/badge/License-GPL%20v3-blue.svg?style=for-the-badge
 [License-url]: LICENSE
+
+[Authors-badge]: https://img.shields.io/badge/AUTHORS-Contributors-orange?style=for-the-badge
+[Authors-url]: AUTHORS
