@@ -310,7 +310,7 @@ docker volume prune
 [Docker-url]: https://www.docker.com/
 
 [Docker-Install-badge]: https://img.shields.io/badge/DOCKER-Installation-2496ED?style=for-the-badge
-[Docker-Install-url]: DOCKER_INSTALLATION.md
+[Docker-Install-url]: DOCKER_INSTALL.md
 
 [Todo-badge]: https://img.shields.io/badge/TODO-Roadmap-red?style=for-the-badge
 [Todo-url]: TODO.md
@@ -319,7 +319,7 @@ docker volume prune
 [Notes-url]: NOTES.md
 
 [License-badge]: https://img.shields.io/badge/License-GPL%20v3-blue.svg?style=for-the-badge
-[License-url]: LICENSE.md
+[License-url]: LICENSE
 
 [Authors-badge]: https://img.shields.io/badge/AUTHORS-Contributors-orange?style=for-the-badge
 [Authors-url]: AUTHORS.md
