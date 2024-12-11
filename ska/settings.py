@@ -7,12 +7,12 @@ import sys
 from pathlib import Path
 from django.urls import reverse_lazy
 from dotenv import load_dotenv
+from termcolor import colored
 
 # Пропуск проверки .env для команд управления окружением
 ENVIRONMENT_MANAGEMENT_COMMANDS = ['keygen', 'setenv']
 is_env_command = any(cmd in sys.argv for cmd in ENVIRONMENT_MANAGEMENT_COMMANDS)
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 MEDIA_ROOT = BASE_DIR / 'files'
@@ -23,22 +23,31 @@ LOGIN_URL = reverse_lazy('auth:login')
 
 LOGIN_REDIRECT_URL = '/'
 
+def get_secret_key():
+    """Динамическое получение SECRET_KEY"""
+    load_dotenv(override=True)
+    return os.getenv('DJANGO_SECRET_KEY')
+
 # Получение SECRET_KEY из переменных окружения
 if is_env_command:
     load_dotenv(override=True)
-    SECRET_KEY = 'temporary-key-for-env-setup-only'
+    SECRET_KEY = 'tmp-key'
 
 else:
-    if not load_dotenv():
-        print("Warning: .env file not found", file=sys.stderr)
 
-    if not os.getenv('DJANGO_SECRET_KEY'):
-        raise ValueError(
-            "DJANGO_SECRET_KEY must be set in .env file. "
-            "Use 'python manage.py setenv' to initialize environment "
-            "or 'python manage.py keygen' to generate a new key."
-        )
-    SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
+    if not load_dotenv():
+        print(colored(".env file not found", "red", attrs=["bold"]), file=sys.stderr)
+        sys.exit(1)
+
+    django_key = get_secret_key()
+    if not django_key:
+        print(colored("WARNING: DJANGO_SECRET_KEY is not set in .env file", "yellow", attrs=["bold"]), file=sys.stderr)
+        print(colored("Using temporary key", "yellow", attrs=["bold"]), file=sys.stderr)
+        print(colored("Use 'python manage.py keygen' to generate a permanent key", "yellow", attrs=["bold"]), file=sys.stderr)
+        SECRET_KEY = 'tmp-key'
+
+    else:
+        SECRET_KEY = django_key
 
 # Debug mode
 DEBUG = os.getenv('DJANGO_DEBUG', 'False').lower() == 'true'
@@ -156,6 +165,7 @@ if DEBUG:
     STATICFILES_DIRS = [
         BASE_DIR / 'static',
     ]
+
 else:
     STATIC_ROOT = BASE_DIR / 'staticfiles'
 

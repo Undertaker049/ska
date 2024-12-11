@@ -1,50 +1,54 @@
 from django.core.management.base import BaseCommand
 from django.core.management.utils import get_random_secret_key
-from pathlib import Path
+from django.conf import settings
+import os
+import re
 
 
 class Command(BaseCommand):
-    help = 'Generates a new Django secret key and updates .env file'
+    help = 'Generate new SECRET_KEY and update .env file'
 
     def add_arguments(self, parser):
         parser.add_argument(
             '--force',
             action='store_true',
-            help='Force overwrite existing SECRET_KEY',
+            help='Force regenerate SECRET_KEY even if it exists',
         )
 
     def handle(self, *args, **options):
-        env_path = Path('.env')
-        new_key = get_random_secret_key()
+        if not os.path.exists('.env'):
+            self.stderr.write(self.style.ERROR('.env file not found'))
+            return
 
-        if env_path.exists() and not options['force']:
+        # Чтение текущего .env файл
+        with open('.env', 'r') as f:
+            lines = f.readlines()
 
-            with open(env_path) as f:
+        # Генерация нового ключа
+        secret_key = f'"{get_random_secret_key()}"'
 
-                if 'DJANGO_SECRET_KEY' in f.read():
-                    self.stdout.write(
-                        self.style.WARNING('SECRET_KEY already exists. Use --force to overwrite')
-                    )
+        # Поиск и замена строки с SECRET_KEY в .env
+        secret_key_pattern = re.compile(r'^DJANGO_SECRET_KEY=.*$')
+        key_found = False
 
+        for i, line in enumerate(lines):
+
+            if secret_key_pattern.match(line):
+                current_key = line.split('=')[1].strip().strip('"\'')
+
+                if current_key and not current_key.isspace() and not options['force']:
+                    self.stdout.write(self.style.WARNING('SECRET_KEY already exists. Use --force to regenerate.'))
                     return
 
-        env_content = []
-        if env_path.exists():
+                lines[i] = f'DJANGO_SECRET_KEY={secret_key}\n'
+                key_found = True
+                break
 
-            with open(env_path) as f:
-                env_content = [
-                    line for line in f.readlines()
-                    if not line.startswith('DJANGO_SECRET_KEY=')
-                ]
+        if not key_found:
+            lines.append(f'DJANGO_SECRET_KEY={secret_key}\n')
 
-                if env_content and not env_content[-1].endswith('\n'):
-                    env_content[-1] += '\n'
+        # Запись обновленного файла
+        with open('.env', 'w') as f:
+            f.writelines(lines)
 
-        env_content.append(f'DJANGO_SECRET_KEY={new_key}\n')
-
-        with open(env_path, 'w') as f:
-            f.writelines(env_content)
-
-        self.stdout.write(
-            self.style.SUCCESS('Successfully generated new SECRET_KEY')
-        )
+        self.stdout.write(self.style.SUCCESS('SECRET_KEY generated'))

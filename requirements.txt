@@ -3,3 +3,4 @@ pillow
 django-bootstrap5
 python-dotenv
 gunicorn
+termcolor

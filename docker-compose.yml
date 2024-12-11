@@ -4,10 +4,18 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - .:/app
-      - sqlite_data:/app/db
-      - media_volume:/app/files
-      - static_volume:/app/staticfiles
+      - type: bind
+        source: .
+        target: /app
+      - type: volume
+        source: sqlite_data
+        target: /app/db
+      - type: volume
+        source: media_volume
+        target: /app/files
+      - type: volume
+        source: static_volume
+        target: /app/staticfiles
     entrypoint: ["/app/entrypoint.sh"]
     environment:
       - DJANGO_SETTINGS_MODULE=ska.settings

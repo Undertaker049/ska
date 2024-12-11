@@ -1,25 +1,29 @@
 #!/bin/bash
 
-# Убедимся что скрипт завершится при любой ошибке
-set -e
+# Инициализация цветовых констант
+YELLOW=$(TERM=xterm-256color tput setaf 3)
+RESET=$(TERM=xterm-256color tput sgr0)
 
-# Переходим в директорию приложения
 cd /app
 
-# Функция для выполнения Django команд
+load_env() {
+    if [ -f .env ]; then
+        echo "Loading environment variables from .env file..."
+        set -a
+        source .env
+        set +a
+    fi
+}
+
 setup_django() {
-    # Собираем статические файлы
     echo 'Collecting static files...'
     python manage.py collectstatic --noinput --clear
 
-    # Применяем миграции
     echo 'Running migrations...'
     python manage.py migrate
 }
 
-# Функция запуска сервера
-start_server() {
-    # Проверяем значение DEBUG в .env
+run_server() {
     if grep -q 'DJANGO_DEBUG=True' .env; then
         echo 'Starting development server...'
         python manage.py runserver 0.0.0.0:8000
@@ -29,31 +33,47 @@ start_server() {
     fi
 }
 
-# Проверяем существование .env файла
-if [ ! -f .env ]; then
-    echo "Warning: .env file does not exist"
-    echo "Please create it using the following commands:"
-    echo "1. docker compose exec web python manage.py setenv --debug"
-    echo "2. docker compose exec web python manage.py keygen --force"
+start() {
+    load_env
+    setup_django
+    run_server
+}
 
-    # Запускаем мониторинг создания .env файла в фоновом режиме
+monitor_env() {
+    echo "Starting .env file monitoring in background..."
     (
-        # Ждем только создание файла, игнорируем модификации
-        inotifywait -e create -q /app |
-        while read -r directory events filename; do
-            if [ "$filename" = ".env" ]; then
-                echo ".env file detected, setting up Django..."
-                sleep 1  # Даем время на завершение записи файла
-                setup_django
-                start_server
-                break  # Выходим после первого обнаружения файла
+        while true; do
+            if [ ! -f .env ]; then
+                echo "Waiting for .env file to be created..."
+                inotifywait -e create,moved_to -q /app
+                if [ -f .env ]; then
+                    echo "${YELLOW}WARNING: .env file was created. Please restart container to apply changes${RESET}"
+                fi
+            else
+                echo "Watching .env file for changes..."
+                inotifywait -e modify,delete,move,close_write -q /app/.env
+                if [ -f .env ]; then
+                    if grep -q "SECRET_KEY" .env; then
+                        echo "${YELLOW}WARNING: .env file was modified and may contain SECRET_KEY changes${RESET}"
+                        echo "${YELLOW}Please use 'docker-compose down && docker-compose up' to restart and apply these changes${RESET}"
+                    else
+                        echo "${YELLOW}WARNING: .env file was modified. Please restart the server to apply changes${RESET}"
+                    fi
+                else
+                    echo "${YELLOW}WARNING: .env file was deleted${RESET}"
+                fi
             fi
         done
     ) &
-else
-    setup_django
-    start_server
-fi
+}
 
-# Держим контейнер запущенным
-exec "$@" 
+# Запуск мониторинга в фоне
+monitor_env
+
+# Первоначальная настройка и запуск
+if [ -f .env ]; then
+    start
+else
+    echo "${YELLOW}WARNING: .env file does not exist${RESET}"
+    echo "${YELLOW}Please create it by using the 'python manage.py setenv' command${RESET}"
+fi

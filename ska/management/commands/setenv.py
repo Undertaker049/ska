@@ -2,6 +2,7 @@ from django.core.management.base import BaseCommand
 import os
 import shutil
 from pathlib import Path
+import re
 
 
 class Command(BaseCommand):
@@ -24,6 +25,7 @@ class Command(BaseCommand):
 
         if os.path.exists(env_path):
             overwrite = input('.env file already exists. Overwrite? (y/n): ')
+
             if overwrite.lower() != 'y':
                 self.stdout.write(self.style.WARNING('Operation cancelled'))
                 return
@@ -32,21 +34,32 @@ class Command(BaseCommand):
             # Копирование шаблона
             shutil.copy2(example_path, env_path)
 
+            # Чтение и модификация файла
+            env_file = Path(env_path)
+            content = env_file.read_text()
+
+            # Очистка поля SECRET_KEY
+            content = re.sub(
+                r'DJANGO_SECRET_KEY=.*',
+                'DJANGO_SECRET_KEY=',
+                content
+            )
+
             # Переключение DEBUG, если необходимо
             if options['debug']:
-                env_path = Path(env_path)
-                content = env_path.read_text()
                 content = content.replace('DJANGO_DEBUG=False', 'DJANGO_DEBUG=True')
-                env_path.write_text(content)
                 debug_status = 'DEBUG=True'
 
             else:
                 debug_status = 'DEBUG=False'
 
+            # Запись обновленных данных
+            env_file.write_text(content)
+
             self.stdout.write(
                 self.style.SUCCESS(
-                    f'File {env_path} successfully created with {debug_status}. '
-                    f'Use python manage.py keygen to generate SECRET_KEY'
+                    f"File {env_path} successfully created \n"
+                    f"Use 'python manage.py keygen' to generate SECRET_KEY"
                 )
             )
 
