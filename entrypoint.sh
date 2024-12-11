@@ -53,12 +53,8 @@ monitor_env() {
                 echo "Watching .env file for changes..."
                 inotifywait -e modify,delete,move,close_write -q /app/.env
                 if [ -f .env ]; then
-                    if grep -q "SECRET_KEY" .env; then
-                        echo "${YELLOW}WARNING: .env file was modified and may contain SECRET_KEY changes${RESET}"
-                        echo "${YELLOW}Please restart container to apply these changes${RESET}"
-                    else
-                        echo "${YELLOW}WARNING: .env file was modified. Please restart container to apply changes${RESET}"
-                    fi
+                    echo "${YELLOW}WARNING: .env file was modified${RESET}"
+                    echo "${YELLOW}Please restart container to apply changes${RESET}"
                 else
                     echo "${YELLOW}WARNING: .env file was deleted${RESET}"
                 fi
