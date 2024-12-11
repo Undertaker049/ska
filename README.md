@@ -32,15 +32,25 @@ WSL 2 and Hyper-V is required
 	docker compose up --build
 	```
 
-3. Perform the necessary migrations:
+3. Create environment variables manually or using command:
    
   	```
-  	docker compose exec web python manage.py makemigrations
-  
-  	docker compose exec web python manage.py migrate
+  	docker compose exec web python manage.py setenv
   	```
 
-4. Connect to:
+4. Create a secret key for correct operation of program:
+
+	```
+ 	docker compose exec web python manage.py keygen
+ 	```
+
+5. Restart docker:
+
+	```
+ 	docker compose restart
+ 	```
+
+6. Connect to:
 
    	<http://127.0.0.1:8000/>
    
@@ -64,15 +74,25 @@ WSL 2 and Hyper-V is required
 	docker compose up --build
 	```
 
-4. Perform the necessary migrations:
+4. Create environment variables manually or using command:
    
   	```
-  	docker compose exec web python manage.py makemigrations
-  
-  	docker compose exec web python manage.py migrate
+  	docker compose exec web python manage.py setenv
   	```
 
-5. Connect to:
+5. Create a secret key for correct operation of program:
+
+	```
+ 	docker compose exec web python manage.py keygen
+ 	```
+
+6. Restart docker:
+
+	```
+ 	docker compose restart
+ 	```
+
+7. Connect to:
 
    	<http://127.0.0.1:8000/>
    
@@ -82,13 +102,13 @@ WSL 2 and Hyper-V is required
 
 ### Common usage
 
-- Running program:
+- Running docker:
   
 	```
 	docker compose start
 	```
 
-- Stopping the program while saving containers:
+- Stopping docker while saving containers:
   
 	```
 	docker compose stop
@@ -118,6 +138,12 @@ WSL 2 and Hyper-V is required
 		 docker compose up --build
 		 ```
 
+- Restarting docker:
+
+  	```
+  	docker compose restart
+  	```
+
 - Interactions with migrations:
   
   	```
@@ -137,6 +163,48 @@ WSL 2 and Hyper-V is required
  	```
   	docker compose logs
   	```
+
+- Creating environment variables (.env) from a template (.env.example):
+
+  	```
+  	docker compose exec web python manage.py setenv
+  	```
+	
+	- Creating environment variables in debugging mode (debug runserver is used as an automatic startup server):
+  
+	  	```
+  		docker compose exec web python manage.py setenv --debug
+  		```
+
+- Generating a new secret key for project (SECRET_KEY) stored in environment variable (.env):
+
+	```
+  	docker compose exec web python manage.py keygen
+	```
+
+	- Regenerating an existing secret key:
+  
+	    ```
+  	    docker compose exec web python manage.py keygen --force
+  	    ```
+
+- Running startup release server:
+
+	```
+  	docker compose exec web python manage.py runrelease
+	```
+
+	- Using custom startup configuration file (must be located in ska/management/release/):
+  
+		```
+  	    docker compose exec web python manage.py runrelease --config custom.conf.py
+	    ```
+
+- Running startup debugging server:
+
+	```
+  	docker compose exec web python manage.py runserver
+	```
 
 ## Troubleshooting
 
@@ -169,12 +237,16 @@ WSL 2 and Hyper-V is required
 
 		newgrp docker
  		```
-      	
+
 - If ports are already in use:
   
 	```
- 	sudo lsof -i :8000
+ 	sudo lsof -i :new_port
  	```
+
+- If the created environment variables (.env) are read-only:
+
+	Edit file on behalf of sudo or make it writable via chmod
 
 # Docker Installation
 
