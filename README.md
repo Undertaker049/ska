@@ -310,16 +310,16 @@ docker volume prune
 [Docker-url]: https://www.docker.com/
 
 [Docker-Install-badge]: https://img.shields.io/badge/DOCKER-Installation-2496ED?style=for-the-badge
-[Docker-Install-url]: DOCKER_INSTALLATION
+[Docker-Install-url]: DOCKER_INSTALLATION.md
 
 [Todo-badge]: https://img.shields.io/badge/TODO-Roadmap-red?style=for-the-badge
-[Todo-url]: TODO
+[Todo-url]: TODO.md
 
 [Notes-badge]: https://img.shields.io/badge/NOTES-Documentation-yellow?style=for-the-badge
-[Notes-url]: NOTES
+[Notes-url]: NOTES.md
 
 [License-badge]: https://img.shields.io/badge/License-GPL%20v3-blue.svg?style=for-the-badge
-[License-url]: LICENSE
+[License-url]: LICENSE.md
 
 [Authors-badge]: https://img.shields.io/badge/AUTHORS-Contributors-orange?style=for-the-badge
-[Authors-url]: AUTHORS
+[Authors-url]: AUTHORS.md
