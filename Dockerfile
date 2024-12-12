@@ -17,9 +17,9 @@ RUN mkdir -p /app/db /app/files /app/staticfiles /app/static/vendor \
 
 COPY . .
 
-RUN dos2unix .vendors || true
+RUN dos2unix .vendors .requirements || true
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r .requirements
 
 EXPOSE 8000
 
