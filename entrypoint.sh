@@ -15,6 +15,40 @@ load_env() {
     fi
 }
 
+download_vendors() {
+    echo "Downloading vendor files..."
+
+    # Нормализация файла .vendors
+    echo "Normalizing .vendors file..."
+    dos2unix .vendors 2>/dev/null || true
+
+    # Чтение и обработка файла
+    while IFS='|' read -r path url; do
+        # Очистка от пробелов и невидимых символов
+        path=$(echo "$path" | tr -d '\r' | xargs)
+        url=$(echo "$url" | tr -d '\r' | xargs)
+
+        if [[ $path != \#* ]] && [[ -n "$path" ]] && [[ -n "$url" ]]; then
+            echo "-----------------------------------"
+            echo "Path: '$path'"
+            echo "URL:  '$url'"
+            echo "Target: '/app/static/vendor/$path'"
+
+            mkdir -p "/app/static/vendor/$(dirname "$path")"
+            if curl -L -f --retry 3 --retry-delay 2 "$url" -o "/app/static/vendor/$path"; then
+                echo "Successfully downloaded $path"
+            else
+                echo "${YELLOW}✗ WARNING: Failed to download $path${RESET}"
+            fi
+        fi
+    done < <(grep -v '^\s*#\|^\s*$' .vendors)
+
+    echo "-----------------------------------"
+    echo "Finished downloading vendor files"
+    echo "Vendor directory contents:"
+    ls -R /app/static/vendor/
+}
+
 setup_django() {
     echo 'Collecting static files...'
     python manage.py collectstatic --noinput --clear
@@ -35,6 +69,7 @@ run_server() {
 
 start() {
     load_env
+    download_vendors
     setup_django
     run_server
 }
