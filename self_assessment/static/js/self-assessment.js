@@ -83,7 +83,7 @@ function collectFormData() {
 }
 
 function submitForm(data) {
-    fetch('/self-assessment/upload', {
+    fetch(window.urls.self_assessment_upload, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

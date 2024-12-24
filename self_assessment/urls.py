@@ -1,3 +1,5 @@
+"""Конфигурация URL для модуля self_assessment"""
+
 from django.urls import path
 from . import views
 

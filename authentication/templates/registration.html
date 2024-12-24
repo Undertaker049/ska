@@ -13,7 +13,7 @@
 <div class="auth-container">
     <div class="auth-card">
         <h3 class="auth-title">Регистрация</h3>
-        <form id="reg" method="POST">
+        <form id="registration-form" method="POST" action="{% url 'auth:registration' %}">
             {% csrf_token %}
             <div class="form-group">
                 <label for="username" class="form-label">Имя пользователя</label>
@@ -80,7 +80,7 @@
             </div>
             <button type="submit" class="btn-auth btn-auth-primary">Зарегистрироваться</button>
             <div class="auth-links">
-                <a href="/auth/?{% if request.GET.next %}next={{ request.GET.next }}{% endif %}" class="auth-link">Уже есть аккаунт? Войти</a>
+                <a href="{% url 'auth:login' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}" class="auth-link">Уже есть аккаунт? Войти</a>
             </div>
         </form>
     </div>

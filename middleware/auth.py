@@ -1,6 +1,7 @@
 from django.shortcuts import redirect
 from django.conf import settings
 from urllib.parse import urlparse
+from django.urls import reverse_lazy
 
 
 class AuthenticationMiddleware:
@@ -9,43 +10,51 @@ class AuthenticationMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
+
         if not request.user.is_authenticated:
+
+            # Получение URL из settings.py с удалением начального слеша
+            static_url = settings.STATIC_URL.lstrip('/')
+            media_url = settings.MEDIA_URL.lstrip('/')
+            admin_url = getattr(settings, 'ADMIN_URL', 'admin/').lstrip('/')
+
             public_urls = [
-                '/auth/',
-                '/auth/registration/',
-                '/static/',
-                '/media/',
-                '/admin/',
-                '/favicon.ico'
+                str(reverse_lazy('auth:login')).lstrip('/'),
+                str(reverse_lazy('auth:registration')).lstrip('/'),
+                static_url,
+                media_url,
+                admin_url,
             ]
 
-            current_url = request.path_info
+            current_url = request.path_info.lstrip('/')
 
-            if (current_url.startswith('/auth/') and
-                current_url != '/auth/' and
-                current_url not in ['/auth/registration/', '/auth/registration']):
-                return redirect('/auth/')
+            # Нормализация URL путем добавления слеша для директорий
+            if current_url and not current_url.endswith('/'):
+                url_slash = current_url + '/'
 
-            # Проверка того, является ли текущий URL страницей входа
-            if current_url in ['/auth/', '/auth']:
+            else:
+                url_slash = current_url
+
+            # Проверка прямого совпадения с публичными URL
+            if any(url in (current_url, url_slash) for url in public_urls):
                 return self.get_response(request)
 
-            # Проверка остальных публичных URL
-            if not any(current_url.startswith(url) for url in public_urls):
-                next_url = request.get_full_path()
+            # Проверка префиксов для статических, медиа и админ URL
+            if any(current_url.startswith(url) for url in [static_url, media_url, admin_url]):
+                return self.get_response(request)
 
-                # Проверка безопасности next_url
-                parsed_next = urlparse(next_url)
+            next_url = request.get_full_path()
+            parsed_next = urlparse(next_url)
 
-                if (not parsed_next.netloc and
-                    not parsed_next.scheme and
-                    not next_url.startswith('/auth/') and
-                    not any(next_url.startswith(url) for url in public_urls)):
-                    login_url = f"{settings.LOGIN_URL}?next={next_url}"
+            if (not parsed_next.netloc and
+                not parsed_next.scheme and
+                not next_url.startswith(str(reverse_lazy('auth:login'))) and
+                not any(next_url.startswith('/' + url) for url in public_urls)):
+                login_url = f"{settings.LOGIN_URL}?next={next_url}"
 
-                else:
-                    login_url = settings.LOGIN_URL
+            else:
+                login_url = settings.LOGIN_URL
 
-                return redirect(login_url)
+            return redirect(login_url)
 
         return self.get_response(request)

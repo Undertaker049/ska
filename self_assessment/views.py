@@ -1,4 +1,5 @@
 """Методы для отображения и работы с данными блока self_assessment"""
+
 import http
 import json
 
@@ -163,11 +164,6 @@ def upload_assessment(request) -> HttpResponse:
                values_list('id', flat=True).
                first())
 
-    # if SkillsSW.objects.filter(employee_id=user_id).exists() | \
-    #         SkillsHW.objects.filter(employee_id=user_id).exists() | \
-    #         SkillsPR.objects.filter(employee_id=user_id).exists():
-    #     return HttpResponse(http.HTTPStatus.FORBIDDEN, content="Ваши данные полностью или частично есть в базе!")
-
     hw = dict(data["HW"])
     for item in hw.items():
         discipline = item[0].split(":")
@@ -176,7 +172,6 @@ def upload_assessment(request) -> HttpResponse:
                        task=TaskHW.objects.get(task=discipline[1]),
                        level=Levels.objects.get(level=item[1])
                        )
-        # obj.save()
         print(obj.level)
 
     sw = dict(data["SW"])
@@ -191,12 +186,5 @@ def upload_assessment(request) -> HttpResponse:
         print(obj.level)
 
     pr = dict
-    # for product in data.get("Processes"):
-    #     process_name = product.get("_product").replace('\'', "")
-    #     processes_tasks_level = product.get("_selections")[0]
-    #     obj = SkillsPR(employee_id=user_id,
-    #                    process=Processes.objects.get(process=process_name),
-    #                    level=Levels.objects.get(weight=processes_tasks_level))
-    #     obj.save()
 
     return HttpResponse(status=http.HTTPStatus.OK)
