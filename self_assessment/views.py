@@ -40,26 +40,45 @@ def main(request):
     if request.method != "GET":
         return HttpResponse(status=http.HTTPStatus.METHOD_NOT_ALLOWED)
 
+    # Получение данные из БД
     products_data = get_products_data()
+    levels_data = Levels.objects.order_by('weight').values('weight', 'level', 'description')
+
+    # Преобразование данные в формат, подходящий для шаблона
+    hw_items = {
+        str(product): list(products_data['hw_tasks'])
+        for product in products_data['hw_products']
+    }
+
+    sw_items = {
+        str(product): list(products_data['sw_tasks'])
+        for product in products_data['sw_products']
+    }
+
+    pr_items = {
+        str(process): ['level']  # Для процессов только один уровень
+        for process in products_data['processes']
+    }
+
+    # Преобразование уровни в список кортежей (вес, название, описание)
+    levels = [(level['weight'], level['level'], level['description']) for level in levels_data]
 
     data = {
         "blocks": {
             "hw": {
                 "name": "Hardware",
-                "products": products_data['hw_products'],
-                "tasks": products_data['hw_tasks']
+                "items": hw_items
             },
             "sw": {
                 "name": "Software",
-                "products": products_data['sw_products'],
-                "tasks": products_data['sw_tasks']
+                "items": sw_items
             },
             "pr": {
                 "name": "Processes",
-                "products": products_data['processes'],
+                "items": pr_items
             },
         },
-        "levels": get_levels()
+        "levels": levels
     }
 
     return render(request, "self_assessment.html", context={"data": data})
@@ -155,36 +174,53 @@ def upload_assessment(request) -> HttpResponse:
     if request.method != "POST":
         return HttpResponse(status=http.HTTPStatus.METHOD_NOT_ALLOWED)
 
-    print(request.POST)
-    data = json.loads(request.POST.get("data"))
+    try:
+        data = json.loads(request.POST.get("data"))
 
-    user_id = (Employees.
-               objects.
-               filter(name=f'{request.user.first_name} {request.user.last_name}').
-               values_list('id', flat=True).
-               first())
+        user_id = (Employees.
+                objects.
+                filter(name=f'{request.user.first_name} {request.user.last_name}').
+                values_list('id', flat=True).
+                first())
 
-    hw = dict(data["HW"])
-    for item in hw.items():
-        discipline = item[0].split(":")
-        obj = SkillsHW(employee_id=user_id,
-                       product=Hardware.objects.get(product=discipline[0]),
-                       task=TaskHW.objects.get(task=discipline[1]),
-                       level=Levels.objects.get(level=item[1])
-                       )
-        print(obj.level)
+        # Сохранение Hardware skills
+        hw = dict(data.get("HW", {}))
+        for item in hw.items():
+            discipline = item[0].split(":")
+            obj = SkillsHW(
+                employee_id=user_id,
+                product=Hardware.objects.get(product=discipline[0]),
+                task=TaskHW.objects.get(task=discipline[1]),
+                level=Levels.objects.get(level=item[1])
+            )
+            obj.save()
 
-    sw = dict(data["SW"])
-    for item in sw.items():
-        discipline = item[0].split(":")
-        obj = SkillsSW(employee_id=user_id,
-                       product=Software.objects.get(product=discipline[0]),
-                       task=TaskSW.objects.get(task=discipline[1]),
-                       level=Levels.objects.get(level=item[1])
-                       )
-        # obj.save()
-        print(obj.level)
+        # Сохранение Software skills
+        sw = dict(data.get("SW", {}))
+        for item in sw.items():
+            discipline = item[0].split(":")
+            obj = SkillsSW(
+                employee_id=user_id,
+                product=Software.objects.get(product=discipline[0]),
+                task=TaskSW.objects.get(task=discipline[1]),
+                level=Levels.objects.get(level=item[1])
+            )
+            obj.save()
 
-    pr = dict
+        # Сохранение Process skills
+        pr = dict(data.get("PR", {}))
+        for item in pr.items():
+            obj = SkillsPR(
+                employee_id=user_id,
+                process=Processes.objects.get(process=item[0]),
+                level=Levels.objects.get(level=item[1])
+            )
+            obj.save()
 
-    return HttpResponse(status=http.HTTPStatus.OK)
+        return HttpResponse(status=http.HTTPStatus.OK)
+
+    except Exception as e:
+        return HttpResponse(
+            f"Ошибка при сохранении данных: {str(e)}",
+            status=http.HTTPStatus.INTERNAL_SERVER_ERROR
+        )

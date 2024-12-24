@@ -1,43 +1,273 @@
-.assessment-block {
-    display: none;
+/* Контейнер оценки
+-------------------------------------------------- */
+.assessment-container {
+    padding: 2rem;
+    height: calc(100vh - 4rem);
+    display: flex;
+    flex-direction: column;
 }
 
-.assessment-block.active {
-    display: block;
+.main-content {
+    height: 100%;
 }
 
-.form-check-input {
+/* Расширения карточек направлений
+-------------------------------------------------- */
+.direction-card {
     cursor: pointer;
 }
 
-.form-check-input:checked {
-    background-color: #0d6efd;
-    border-color: #0d6efd;
+.direction-card::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    background: var(--dominant-color, rgba(255, 255, 255, 0.3));
+    border-radius: inherit;
+    opacity: 0;
+    transition: all 0.3s ease;
 }
 
-body.dark-mode .form-check-input:checked {
-    background-color: #0d6efd;
-    border-color: #0d6efd;
+.direction-content {
+    height: 100%;
 }
 
-body.dark-mode .form-check-input {
-    background-color: #343a40;
-    border-color: #6c757d;
+.direction-icon {
+    width: 80px;
+    height: 80px;
+    font-size: 2.5rem;
+    border-radius: 20px;
+}
+
+.direction-name {
+    font-size: 1.8rem;
+}
+
+/* Эффекты при наведении */
+.direction-card:hover {
+    border-color: transparent;
+}
+
+.direction-card:hover::before {
+    opacity: 0.03;
+    filter: blur(8px);
+}
+
+.direction-card:hover .direction-icon {
+    transform: scale(1.1);
+}
+
+/* Расширения секции фильтрации
+-------------------------------------------------- */
+.filter-section {
+    width: 350px;
+    height: fit-content;
+    max-height: 100%;
+}
+
+.filter-header {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.back-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0;
+}
+
+.back-button:hover {
+    color: var(--dominant-color, #ffffff);
+}
+
+.search-box {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.search-box i {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.search-input {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 0.75rem 1rem 0.75rem 2.5rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--dominant-color, rgba(255, 255, 255, 0.3));
+    box-shadow: 0 0 15px var(--dominant-color, rgba(255, 255, 255, 0.1));
+}
+
+.tasks-list {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+    max-height: calc(100vh - 250px);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-content: flex-start;
+}
+
+/* Расширения карточек продуктов
+-------------------------------------------------- */
+.products-section {
+    flex: 1;
+}
+
+.product-details {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+/* Стили для опций */
+.options-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.option-card {
+    cursor: pointer;
+}
+
+.option-input {
+    display: none;
+}
+
+.option-content {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 1rem;
+    transition: all 0.3s ease;
+}
+
+.option-text {
+    display: block;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 0.5rem;
+}
+
+.option-description {
+    display: block;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.6);
+    line-height: 1.2;
+}
+
+.option-card:hover .option-content {
+    border-color: var(--dominant-color, rgba(255, 255, 255, 0.3));
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.option-input:checked + .option-content {
+    background: var(--dominant-color, rgba(255, 255, 255, 0.1));
+    border-color: var(--dominant-color, rgba(255, 255, 255, 0.3));
+    box-shadow:
+        0 0 15px var(--dominant-color, rgba(255, 255, 255, 0.1)),
+        0 0 30px var(--dominant-color, rgba(255, 255, 255, 0.05));
+}
+
+.option-input:checked + .option-content .option-text {
+    color: var(--dominant-color, #ffffff);
+}
+
+.option-input:checked + .option-content .option-description {
+    color: var(--dominant-color, rgba(255, 255, 255, 0.8));
+}
+
+/* Кнопка завершения
+-------------------------------------------------- */
+.finish-button {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: rgba(40, 167, 69, 0.2);
+    border: 1px solid rgba(40, 167, 69, 0.3);
+    border-radius: 12px;
+    padding: 1rem 2rem;
+    color: #ffffff;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.finish-button:hover {
+    background: rgba(40, 167, 69, 0.3);
+    border-color: rgba(40, 167, 69, 0.4);
+    box-shadow:
+        0 0 15px rgba(40, 167, 69, 0.3),
+        0 0 30px rgba(40, 167, 69, 0.2);
+}
+
+/* Медиа-запросы
+-------------------------------------------------- */
+@media (max-width: 1200px) {
+    .direction-selection {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 992px) {
+    .cards-row {
+        flex-direction: column;
+    }
+
+    .filter-section {
+        width: 100%;
+    }
 }
 
 @media (max-width: 768px) {
-    .btn-group {
-        flex-direction: column;
-        width: 100%;
+    .assessment-container {
+        padding: 1rem;
+        height: auto;
     }
 
-    .btn-group .btn {
-        width: 100%;
-        margin-bottom: 0.5rem;
-        border-radius: 0.25rem !important;
+    .direction-selection {
+        padding: 1rem;
     }
 
-    .table-responsive {
-        margin-bottom: 1rem;
+    .direction-card {
+        padding: 1.5rem;
+    }
+
+    .direction-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 2rem;
+    }
+
+    .direction-name {
+        font-size: 1.5rem;
+    }
+
+    .finish-button {
+        position: static;
+        width: 100%;
+        margin-top: 1rem;
     }
 }
