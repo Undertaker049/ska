@@ -755,13 +755,13 @@ hr {
 .card-body.scrollable {
     overflow-y: auto;
     overflow-x: hidden;
-    padding-right: 8px; /* Компенсация ширины scrollbar */
+    padding-right: 8px;
 }
 
 /* Настройка скроллинга для боковой карточки */
 .card.card-sidebar .card-body {
     scrollbar-gutter: stable;
-    padding-right: 8px; /* Компенсация ширины scrollbar */
+    padding-right: 8px;
 }
 
 .card.card-sidebar .card-body::-webkit-scrollbar {
@@ -928,7 +928,6 @@ hr {
     overflow-y: auto;
 }
 
-/* Убираем дублирующие эффекты для вложенных карточек */
 .card.card-sidebar .card {
     background: transparent;
     border: none;
@@ -1383,7 +1382,7 @@ hr {
     transform: translateX(-50%) translateY(-10px);
 }
 
-/* Стрел��и для разных позиций */
+/* Стрелки для разных позиций */
 .custom-tooltip::before {
     content: '';
     position: absolute;

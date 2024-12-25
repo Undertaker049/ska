@@ -9,10 +9,12 @@
 
 {% block extra_js %}
 <script src="{% static 'js/tooltip.js' %}"></script>
+<script src="{% static 'js/radiocards.js' %}"></script>
 {% endblock %}
 
 {% block content %}
 <div class="cards-split-equal">
+
     <!-- Левая колонка с фильтрами -->
     <div class="card card-glow card-sidebar">
         <div class="card-body">
@@ -214,7 +216,7 @@
 
                         {% if employee.certificates %}
                         <div class="certificates-section">
-                            <h5>Сертификаты ({{ employee.total_certificates }})</h5>
+                            <h5>Серти��икаты ({{ employee.total_certificates }})</h5>
                             {% for cert in employee.certificates %}
                             <div class="certificate-item">
                                 <span>{{ cert.name }}</span>
@@ -236,48 +238,4 @@
         </div>
     </div>
 </div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const radioCards = document.querySelectorAll('.radio-card');
-
-    // Обработка радиокарточек
-    radioCards.forEach(card => {
-        const input = card.querySelector('input[type="radio"]');
-
-        // Меняем тип input на checkbox для множественного выбора
-        input.type = 'checkbox';
-
-        // Добавляем класс selected если карточка выбрана
-        if (input.checked) {
-            card.classList.add('selected');
-        }
-
-        // Обработчик изменения состояния input
-        input.addEventListener('change', function() {
-            card.classList.toggle('selected', this.checked);
-        });
-    });
-
-    // Обработка поиска в аккордеонах
-    const searchInputs = document.querySelectorAll('.search-box input[data-search-category]');
-
-    searchInputs.forEach(input => {
-        input.addEventListener('input', function() {
-            const category = this.dataset.searchCategory;
-            const searchValue = this.value.toLowerCase().trim();
-            const cards = document.querySelectorAll(`input[data-category="${category}"]`).forEach(input => {
-                const card = input.closest('.tooltip-wrapper');
-                const skillName = input.value.toLowerCase();
-
-                if (searchValue === '' || skillName.includes(searchValue)) {
-                    card.style.display = '';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        });
-    });
-});
-</script>
 {% endblock %}

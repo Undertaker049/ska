@@ -85,7 +85,7 @@
 - [x] Удалить отдельный стиль аккордеона из employee_evaluation_supervisor_filters.css
 - [ ] Доработать стиль всплывающего окна
 - [ ] Доработать стиль выпадающего списка в модуле profile
-- [ ] Вынести логику обработки радиокарточек в общедоступный radiocards.js из employee_evaluation/templates/employee_evaluation.html
+- [x] Вынести логику обработки радиокарточек в общедоступный radiocards.js из employee_evaluation/templates/employee_evaluation.html
 
 ## Подготовка к релизу
 - [x] Убрать автосгенерированные комментарии в коде
