@@ -5,26 +5,44 @@ function initializeRadioCards() {
     const radioCards = document.querySelectorAll('.radio-card');
 
     radioCards.forEach(card => {
-        const input = card.querySelector('input[type="radio"]');
+        const input = card.querySelector('input[type="radio"], input[type="checkbox"]');
+        const isSingleSelect = input.dataset.mode === 'single';
+        const radioGroup = isSingleSelect ? document.querySelectorAll(`input[name="${input.name}"]`) : null;
 
-        // Изменение типа input на checkbox для множественного выбора
-        input.type = 'checkbox';
+        // Изменение типа input на checkbox только для multiple select
+        if (!isSingleSelect && input.type === 'radio') {
+            input.type = 'checkbox';
+        }
 
         // Обработчик клика по карточке
         card.addEventListener('click', function(e) {
-
             if (e.target.closest('.custom-tooltip')) {
                 return;
             }
 
             const input = this.querySelector('input');
-            input.checked = !input.checked;
 
-            // Вызов события изменения для фильтрации
+            if (isSingleSelect) {
+                // Для single select снимаем выделение со всех карточек группы
+                radioGroup.forEach(groupInput => {
+                    const groupCard = groupInput.closest('.radio-card');
+                    if (groupCard) {
+                        groupCard.classList.remove('selected');
+                    }
+                    groupInput.checked = false;
+                });
+
+                // Выделяем текущую карточку
+                input.checked = true;
+                card.classList.add('selected');
+            } else {
+                // Для multiple select переключаем состояние
+                input.checked = !input.checked;
+                updateCardState(card, input.checked);
+            }
+
+            // Вызов события изменения для обработки
             input.dispatchEvent(new Event('change'));
-
-            // Обновление визуального состояние карточки
-            updateCardState(card, input.checked);
         });
 
         // Инициализация начального состояния
@@ -41,12 +59,9 @@ function initializeRadioCards() {
  * @param {boolean} isChecked - Состояние чекбокса
  */
 function updateCardState(card, isChecked) {
-
     if (isChecked) {
         card.classList.add('selected');
-    }
-
-    else {
+    } else {
         card.classList.remove('selected');
     }
 }
@@ -68,9 +83,7 @@ function initializeAccordionSearch() {
 
                 if (searchValue === '' || skillName.includes(searchValue)) {
                     card.style.display = '';
-                }
-
-                else {
+                } else {
                     card.style.display = 'none';
                 }
             });
