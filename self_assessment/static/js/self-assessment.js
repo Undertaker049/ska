@@ -157,12 +157,94 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.hide();
     });
 
-    // Проверка сохраненных данн��х
+    // Проверка сохраненных данных
     const savedData = localStorage.getItem('SKA_DATA');
     if (savedData) {
         modal.show();
     }
+
+    // Инициализация обработчиков для иконок
+    initializeIconAnimations();
 });
+
+function initializeIconAnimations() {
+    const cards = document.querySelectorAll('.direction-card');
+
+    cards.forEach(card => {
+        const icon = card.querySelector('.direction-icon');
+        const iconI = icon.querySelector('i');
+        let isAnimating = false;
+        let pulseTimeout = null;
+
+        // Добавляем класс состояния покоя
+        icon.classList.add('at-rest');
+
+        function resetIconState() {
+            icon.style.animation = 'none';
+            iconI.style.animation = 'none';
+            icon.offsetHeight; // Форсируем reflow
+            iconI.offsetHeight;
+            icon.style.animation = '';
+            iconI.style.animation = '';
+            iconI.classList.remove('pulse-ready');
+            clearTimeout(pulseTimeout);
+        }
+
+        function startPulseAnimation() {
+            if (card.matches(':hover')) {
+                iconI.classList.add('pulse-ready');
+            }
+        }
+
+        card.addEventListener('mouseenter', () => {
+            // Сбрасываем предыдущие состояния
+            resetIconState();
+
+            // Убираем класс состояния покоя
+            requestAnimationFrame(() => {
+                icon.classList.remove('at-rest');
+
+                // Запускаем пульсацию после завершения начальной анимации
+                pulseTimeout = setTimeout(startPulseAnimation, 600);
+            });
+        });
+
+        card.addEventListener('mouseleave', () => {
+            // Сбрасываем состояния
+            resetIconState();
+
+            // Отмечаем начало анимации
+            isAnimating = true;
+
+            // Слушаем окончание анимации возврата
+            const handleAnimationEnd = (event) => {
+                if (event.target === icon) {
+                    isAnimating = false;
+                    requestAnimationFrame(() => {
+                        if (!card.matches(':hover')) {
+                            icon.classList.add('at-rest');
+                        }
+                    });
+                    icon.removeEventListener('transitionend', handleAnimationEnd);
+                }
+            };
+
+            icon.addEventListener('transitionend', handleAnimationEnd);
+        });
+
+        // Обработка активного состояния
+        card.addEventListener('mousedown', () => {
+            resetIconState();
+            clearTimeout(pulseTimeout);
+        });
+
+        card.addEventListener('mouseup', () => {
+            if (card.matches(':hover')) {
+                pulseTimeout = setTimeout(startPulseAnimation, 300);
+            }
+        });
+    });
+}
 
 // Вспомогательные функции
 function isFormComplete() {

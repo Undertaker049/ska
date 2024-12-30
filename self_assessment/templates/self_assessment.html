@@ -14,16 +14,16 @@
         {% csrf_token %}
 
         <!-- Выбор направления -->
-        <div class="direction-selection cards-grid">
+        <div class="direction-selection">
             {% for key, block in data.blocks.items %}
                 <div class="card direction-card" data-direction="{{ key }}">
                     <div class="card-content direction-content">
                         <div class="card-icon direction-icon">
                             <i class="bi {% if key == 'hw' %}bi-cpu{% elif key == 'sw' %}bi-code-square{% else %}bi-gear{% endif %}"></i>
                         </div>
-                        <div class="card-info direction-info">
-                            <h3 class="card-name direction-name">{{ block.name }}</h3>
-                            <span class="card-description direction-count">{{ block.items|length }} продуктов</span>
+                        <div class="card-info">
+                            <h3 class="card-name direction-name" data-text="{{ block.name }}">{{ block.name }}</h3>
+                            <p class="card-description">{{ block.items|length|pluralize:"продукт" }}</p>
                         </div>
                     </div>
                 </div>
@@ -32,93 +32,75 @@
 
         <!-- Основной контент -->
         <div class="main-content" style="display: none;">
-            <div class="cards-split">
+            <div class="cards-split-equal">
                 <!-- Карточка с фильтрацией -->
-                <div class="card card-sidebar filter-section">
-                    <div class="card-body">
-                        <div class="filter-header">
-                            <button type="button" class="back-button">
-                                <i class="bi bi-arrow-left"></i>
+                <div class="card card-sidebar card-glow">
+                    <div class="card-header">
+                        <div class="d-flex align-items-center mb-3">
+                            <button type="button" class="back-button d-flex align-items-center me-3">
+                                <i class="bi bi-arrow-left me-2"></i>
                                 <span>Назад к выбору направления</span>
                             </button>
-                            <h3 class="card-title direction-title"></h3>
                         </div>
-                        <div class="filter-body">
-                            <div class="search-box">
-                                <i class="bi bi-search"></i>
-                                <input type="text" class="search-input" placeholder="Поиск по задачам...">
-                            </div>
-                            <div class="tasks-list">
-                                <!-- Задачи будут добавлены динамически -->
-                            </div>
+                        <h3 class="h4 mb-0 direction-title"></h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group search-box">
+                            <i class="bi bi-search"></i>
+                            <input type="text" class="form-control search-input" placeholder="Поиск по задачам...">
+                        </div>
+                        <div class="tasks-list">
+                            <!-- Задачи будут добавлены динамически -->
                         </div>
                     </div>
                 </div>
 
                 <!-- Карточка с продуктами -->
-                <div class="card card-main products-section">
+                <div class="card card-main card-glow">
+                    <div class="card-header">
+                        <h2 class="h4 mb-0">Продукты</h2>
+                    </div>
                     <div class="card-body">
-                        <h3 class="card-title">Продукты</h3>
-                        <div class="card-scrollable">
-                            <div class="products-grid cards-grid">
-                                {% for key, block in data.blocks.items %}
-                                    <div class="products-block" id="products_{{ key }}" style="display: none;">
-                                        {% for product, disciplines in block.items.items %}
-                                            <div class="card product-card" data-tasks="{{ disciplines|join:',' }}">
-                                                <div class="card-content">
-                                                    <div class="card-icon product-icon">
-                                                        {% if key == 'hw' %}
-                                                            <i class="bi bi-hdd"></i>
-                                                        {% elif key == 'sw' %}
-                                                            <i class="bi bi-window"></i>
-                                                        {% else %}
-                                                            <i class="bi bi-diagram-3"></i>
-                                                        {% endif %}
-                                                    </div>
-                                                    <div class="card-info product-info">
-                                                        <span class="card-name product-name">{{ product }}</span>
-                                                        <span class="card-description product-tasks">{{ disciplines|length }} задач{% if disciplines|length > 1 %}и{% endif %}</span>
-                                                    </div>
+                        {% for key, block in data.blocks.items %}
+                            <div class="products-block" id="products_{{ key }}" style="display: none;">
+                                {% for product, disciplines in block.items.items %}
+                                    <div class="tooltip-wrapper" style="position: relative;">
+                                        <div class="card product-card card-glow" data-tasks="{{ disciplines|join:',' }}" style="width: 100%;">
+                                            <div class="card-body d-flex align-items-center">
+                                                <div class="card-icon me-3">
+                                                    {% if key == 'hw' %}
+                                                        <i class="bi bi-hdd"></i>
+                                                    {% elif key == 'sw' %}
+                                                        <i class="bi bi-window"></i>
+                                                    {% else %}
+                                                        <i class="bi bi-diagram-3"></i>
+                                                    {% endif %}
                                                 </div>
-                                                <div class="product-details" style="display: none;">
-                                                    {% for discipline in disciplines %}
-                                                        <div class="discipline-section">
-                                                            <h5>{{ discipline }}</h5>
-                                                            <div class="options-grid">
-                                                                {% for weight, level, description in data.levels %}
-                                                                    <label class="option-card">
-                                                                        <input type="radio"
-                                                                               class="option-input"
-                                                                               name="{{ product|replace_dj:" |_" }}_{{ discipline|replace_dj:" |_" }}"
-                                                                               value="{{ level }}"
-                                                                               required>
-                                                                        <div class="option-content">
-                                                                            <span class="option-text">{{ level }}</span>
-                                                                            <span class="option-description">{{ description }}</span>
-                                                                        </div>
-                                                                    </label>
-                                                                {% endfor %}
-                                                            </div>
-                                                        </div>
-                                                    {% endfor %}
+                                                <div class="card-info flex-grow-1">
+                                                    <h5 class="card-title mb-1">{{ product }}</h5>
+                                                    <p class="card-text">
+                                                        <i class="bi bi-list-task"></i>
+                                                        {{ disciplines|length|pluralize:"задача" }}
+                                                    </p>
+                                                </div>
+                                                <div class="card-action ms-2">
+                                                    <i class="bi bi-chevron-right text-muted"></i>
                                                 </div>
                                             </div>
-                                        {% endfor %}
+                                        </div>
+                                        <div class="custom-tooltip tooltip-bottom" style="position: absolute; width: 100%;">
+                                            <div class="custom-tooltip-title">{{ product }}</div>
+                                            <div class="custom-tooltip-content">
+                                                Задачи: {{ disciplines|join:', ' }}
+                                            </div>
+                                        </div>
                                     </div>
                                 {% endfor %}
                             </div>
-                        </div>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
-
-            <!-- Кнопка завершения -->
-            <button type="button" class="finish-button" id="finish-button" style="display: none;">
-                <span class="button-content">
-                    <i class="bi bi-check-circle"></i>
-                    <span class="button-text">Завершить</span>
-                </span>
-            </button>
         </div>
     </form>
 </div>
@@ -136,8 +118,8 @@
                 <p class="text-muted">(В случае отказа данные будут стёрты)</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" id="modal-accept">Продолжить</button>
-                <button type="button" class="btn btn-secondary" id="modal-decline">Очистить</button>
+                <button type="button" class="btn btn-custom btn-custom-primary" id="modal-accept">Продолжить</button>
+                <button type="button" class="btn btn-custom btn-custom-secondary" id="modal-decline">Очистить</button>
             </div>
         </div>
     </div>
@@ -145,5 +127,6 @@
 {% endblock %}
 
 {% block extra_js %}
+<script src="{% static 'js/tooltip.js' %}"></script>
 <script src="{% static 'js/self-assessment.js' %}"></script>
 {% endblock %}
