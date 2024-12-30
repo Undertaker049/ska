@@ -11,11 +11,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Инициализация блоков и подсчет вопросов
     Object.keys(assessmentData).forEach(blockId => {
         const block = document.getElementById(`products_${blockId}`);
+
         if (block) {
             const inputs = block.querySelectorAll('input[type="radio"][required]');
             const uniqueNames = new Set(Array.from(inputs).map(input => input.name));
             assessmentData[blockId].total = uniqueNames.size;
-        } else {
+        }
+
+        else {
             console.error(`Block with id products_${blockId} not found`);
         }
     });
@@ -24,25 +27,21 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.direction-card').forEach(card => {
         card.addEventListener('click', () => {
             const direction = card.dataset.direction;
-
-            // Скрываем выбор направления
             document.querySelector('.direction-selection').style.display = 'none';
-
-            // Показываем основной контент
             const mainContent = document.querySelector('.main-content');
             mainContent.style.display = 'block';
 
-            // Обновляем заголовок
+            // Обновление заголовка
             const directionTitle = mainContent.querySelector('.direction-title');
             directionTitle.textContent = card.querySelector('.direction-name').textContent;
 
-            // Показываем блок продуктов для выбранного направления
+            // Инициализация блока продуктов для выбранного направления
             document.querySelectorAll('.products-block').forEach(block => {
                 block.style.display = 'none';
             });
             document.getElementById(`products_${direction}`).style.display = 'grid';
 
-            // Заполняем список задач
+            // Заполнение списка задач
             const tasksList = mainContent.querySelector('.tasks-list');
             const tasks = new Set();
             document.querySelectorAll(`#products_${direction} .product-card`).forEach(card => {
@@ -61,7 +60,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
 
-            // Показываем кнопку завершения
             document.getElementById('finish-button').style.display = 'block';
         });
     });
@@ -84,15 +82,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Обработка фильтрации по задачам
     document.querySelector('.tasks-list').addEventListener('change', (e) => {
+
         if (e.target.type === 'checkbox') {
             const selectedTasks = Array.from(document.querySelectorAll('input[name="task_filter"]:checked'))
                 .map(input => input.value);
 
             document.querySelectorAll('.product-card').forEach(card => {
                 const cardTasks = card.dataset.tasks.split(',');
+
                 if (selectedTasks.length === 0 || cardTasks.some(task => selectedTasks.includes(task))) {
                     card.style.display = 'block';
-                } else {
+                }
+
+                else {
                     card.style.display = 'none';
                 }
             });
@@ -103,13 +105,15 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.product-card').forEach(card => {
         card.addEventListener('click', () => {
             const details = card.querySelector('.product-details');
+
             if (details.style.display === 'none') {
-                // Скрываем все открытые детали
                 document.querySelectorAll('.product-details').forEach(d => {
                     d.style.display = 'none';
                 });
                 details.style.display = 'block';
-            } else {
+            }
+
+            else {
                 details.style.display = 'none';
             }
         });
@@ -118,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Обработка выбора ответов
     document.querySelectorAll('input[type="radio"]').forEach(radio => {
         radio.addEventListener('change', (e) => {
-            e.stopPropagation(); // Предотвращаем всплытие обытия
+            e.stopPropagation();
 
             const blockId = e.target.closest('.products-block').id.replace('products_', '');
             const inputName = e.target.name;
@@ -137,10 +141,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const finishButton = document.getElementById('finish-button');
     if (finishButton) {
         finishButton.addEventListener('click', () => {
+
             if (isFormComplete()) {
                 const formData = collectFormData();
                 submitForm(formData);
-            } else {
+            }
+
+            else {
                 showSnackbar("Сначал выберите ответ во всех вопросах!", 'warning');
             }
         });
@@ -173,73 +180,78 @@ function initializeIconAnimations() {
     cards.forEach(card => {
         const icon = card.querySelector('.direction-icon');
         const iconI = icon.querySelector('i');
-        let isAnimating = false;
         let pulseTimeout = null;
+        let isReturning = false;
 
-        // Добавляем класс состояния покоя
+        // Обработка состояния покоя иконки
         icon.classList.add('at-rest');
 
         function resetIconState() {
             icon.style.animation = 'none';
             iconI.style.animation = 'none';
-            icon.offsetHeight; // Форсируем reflow
+            icon.style.transform = '';
+            iconI.style.transform = '';
+            icon.offsetHeight;
             iconI.offsetHeight;
             icon.style.animation = '';
             iconI.style.animation = '';
             iconI.classList.remove('pulse-ready');
             clearTimeout(pulseTimeout);
+            isReturning = false;
         }
 
         function startPulseAnimation() {
-            if (card.matches(':hover')) {
+
+            if (card.matches(':hover') && !isReturning) {
                 iconI.classList.add('pulse-ready');
             }
         }
 
         card.addEventListener('mouseenter', () => {
-            // Сбрасываем предыдущие состояния
-            resetIconState();
 
-            // Убираем класс состояния покоя
-            requestAnimationFrame(() => {
-                icon.classList.remove('at-rest');
+            if (isReturning) {
+                icon.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+                iconI.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
 
-                // Запускаем пульсацию после завершения начальной анимации
-                pulseTimeout = setTimeout(startPulseAnimation, 600);
-            });
+                requestAnimationFrame(() => {
+                    resetIconState();
+                    icon.classList.remove('at-rest');
+                    pulseTimeout = setTimeout(startPulseAnimation, 600);
+                });
+            }
+
+            else {
+                resetIconState();
+                requestAnimationFrame(() => {
+                    icon.classList.remove('at-rest');
+                    pulseTimeout = setTimeout(startPulseAnimation, 600);
+                });
+            }
         });
 
         card.addEventListener('mouseleave', () => {
-            // Сбрасываем состояния
+            isReturning = true;
             resetIconState();
 
-            // Отмечаем начало анимации
-            isAnimating = true;
+            icon.addEventListener('transitionend', () => {
 
-            // Слушаем окончание анимации возврата
-            const handleAnimationEnd = (event) => {
-                if (event.target === icon) {
-                    isAnimating = false;
+                if (!card.matches(':hover')) {
                     requestAnimationFrame(() => {
-                        if (!card.matches(':hover')) {
-                            icon.classList.add('at-rest');
-                        }
+                        icon.classList.add('at-rest');
+                        isReturning = false;
                     });
-                    icon.removeEventListener('transitionend', handleAnimationEnd);
                 }
-            };
-
-            icon.addEventListener('transitionend', handleAnimationEnd);
+            }, { once: true });
         });
 
-        // Обработка активного состояния
         card.addEventListener('mousedown', () => {
             resetIconState();
             clearTimeout(pulseTimeout);
         });
 
         card.addEventListener('mouseup', () => {
-            if (card.matches(':hover')) {
+
+if (card.matches(':hover') && !isReturning) {
                 pulseTimeout = setTimeout(startPulseAnimation, 300);
             }
         });
@@ -256,6 +268,7 @@ function collectFormData() {
     Object.entries(assessmentData).forEach(([blockId, block]) => {
         data[blockId.toUpperCase()] = block.selections;
     });
+
     return data;
 }
 
@@ -271,14 +284,18 @@ function submitForm(data) {
         body: formData
     })
     .then(response => {
+
         if (response.ok) {
             showSnackbar("езультаты успешно сохранены!", 'success');
             const finishButton = document.getElementById('finish-button');
+
             if (finishButton) {
                 finishButton.disabled = true;
             }
             localStorage.removeItem('SKA_DATA');
-        } else {
+        }
+
+        else {
             return response.text().then(text => {
                 throw new Error(text || "Произошла ошибка при сохранении");
             });
@@ -295,14 +312,17 @@ function saveFormData() {
 
 function restoreFormData() {
     const savedData = JSON.parse(localStorage.getItem('SKA_DATA'));
+
     if (savedData) {
         Object.entries(savedData).forEach(([blockId, selections]) => {
             const localBlockId = blockId.toLowerCase();
             Object.entries(selections).forEach(([name, value]) => {
                 const input = document.querySelector(`#products_${localBlockId} input[name="${name}"][value="${value}"]`);
+
                 if (input) {
                     input.checked = true;
                     assessmentData[localBlockId].selections[name] = value;
+
                     if (!assessmentData[localBlockId].selections[name]) {
                         assessmentData[localBlockId].count++;
                     }

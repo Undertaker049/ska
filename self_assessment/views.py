@@ -6,6 +6,9 @@ import json
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render
+from django.utils.decorators import method_decorator
+from django.views.generic import TemplateView
+from django.urls import reverse_lazy
 
 from .models import (Hardware,
                      TaskHW,
@@ -20,68 +23,104 @@ from .models import (Hardware,
 
 def get_products_data():
     return {
-        'hw_products': Hardware.objects.values_list('product', flat=True),
-        'sw_products': Software.objects.values_list('product', flat=True),
-        'hw_tasks': TaskHW.objects.values_list('task', flat=True),
-        'sw_tasks': TaskSW.objects.values_list('task', flat=True),
-        'processes': Processes.objects.values_list('process', flat=True)
+        'hw_products': Hardware.objects.all(),
+        'sw_products': Software.objects.all(),
+        'hw_tasks': TaskHW.objects.all(),
+        'sw_tasks': TaskSW.objects.all(),
+        'processes': Processes.objects.all()
     }
 
 def get_levels():
     return Levels.objects.order_by("weight").values_list('level', flat=True)
 
-@login_required
-def main(request):
-    """
-    Метод выводит опросник по заданным дисциплинам, дисциплины берутся из БД
-    :param request: Объект запроса
-    :return: рендер страницы
-    """
-    if request.method != "GET":
-        return HttpResponse(status=http.HTTPStatus.METHOD_NOT_ALLOWED)
+class BaseAssessmentView(TemplateView):
+    template_name = "self_assessment_direction.html"
 
-    # Получение данные из БД
-    products_data = get_products_data()
-    levels_data = Levels.objects.order_by('weight').values('weight', 'level', 'description')
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
 
-    # Преобразование данные в формат, подходящий для шаблона
-    hw_items = {
-        str(product): list(products_data['hw_tasks'])
-        for product in products_data['hw_products']
-    }
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        products_data = get_products_data()
+        levels_data = Levels.objects.order_by('weight').values('weight', 'level', 'description')
+        context['levels'] = [(level['weight'], level['level'], level['description']) for level in levels_data]
+        return context
 
-    sw_items = {
-        str(product): list(products_data['sw_tasks'])
-        for product in products_data['sw_products']
-    }
+class HardwareAssessmentView(BaseAssessmentView):
 
-    pr_items = {
-        str(process): ['level']  # Для процессов только один уровень
-        for process in products_data['processes']
-    }
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        products_data = get_products_data()
+        context['direction'] = {
+            'name': 'Hardware',
+            'items': {
+                str(product): list(TaskHW.objects.all().values_list('task', flat=True))
+                for product in products_data['hw_products']
+            }
+        }
+        return context
 
-    # Преобразование уровни в список кортежей (вес, название, описание)
-    levels = [(level['weight'], level['level'], level['description']) for level in levels_data]
+class SoftwareAssessmentView(BaseAssessmentView):
 
-    data = {
-        "blocks": {
-            "hw": {
-                "name": "Hardware",
-                "items": hw_items
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        products_data = get_products_data()
+        context['direction'] = {
+            'name': 'Software',
+            'items': {
+                str(product): list(TaskSW.objects.all().values_list('task', flat=True))
+                for product in products_data['sw_products']
+            }
+        }
+        return context
+
+class ProcessesAssessmentView(BaseAssessmentView):
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        products_data = get_products_data()
+        context['direction'] = {
+            'name': 'Processes',
+            'items': {
+                str(process): list(Levels.objects.all().values_list('level', flat=True))
+                for process in products_data['processes']
+            }
+        }
+        return context
+
+class SelfAssessmentView(TemplateView):
+    template_name = "self_assessment.html"
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        products_data = get_products_data()
+
+        context['directions'] = [
+            {
+                'name': 'Hardware',
+                'icon': 'bi-cpu',
+                'url': reverse_lazy('hardware_assessment'),
+                'items': {str(product): [] for product in products_data['hw_products']}
             },
-            "sw": {
-                "name": "Software",
-                "items": sw_items
+            {
+                'name': 'Software',
+                'icon': 'bi-code-square',
+                'url': reverse_lazy('software_assessment'),
+                'items': {str(product): [] for product in products_data['sw_products']}
             },
-            "pr": {
-                "name": "Processes",
-                "items": pr_items
-            },
-        },
-        "levels": levels
-    }
-
-    return render(request, "self_assessment.html", context={"data": data})
+            {
+                'name': 'Processes',
+                'icon': 'bi-gear',
+                'url': reverse_lazy('processes_assessment'),
+                'items': {str(process): [] for process in products_data['processes']}
+            }
+        ]
+        return context
 
 @login_required
 def old(request):
