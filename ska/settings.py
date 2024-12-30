@@ -84,8 +84,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'certificate.middleware.CertificateMiddleware',
-    'middleware.auth.AuthenticationMiddleware',
-    'middleware.background.BackgroundMiddleware',
+    'authentication.middleware.AuthenticationMiddleware',
+    'ska.middleware.BackgroundMiddleware',
 ]
 
 ROOT_URLCONF = 'ska.urls'
