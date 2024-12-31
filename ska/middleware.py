@@ -46,7 +46,6 @@ class BackgroundMiddleware:
         self.backgrounds = {
             str(reverse_lazy('profile:main')): 'profile_bg.jpg',
             str(reverse_lazy('auth:login')): 'auth_bg.jpg',
-            str(reverse_lazy('auth:registration')): 'auth_bg.jpg',
             str(reverse_lazy('self_assessment')): 'self_assessment_bg.jpg',
             str(reverse_lazy('certificate_main')): 'certificate_bg.jpg',
             str(reverse_lazy('employee_evaluation_main')): 'employee_evaluation_bg.jpg',
@@ -77,8 +76,10 @@ class BackgroundMiddleware:
         path_parts = path.rstrip('/').split('/')
         while path_parts:
             parent_path = '/'.join(path_parts) + '/'
+
             if parent_path in self.backgrounds:
                 return self.backgrounds[parent_path]
+
             path_parts.pop()
 
         return self.default_bg

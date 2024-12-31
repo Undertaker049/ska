@@ -1870,3 +1870,88 @@ hr {
         0 8px 16px rgba(0, 0, 0, 0.4);
     letter-spacing: 0.02em;
 }
+
+/* Кнопки с эффектом свечения */
+.btn.btn-custom.btn-glare {
+    width: 100%;
+    padding: 0.75rem;
+    font-weight: 500;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn.btn-custom.btn-glare::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        45deg,
+        transparent,
+        rgba(255, 255, 255, 0.1),
+        transparent
+    );
+    transform: translateX(-100%);
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn.btn-custom.btn-glare:hover::before {
+    transform: translateX(100%);
+}
+
+.btn.btn-custom.btn-glare-primary {
+    background: var(--dominant-color) !important;
+    color: rgba(0, 0, 0, 0.8) !important;
+}
+
+.btn.btn-custom.btn-glare-primary:hover {
+    box-shadow: 0 0 20px rgba(var(--dominant-color-rgb), 0.5) !important;
+}
+
+.btn.btn-custom.btn-glare-outline {
+    background: transparent !important;
+    border: 1px solid var(--dominant-color) !important;
+    color: var(--dominant-color) !important;
+}
+
+.btn.btn-custom.btn-glare-outline:hover {
+    background: rgba(var(--dominant-color-rgb), 0.1) !important;
+    box-shadow: 0 0 20px rgba(var(--dominant-color-rgb), 0.3) !important;
+}
+
+/* Интерактивные ссылки */
+.interactive-links {
+    text-align: center;
+    margin-top: 1.5rem;
+}
+
+.interactive-link {
+    color: var(--dominant-color);
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+}
+
+.interactive-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 1px;
+    background: var(--dominant-color);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateX(-50%);
+}
+
+.interactive-link:hover {
+    background: rgba(var(--dominant-color-rgb), 0.1);
+}
+
+.interactive-link:hover::after {
+    width: 80%;
+}
