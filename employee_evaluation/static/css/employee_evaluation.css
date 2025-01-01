@@ -252,3 +252,36 @@
     border-color: rgba(255, 255, 255, 0.05);
     transform: translateY(-1px);
 }
+
+.accordion-body .radio-card {
+    cursor: pointer;
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 1.5rem;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    transform-origin: center center;
+    will-change: transform, box-shadow;
+}
+
+.accordion-body .radio-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.2);
+}
+
+.accordion-body .radio-card.selected {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+}
+
+.accordion-body .radio-card.selected:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.2);
+}
