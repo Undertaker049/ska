@@ -190,19 +190,33 @@
                                     </div>
                                     {% if role != 'admin' %}
                                     <div class="form-group">
-                                        <label class="form-label">Отдел</label>
-                                        <select name="department" class="form-select">
-                                            {% for dept in departments %}
-                                            <option value="{{ dept.id }}" {% if dept.id == department.id %}selected{% endif %}>
-                                                {{ dept.name }}
-                                            </option>
-                                            {% endfor %}
-                                        </select>
+                                        <label class="form-label" for="departmentDropdown">Отдел</label>
+                                        <div class="dropdown">
+                                            <button class="btn form-control text-start d-flex justify-content-between align-items-center"
+                                                    type="button"
+                                                    id="departmentDropdown"
+                                                    data-bs-toggle="dropdown"
+                                                    aria-expanded="false">
+                                                <span class="selected-department">{{ department.name }}</span>
+                                                <input type="hidden" name="department" value="{{ department.id }}">
+                                            </button>
+                                            <ul class="dropdown-menu w-100" aria-labelledby="departmentDropdown">
+                                                {% for dept in departments %}
+                                                <li>
+                                                    <a class="dropdown-item {% if dept.id == department.id %}active{% endif %}"
+                                                       href="#"
+                                                       data-value="{{ dept.id }}">
+                                                        {{ dept.name }}
+                                                    </a>
+                                                </li>
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
                                     </div>
                                     {% endif %}
                                 </div>
                                 <div class="form-actions">
-                                    <button type="submit" class="btn btn-custom btn-custom-primary">Сохранить изменения</button>
+                                    <button type="submit" class="btn btn-custom btn-glare btn-glare-primary">Сохранить изменения</button>
                                 </div>
                             </form>
                         </div>
@@ -220,7 +234,7 @@
                                     <label class="form-label">Текущий пароль</label>
                                     <div class="input-group">
                                         <input type="password" name="current_password" class="form-control" required>
-                                        <button type="button" class="btn btn-custom password-toggle" aria-label="Показать/скрыть пароль">
+                                        <button type="button" class="password-toggle" aria-label="Показать/скрыть пароль">
                                             <i class="bi bi-eye"></i>
                                         </button>
                                     </div>
@@ -229,7 +243,7 @@
                                     <label class="form-label">Новый пароль</label>
                                     <div class="input-group">
                                         <input type="password" name="new_password" class="form-control" required>
-                                        <button type="button" class="btn btn-custom password-toggle" aria-label="Показать/скрыть пароль">
+                                        <button type="button" class="password-toggle" aria-label="Показать/скрыть пароль">
                                             <i class="bi bi-eye"></i>
                                         </button>
                                     </div>
@@ -238,13 +252,13 @@
                                     <label class="form-label">Подтвердите новый пароль</label>
                                     <div class="input-group">
                                         <input type="password" name="confirm_password" class="form-control" required>
-                                        <button type="button" class="btn btn-custom password-toggle" aria-label="Показать/скрыть пароль">
+                                        <button type="button" class="password-toggle" aria-label="Показать/скрыть пароль">
                                             <i class="bi bi-eye"></i>
                                         </button>
                                     </div>
                                 </div>
                                 <div class="form-actions">
-                                    <button type="submit" class="btn btn-custom btn-custom-primary">Изменить пароль</button>
+                                    <button type="submit" class="btn btn-custom btn-glare btn-glare-primary">Изменить пароль</button>
                                 </div>
                             </form>
                         </div>
@@ -257,6 +271,13 @@
 {% endblock %}
 
 {% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="{% static 'js/radiocards.js' %}"></script>
 <script type="module" src="{% static 'js/profile.js' %}"></script>
+<script type="module">
+    import { initDropdown } from "{% static 'js/dropdown.js' %}";
+    window.addEventListener('load', function() {
+        initDropdown();
+    });
+</script>
 {% endblock %}
