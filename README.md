@@ -92,8 +92,8 @@ A Docker-based assessment system
    ```
 
 3. Access the application:
-   - 🌐 [Main Interface](http://127.0.0.1:8000/)
-   - ⚙️ [Admin Panel](http://127.0.0.1:8000/admin)
+   - 🌐 [Main Interface](http://127.0.0.1:80/)
+   - ⚙️ [Admin Panel](http://127.0.0.1:80/admin)
 
 > **Note**: First build may take several minutes depending on your internet connection and system performance
 
