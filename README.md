@@ -67,8 +67,8 @@ A Docker-based assessment system
    ```
 
 4. Access the application:
-   - 🌐 [Main Interface](http://127.0.0.1:8000/)
-   - ⚙️ [Admin Panel](http://127.0.0.1:8000/admin)
+   - 🌐 [Main Interface](http://127.0.0.1:80/)
+   - ⚙️ [Admin Panel](http://127.0.0.1:80/admin)
 
 ### Windows Setup
 > Docker is required, see [Docker Installation](DOCKER_INSTALL.md)
