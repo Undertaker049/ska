@@ -2,6 +2,8 @@ from django.db.models.signals import post_migrate
 from django.dispatch import receiver
 from django.db import connection
 import os
+from termcolor import colored
+import sys
 
 
 @receiver(post_migrate)
@@ -17,7 +19,7 @@ def initialize_database(sender, **kwargs):
         sql_file_path = os.path.join('db', 'ska-init.sql')
 
         if not os.path.exists(sql_file_path):
-            print(f'Error: SQL file not found at {sql_file_path}')
+            print(colored(f'Error: SQL file not found at {sql_file_path}', 'red', attrs=['bold']), file=sys.stderr)
             return
 
         # Чтение БД
@@ -28,7 +30,7 @@ def initialize_database(sender, **kwargs):
         with connection.cursor() as cursor:
             cursor.executescript(sql_content)
 
-        print('Database initialized successfully from ska-init.sql')
+        print(colored('Database initialized successfully from ska-init.sql', 'green', attrs=['bold']))
 
     except Exception as e:
-        print(f'Error initializing database: {str(e)}')
+        print(colored(f'Error initializing database: {str(e)}', 'red', attrs=['bold']), file=sys.stderr)
