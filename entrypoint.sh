@@ -88,6 +88,13 @@ setup_django() {
 
     echo 'Running migrations...'
     python manage.py migrate
+
+    echo 'Initializing database...'
+    if ! python manage.py setdb --force; then
+        echo "${RED}ERROR: Failed to initialize database${RESET}"
+        return 1
+    fi
+    echo "${GREEN}Database initialized successfully${RESET}"
 }
 
 run_server() {
