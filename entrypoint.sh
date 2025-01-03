@@ -8,6 +8,24 @@ RESET=$(TERM=xterm-256color tput sgr0)
 
 cd /app
 
+# Настройка временной зоны
+setup_timezone() {
+    if [ -f /etc/timezone ]; then
+        echo "Setting timezone from host system..."
+        TZ=$(cat /etc/timezone)
+        export TZ
+        echo "Current timezone: $TZ"
+        # Обновление временной зоны в системе
+        ln -snf /usr/share/zoneinfo/$TZ /etc/localtime
+        echo $TZ > /etc/timezone
+        # Проверка настроек времени
+        date
+    else
+        echo "${YELLOW}WARNING: Unable to determine host timezone, using UTC${RESET}"
+        export TZ=UTC
+    fi
+}
+
 load_env() {
     if [ -f .env ]; then
         echo "Loading environment variables from .env file..."
@@ -133,6 +151,7 @@ run_server() {
 }
 
 start() {
+    setup_timezone
     load_env
     download_vendors
     setup_django

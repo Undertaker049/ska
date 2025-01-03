@@ -8,6 +8,7 @@ FROM python:3.12-slim
 # - dos2unix: для нормализации конфигурационных файлов
 # - apache2 и apache2-utils: веб-сервер и утилиты
 # - libxml2-dev: для работы с XML
+# - tzdata: для поддержки временных зон
 RUN apt-get update \
     && apt-get install -y \
         gcc \
@@ -17,7 +18,7 @@ RUN apt-get update \
         apache2 \
         apache2-utils \
         libxml2-dev \
-
+        tzdata \
     # Включение необходимых модулей Apache
     && a2enmod proxy \
     && a2enmod proxy_http \
@@ -27,14 +28,11 @@ RUN apt-get update \
     && a2enmod expires \
     && a2enmod alias \
     && a2enmod mime \
-
     # Очистка кэша apt для уменьшения размера образа
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
-
     # Фиксация версий curl и dos2unix
     && apt-mark hold curl dos2unix \
-
     # Создание и настройка директорий для логов Apache
     && mkdir -p /var/log/apache2 \
     && mkdir -p /var/run/apache2 \
