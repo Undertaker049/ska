@@ -8,12 +8,9 @@ services:
       - sqlite_data:/app/db
       - media_volume:/app/files
       - static_volume:/app/staticfiles
-      - /etc/timezone:/etc/timezone:ro
-      - /etc/localtime:/etc/localtime:ro
     entrypoint: ["sh", "-c", "chmod +x /app/entrypoint.sh && /app/entrypoint.sh"]
     environment:
       - DJANGO_SETTINGS_MODULE=ska.settings
-      - TZ=/etc/timezone
 
 volumes:
   sqlite_data:
