@@ -1,22 +1,40 @@
-# Использование официальный образа Python 3.12 slim для минимального размера
+# Использование официального образа Python 3.12 slim для минимального размера
 FROM python:3.12-slim
 
-# Установка системных зависимостей и настройка Apache
-# - gcc: для компиляции Python-пакетов
-# - inotify-tools: для мониторинга изменений файлов
-# - curl: для загрузки внешних ресурсов
-# - dos2unix: для нормализации конфигурационных файлов
-# - apache2 и apache2-utils: веб-сервер и утилиты
-# - libxml2-dev: для работы с XML
+# Установка базовых пакетов
 RUN apt-get update \
-    && apt-get install -y \
-        gcc \
-        inotify-tools \
-        curl \
-        dos2unix \
-        apache2 \
-        apache2-utils \
-        libxml2-dev \
+    && apt-get install -y --no-install-recommends \
+        dos2unix=7.4.3-1 \
+        ca-certificates=20230311 \
+        gnupg=2.2.40-1.1 \
+    && apt-mark hold dos2unix ca-certificates gnupg \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Установка рабочей директории
+WORKDIR /app
+
+# Копирование файлов конфигурации
+COPY .requirements .vendors ./
+
+# Нормализация конфигурационных файлов
+RUN dos2unix .requirements .vendors
+
+# Установка системных зависимостей
+RUN set -e \
+    && apt-get update \
+    && DEBIAN_FRONTEND=noninteractive \
+    # Установка остальных системных пакетов
+    && remaining_packages=$(sed -n '/^\[system\]/,/^\[/p' .requirements | \
+       grep "==" | grep -v "^ca-certificates\|^gnupg" | \
+       grep -v "^\[" | cut -d= -f1) \
+    && for pkg in $remaining_packages; do \
+           echo "Installing $pkg..." \
+           && apt-get install -y --no-install-recommends "$pkg" || exit 1; \
+       done \
+    # Фиксация версий пакетов
+    && sed -n '/^\[system\]/,/^\[/p' .requirements | grep "==" | \
+       grep -v "^\[" | cut -d= -f1 | xargs apt-mark hold \
     # Включение необходимых модулей Apache
     && a2enmod proxy \
     && a2enmod proxy_http \
@@ -29,43 +47,31 @@ RUN apt-get update \
     # Очистка кэша apt для уменьшения размера образа
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
-    # Фиксация версий curl и dos2unix
-    && apt-mark hold curl dos2unix \
-    # Создание и настройка директорий для логов Apache
+    # Настройка директорий Apache
     && mkdir -p /var/log/apache2 \
     && mkdir -p /var/run/apache2 \
     && chown -R www-data:www-data /var/log/apache2 \
     && chown -R www-data:www-data /var/run/apache2
 
-# Установка рабочей директории
-WORKDIR /app
-
-# Создание необходимых директорий и настройка прав доступа
-# - /app/db: для SQLite базы данных
-# - /app/files: для медиа-файлов
-# - /app/static/vendor: для внешних библиотек
+# Создание необходимых директорий
 RUN mkdir -p /app/db /app/files /app/static/vendor \
     && chmod -R 755 /app/static \
     && chown -R www-data:www-data /app/static
 
-# Копирование файлов проекта
+# Копирование остальных файлов проекта
 COPY . .
 
-# Нормализация конфигурационных файлов (конвертация CRLF в LF)
-RUN dos2unix .vendors .requirements || true
-
 # Установка Python-зависимостей
-RUN pip install --no-cache-dir -r .requirements
+RUN sed -n '/^\[python\]/,/^$/p' .requirements | grep "==" | \
+    grep -v "^\[" | pip install --no-cache-dir -r /dev/stdin
 
-# Создание и настройка директории для статических файлов
-# Права 755 позволяют Apache читать и выполнять, но не изменять файлы
+# Настройка директории для статических файлов
 RUN mkdir -p /app/staticfiles \
     && chown -R www-data:www-data /app/staticfiles \
     && chmod -R 755 /app/staticfiles
 
-# Открытие портов:
-# - 80: для Apache (обработка статических файлов и проксирование)
+# Открытие порта для Apache
 EXPOSE 80
 
-# Запуск оболочки по умолчанию (фактический запуск серверов происходит через entrypoint.sh)
+# Запуск оболочки по умолчанию
 CMD ["sh"]
